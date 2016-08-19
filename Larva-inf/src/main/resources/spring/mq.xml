@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/rabbit
+       http://www.springframework.org/schema/rabbit/spring-rabbit-1.0.xsd">
+       
+   <!-- 连接服务配置  -->
+   <rabbit:connection-factory id="connectionFactory" host="localhost" username="guest"
+        password="guest" port="5672"  />
+         
+   <rabbit:admin connection-factory="connectionFactory"/>
+    
+   <!-- queue 队列声明-->
+   <rabbit:queue id="larva_mq_queue" durable="false" auto-delete="false" exclusive="false" name="${larva.mq.queue.heartbeat}"/>
+   
+    <bean id="heartBeatListener" class="com.larva.mq.listener.HeartBeatListener" />
+    <!-- queue litener  观察 监听模式 当有消息到达时会通知监听在对应的队列上的监听对象-->
+    <rabbit:listener-container connection-factory="connectionFactory" acknowledge="auto">
+        <rabbit:listener queues="larva_mq_queue" ref="heartBeatListener"/>
+    </rabbit:listener-container>
+
+    <!-- 配置connectionFactory -->
+   <!--  <bean id="jmsFactory" class="org.apache.activemq.pool.PooledConnectionFactory"
+          destroy-method="stop">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL">
+                    <value>tcp://127.0.0.1:61616</value>
+                </property>
+                <property name="password" value="admin"/>
+                <property name="userName" value="admin"/>
+            </bean>
+        </property>
+        <property name="maxConnections" value="100"></property>
+    </bean> -->
+
+    <!-- Spring JMS Template -->
+    <!-- <bean id="jmsTemplate" class="org.springframework.jms.core.JmsTemplate">
+        <property name="connectionFactory" ref="jmsFactory"/>
+        <property name="defaultDestination" ref="logsDestination"/>
+    </bean> -->
+
+    <!-- 发送消息的目的地（一个队列） -->
+   <!--  <bean id="logsDestination" class="org.apache.activemq.command.ActiveMQQueue">
+        设置消息队列的名字
+        <constructor-arg index="0" value="logs" />
+    </bean> -->
+
+</beans>

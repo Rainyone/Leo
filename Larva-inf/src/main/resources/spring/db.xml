@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd"
+        >
+
+    <!-- 数据源配置, 使用 Druid 数据库连接池 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <!-- 数据源驱动类可不写，Druid默认会自动根据URL识别DriverClass -->
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <!-- 基本属性 url、user、password -->
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <!-- 配置初始化大小、最小、最大 -->
+        <property name="initialSize" value="${jdbc.initialSize}"/>
+        <property name="minIdle" value="${jdbc.minIdle}"/>
+        <property name="maxActive" value="${jdbc.maxActive}"/>
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name="maxWait" value="${jdbc.maxWait}"/>
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="${jdbc.timeBetweenEvictionRunsMillis}"/>
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="${jdbc.minEvictableIdleTimeMillis}"/>
+        <property name="validationQuery" value="${jdbc.validationQuery}"/>
+        <property name="testWhileIdle" value="${jdbc.testWhileIdle}"/>
+        <property name="testOnBorrow" value="${jdbc.testOnBorrow}"/>
+        <property name="testOnReturn" value="${jdbc.testOnReturn}"/>
+        <!-- 配置监控统计拦截的filters -->
+        <property name="filters" value="${jdbc.filters}"/>
+    </bean>
+    
+    <bean id="dynamicDataSource" class="com.mini.core.dynamic.DynamicDataSource">
+		<property name="defaultTargetDataSource" ref="dataSource"></property>
+		<property name="targetDataSources">
+	        <map key-type="java.lang.String">
+	            <entry key="key1" value-ref="dataSource" />
+	            <!-- <entry key="key2" value-ref="datasource2" /> -->
+	        </map>
+	    </property>
+	</bean>
+	<bean id="miniConfig" class="com.mini.core.cfg.MiniConfig">
+		<property name="dynamicDataSource" ref="dynamicDataSource"></property>
+	</bean>
+	<bean id="databaseRouter" class="com.mini.core.DatabaseRouter">
+		<property name="entityPackage" value="com.larva.model" />
+	</bean>
+	
+    <!--配置sqlSessionFactory-->
+    <!-- <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:sqlMapConfig.xml" />
+    </bean> -->
+    <!--事务支持-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean> 
+    <!--配置mybatis-->
+    <!-- <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.larva.mapper"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean> -->
+    <!--事务注解-->
+     <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+        	<tx:method name="save*" propagation="REQUIRED"/>
+      		<tx:method name="del*" propagation="REQUIRED"/>
+     		<tx:method name="update*" propagation="REQUIRED"/>
+      		<tx:method name="add*" propagation="REQUIRED"/>
+            <tx:method name="find*" read-only="true"/>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="select*" read-only="true"/>
+            <tx:method name="*" read-only="false"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:pointcut id="servicePointCuts" expression="execution(* com.larva.service.*.*(..))" />
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="servicePointCuts" />
+    </aop:config> 
+
+
+    <!--配置jedis-->
+   <!--  <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="testOnReturn" value="false"/>
+        <property name="maxIdle" value="15"/>
+        <property name="maxTotal" value="20" />
+        <property name="maxWaitMillis" value="1000"/>
+        <property name="minIdle" value="10" />
+        <property name="lifo" value="false"/>
+        <property name="softMinEvictableIdleTimeMillis" value="10"/>
+        <property name="testOnBorrow" value="true"/>
+        <property name="testWhileIdle" value="false"/>
+        <property name="timeBetweenEvictionRunsMillis" value="300000"/>
+        <property name="blockWhenExhausted" value="true"/>
+    </bean>
+    <bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+        <constructor-arg index="0" ref="jedisPoolConfig" />
+        <constructor-arg index="1" value="${jedis.host}" />
+    </bean>
+    <bean id="redisManager" class="com.larva.shiro.RedisManager">
+        <property name="jedisPool" ref="jedisPool"/>
+    </bean> -->
+</beans>
