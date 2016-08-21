@@ -17,4 +17,5 @@ import java.util.Set;
 public interface IAppManageDao  {
     int save(AppManage appManage);
     PageResult<AppManage> selectAppManages(int pageNow, int pageSize);
+    
 }

@@ -1,139 +1,147 @@
 package com.larva.inf.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.larva.service.InfService;
 import com.larva.utils.IPSeeker;
 import com.larva.utils.ServiceUtils;
 import com.larva.vo.ResultVO;
+import com.mini.core.Record;
 
 
 @Controller
 public class InfController {
 	private Logger logger = Logger.getLogger(InfController.class);
 	private static IPSeeker ipSeeker = IPSeeker.getInstance();
+	@Autowired
+	private InfService infService;	
 	@RequestMapping(value="/setCharge", method=RequestMethod.GET)
 	@ResponseBody
-    public ResultVO login(@RequestParam(value="appId", required=false, defaultValue="") String appId,
-			@RequestParam(value="appSecret", required=false, defaultValue="") String appSecret,//验证app合法性
-			@RequestParam(value="imsi", required=false, defaultValue="") String imsi,
-			@RequestParam(value="imei", required=false, defaultValue="") String imei,
-			@RequestParam(value="osVersion", required=false, defaultValue="") String osVersion,
-			@RequestParam(value="platform", required=false, defaultValue="") String platform,
-			@RequestParam(value="netState", required=false, defaultValue="") String netState,
-			@RequestParam(value="ua", required=false, defaultValue="") String ua,
-			@RequestParam(value="brand", required=false, defaultValue="") String brand,
-			@RequestParam(value="advertType", required=false, defaultValue="") String advertType,//
-			@RequestParam(value="adSize", required=false, defaultValue="") String adSize,
-			@RequestParam(value="state", required=false, defaultValue="") String state,//不用
-			@RequestParam(value="timestamp", required=false, defaultValue="") String timestamp,
-			@RequestParam(value="sdkVersion", required=false, defaultValue="") String sdkVersion,
-			@RequestParam(value="adId", required=false, defaultValue="") String adId,//
-			@RequestParam(value="attachApp", required=false, defaultValue="") String attachApp,//智能广告展现的应用（值为包名）
-			@RequestParam(value="event", required=false, defaultValue="") String event, //展示1，点击2，安装3
+    public ResultVO login(@RequestParam(value="app_id", required=false, defaultValue="") String app_id,//应用id
+			@RequestParam(value="app_key", required=false, defaultValue="") String app_key,//appKey
+			@RequestParam(value="channel", required=false, defaultValue="") String channel,//渠道id
+			@RequestParam(value="price", required=false, defaultValue="") String price,//价格：1000分
+			@RequestParam(value="imei", required=false, defaultValue="") String imei,//手机IMSI信息
+			@RequestParam(value="imsi", required=false, defaultValue="") String imsi,//手机IMEI信息
+			@RequestParam(value="bsc_lac", required=false, defaultValue="") String netState,//移动基站信息
+			@RequestParam(value="bsc_cid", required=false, defaultValue="") String ua,//移动基站信息
+			@RequestParam(value="mobile", required=false, defaultValue="") String brand,//手机号码
+			@RequestParam(value="iccid", required=false, defaultValue="") String advertType,//sim卡iccid号
+			@RequestParam(value="mac", required=false, defaultValue="") String adSize,//mac
+			@RequestParam(value="cpparm", required=false, defaultValue="") String state,//cpparm
+			@RequestParam(value="fmt", required=false, defaultValue="") String fmt,//报文输出格式 json
+			@RequestParam(value="timestamp", required=false, defaultValue="") String timestamp,//时间戳
+			@RequestParam(value="isp", required=false, defaultValue="") String isp,//运营商编码
 			HttpServletRequest request){
 		ResultVO vo = new ResultVO(true);
 		boolean result = true;
-		String area = "";
+		String area_id = "";
 		//参数判断
-		if(StringUtils.isBlank(adId)) {
+		if(StringUtils.isBlank(app_id)) {
 			vo.setOk(false);
-			vo.setMsg("adId is null");
-			result = false;
+			vo.setMsg("app_id is null");
+			return vo;
+		}
+		if(StringUtils.isBlank(app_key)) {
+			vo.setOk(false);
+			vo.setMsg("app_key is null");
+			return vo;
 		}
 		if(StringUtils.isBlank(imei)) {
 			vo.setOk(false);
 			vo.setMsg("imei is null");
-			result = false;
+			return vo;
 		}
-		if(StringUtils.isBlank(event)) {
+		if(StringUtils.isBlank(imsi)) {
 			vo.setOk(false);
-			vo.setMsg("event is null");
-			result = false;
+			vo.setMsg("imsi is null");
+			return vo;
 		}
-		//appid+appKey校验，查数据库看此appid和key 是否可用
-		if(this.checkKey(appId, appSecret)){
+		if(StringUtils.isBlank(fmt)) {
 			vo.setOk(false);
-			vo.setMsg("appKey is not available");
-			result = false;
+			vo.setMsg("fmt is null");
+			return vo;
 		}
-		if(result){
-			// TODO 逻辑判断，获取计费代码，请求计费代码，解析反馈数据，反馈客户端数据
-			//获取ip地址
-			String realIp = ServiceUtils.getRealAddr(request);
-			logger.info("realIp:" + realIp);
-			String address = ipSeeker.getAddress(realIp);
-			//获取区域编码
-			area = address.split(" ")[0];
-			logger.info("area:" + area);
-			//获取计费代码
-			List<String> chargeCode = this.getChargeCode(appId,area);
+		if(StringUtils.isBlank(timestamp)) {
+			vo.setOk(false);
+			vo.setMsg("timestamp is null");
+			return vo;
+			
+		}
+		// TODO 逻辑判断，获取计费代码，请求计费代码，解析反馈数据，反馈客户端数据
+		String realIp = ServiceUtils.getRealAddr(request);//获取ip地址
+		logger.info("realIp:" + realIp);
+		String address = ipSeeker.getAddress(realIp);
+		area_id = address.split(" ")[0];//获取区域编码
+		area_id = "110000";//测试用
+		isp = "1001";
+		logger.info("area:" + area_id);
+
+		//appid+appKey校验，查数据库看此appid和key 是否可用，APP日月限量额度
+		//判断是否在可用省份内，APP省内日月限量额度
+		vo = infService.checkApp(app_id,app_key,area_id,isp);
+		if(!vo.isOk()){//APP校验不通过
+			return vo;
+		}
+		Record r = (Record) vo.getData();
+		
+		//获取可用计费代码（判断是否超过地区日限量、地区月限量、app日限量、app月限量）
+		vo = infService.checkAndGetChargeCode(app_id,area_id,isp);
+		if(!vo.isOk()){//校验不通过
+			return vo;
+		}
+		Record chargeCodes = (Record) vo.getData();
+		logger.debug(chargeCodes);
+		/*if(chargeCodes.size()>0){
 			String backStr = "";
-			//发送请求到运营商
-			for(String one :chargeCode){
-				String returnCode = this.reqYYS(one);
-				backStr += this.analysis(returnCode); 
+			for(String[] one :chargeCodes){
+				//循环每个计费代码（判断计费代码是否在可用省份内）
+					//判断是否在可用时间段内
+					//判断计费代码的日限量、月限量
+				//发送计费代码请求
+					//计费代码参数填充
+					//计费代码请求
+					//计费代码反馈报文解析
+					//发送请求到运营商
+//				String returnCode = this.reqYYS(one[0]);
+				backStr += this.analysis(one[0],one[1]); 
 			}
 			//反馈给客户端
+			vo.setOk(true);
+			vo.setMsg("success");
 			vo.setData(backStr);
-			return vo;
 		}else{
-			return vo;
-		}
+			vo.setOk(false);
+			vo.setMsg("have no charging");
+		}*/
+		return vo;
 	}
 	/**
 	 * 解析反馈的报文数据
 	 * @param returnCode
 	 * @return
 	 */
-	private String analysis(String returnCode) {
+	private String analysis(String returnCode,String returnForm) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	/**
-	 * 请求运营商
-	 * @param one
-	 * @return
-	 */
-	private String reqYYS(String one) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	@RequestMapping(value = "/fail")
 	@ResponseBody
 	public ResultVO fail() {
-		ResultVO vo = new ResultVO(true);
+		ResultVO vo = new ResultVO(false);
 		vo.setData(null);
-		vo.setMsg("url error 2");
+		vo.setMsg("url error ");
 		return vo;
-	}
-	/**
-	 * 校验appid和appkey
-	 * @param appId
-	 * @param appKey
-	 * @return
-	 */
-	private boolean checkKey(String appId,String appKey){
-		//TODO 查库校验
-		return true;
-	}
-	/**
-	 * 获取计费代码
-	 * @param appId
-	 * @param area
-	 * @return
-	 */
-	private List<String> getChargeCode(String appId, String area) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

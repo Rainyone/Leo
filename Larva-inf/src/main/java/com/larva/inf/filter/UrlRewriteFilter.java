@@ -102,20 +102,23 @@ public class UrlRewriteFilter implements Filter {
 		}
 		
 		// 检查是否有必要的参数
-		if (paramsMaps == null || !paramsMaps.containsKey("appId")
-				|| !paramsMaps.containsKey("appSecret")
-				|| !paramsMaps.containsKey("timestamp")) {
-			log.info("没有关键参数  appId: " + paramsMaps.containsKey("appId") + 
-					" appSecret: " + paramsMaps.containsKey("appSecret") + 
-					" timestamp: " + paramsMaps.containsKey("timestamp"));
+		if (paramsMaps == null || !paramsMaps.containsKey("app_id")
+				|| !paramsMaps.containsKey("app_key")
+				|| !paramsMaps.containsKey("timestamp")
+				|| !paramsMaps.containsKey("imei")) {
+			log.info("没有关键参数  app_id: " + paramsMaps.containsKey("app_id") + 
+					" app_key: " + paramsMaps.containsKey("app_key") + 
+					" timestamp: " + paramsMaps.containsKey("timestamp")+ 
+					" imei: " + paramsMaps.containsKey("imei"));
 			return false;
 		}
 		
 		String sign = request.getParameter("sign");
-		String appId = paramsMaps.get("appId");
-		String appSecret = paramsMaps.get("appSecret");
+		String appId = paramsMaps.get("app_id");
+		String appSecret = paramsMaps.get("app_key");
+		String imei = paramsMaps.get("imei");
 		String timestamp = paramsMaps.get("timestamp");
-		String sign2 = DESEncrypt.getSign(appId, appSecret, timestamp);
+		String sign2 = DESEncrypt.getSign(appId, appSecret,imei, timestamp);
 		if (!sign.equals(sign2)) {
 			log.info("签名错误 sign:" + sign + " sign2: " + sign2);
 			return false;
@@ -158,7 +161,7 @@ public class UrlRewriteFilter implements Filter {
 			return false;
 		
 		String sign = request.getParameter("sign");
-		String data = request.getParameter("data");
+		String data = request.getParameter("body");
 		log.info("SessionID:" + request.getSession().getId() + " sign:" + sign + " data: " + data);
 		// 无效请求，进行一个记录并返回错误页面
 		if (StringUtils.isBlank(sign) || StringUtils.isBlank(data)) {
@@ -183,7 +186,7 @@ public class UrlRewriteFilter implements Filter {
 	 */
 	private String decodeUrl(HttpServletRequest request, 
 			String contextPath) throws IOException, Exception {
-		String data = request.getParameter("data");
+		String data = request.getParameter("body");
 		String plainText = URIUtil.getPathQuery(new String(
 				DESEncrypt.decrypt(Base64.decodeBase64(data))));
 		
@@ -207,20 +210,4 @@ public class UrlRewriteFilter implements Filter {
 	public void destroy() {
 	}
 	
-	public static void main(String[] args) {
-//		String sign = "9lYPxJRvbW94keJ9ngszN+EeHkc="; //9lYPxJRvbW94keJ9ngszN%2bEeHkc%3d
-		String url = "setCharge?appId=111&appSecret=222&imsi=46000xxxxx1234&imei=444&packageName=com.haimeng.ad&osVersion=555&platform=1&netState=1&ua=888&brand=9999&advertType=1&adSize=123&sdkVersion=333&timestamp=182832737&appName=baidu";
-//		appId appSecret反转 timestamp 固定string
-		try {
-			String encode = Base64.encodeBase64String(DESEncrypt.encrypt(url.getBytes()));
-			System.out.println("encode:" + URLEncoder.encode(encode));
-			String plainText = URIUtil.getPathQuery(new String(DESEncrypt.decrypt(Base64.decodeBase64(encode))));
-			System.out.println("plainText:" + plainText);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		String signself = DESEncrypt.getSign("111", "222", "182832737");
-		System.out.println(URLEncoder.encode(signself));
-	}
 }
