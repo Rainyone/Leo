@@ -23,8 +23,8 @@ public class MenuPermissionDaoImpl extends MiniDao implements IMenuPermissionDao
      * @param menuId
      * @return
      */
-    public List<Integer> selectPermissionIdSet(int menuId) {
-        return this.findList("select permission_id from menu_permission where menu_id =?", int.class, menuId);
+    public List<String> selectPermissionIdSet(String menuId) {
+        return this.findList("select permission_id from menu_permission where menu_id =?", String.class, menuId);
     }
 
     /**
@@ -32,7 +32,7 @@ public class MenuPermissionDaoImpl extends MiniDao implements IMenuPermissionDao
      *
      * @param perId
      */
-    public void deleteByPerId(int perId) {
+    public void deleteByPerId(String perId) {
     	this.execute("delete from menu_permission where permission_id=?", perId);
     }
 
@@ -41,7 +41,7 @@ public class MenuPermissionDaoImpl extends MiniDao implements IMenuPermissionDao
      *
      * @param menuId
      */
-    public void deleteByMenuId(int menuId) {
+    public void deleteByMenuId(String menuId) {
     	this.execute("delete from menu_permission where menu_id=?", menuId);
     }
 

@@ -9,7 +9,7 @@ import com.mini.core.WeakEntity;
 import com.mini.core.annotation.Entity;
 import com.mini.core.utils.EnumClazz.StrategyType;
 
-@Entity(table="department",id="id",strategy = StrategyType.AUTO)
+@Entity(table="department",id="id",strategy = StrategyType.NULL)
 public class Department extends WeakEntity implements Serializable {
 	/**
 	 * 表字段定义静态类
@@ -21,20 +21,20 @@ public class Department extends WeakEntity implements Serializable {
 		public static final String order = "order";//department.order (排序)
 	}
 	
-    public Integer getId() {
-        return super.getInt(Columns.id);
+    public String getId() {
+        return super.getStr(Columns.id);
     }
 
-    public Department setId(Integer id) {
+    public Department setId(String id) {
         super.set(Columns.id, id);
         return this;
     }
 
-    public Integer getParentId() {
-        return super.getInt(Columns.parentId);
+    public String getParentId() {
+        return super.getStr(Columns.parentId);
     }
 
-    public Department setParentId(Integer parentId) {
+    public Department setParentId(String parentId) {
     	super.set(Columns.parentId, parentId);
         return this;
     }

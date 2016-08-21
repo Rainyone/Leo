@@ -66,7 +66,7 @@ public class MainController {
     @RequestMapping("/get-menu-show-permissions")
     public
      @ResponseBody
-     ResultVO getMenuShowPermissons(@RequestParam int menuId) {
+     ResultVO getMenuShowPermissons(@RequestParam String menuId) {
          ResultVO resultVO =permissionService.getMenuShowPermissions(menuId,true);
          return resultVO;
      }
@@ -74,7 +74,7 @@ public class MainController {
     @RequestMapping("/get-menu-check-permissions")
     public
      @ResponseBody
-     ResultVO getMenucheckPermissons(@RequestParam int menuId) {
+     ResultVO getMenucheckPermissons(@RequestParam String menuId) {
          ResultVO resultVO =permissionService.getMenuShowPermissions(menuId,false);
          return resultVO;
      }
@@ -91,7 +91,7 @@ public class MainController {
     @RequestMapping("/get-role-show-permissions")
     public
     @ResponseBody
-    ResultVO getRoleShowPermissons(@RequestParam int roleId) {
+    ResultVO getRoleShowPermissons(@RequestParam String roleId) {
         ResultVO resultVO =permissionService.getRoleShowPermissions(roleId,true);
         return resultVO;
     }
@@ -100,7 +100,7 @@ public class MainController {
     @RequestMapping("/get-role-check-permissions")
     public
     @ResponseBody
-    ResultVO getRoleCheckPermissons(@RequestParam int roleId) {
+    ResultVO getRoleCheckPermissons(@RequestParam String roleId) {
     	ResultVO resultVO =permissionService.getRoleShowPermissions(roleId,false);
     	return resultVO;
     }

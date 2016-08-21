@@ -10,13 +10,13 @@ import com.larva.model.Role;
  */
 public interface IRoleDao {
 
-    Role get(List<Role> roles, int id);
+    Role get(List<Role> roles, String id);
 
     List<Role> selectAll();
 
     int createRole(Role role);
 
-    int deleteRole(int roleId);
+    int deleteRole(String roleId);
 
     int updateRole(Role role);
 }

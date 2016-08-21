@@ -6,7 +6,7 @@ import javax.validation.constraints.NotNull;
  * Created by sxjun on 15-8-30.
  */
 public class MenuCreateVO {
-    private Integer parentId;
+    private String parentId;
     @NotNull(message = "菜单名字不能为空")
     private String name;
     private String url;
@@ -14,11 +14,11 @@ public class MenuCreateVO {
     @NotNull(message = "菜单排序不能为空")
     private Integer order;
 
-    public Integer getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(Integer parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
     }
 

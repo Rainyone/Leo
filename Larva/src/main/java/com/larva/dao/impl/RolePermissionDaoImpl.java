@@ -23,15 +23,15 @@ public class RolePermissionDaoImpl extends MiniDao implements IRolePermissionDao
      * @param roleId
      * @return
      */
-    public List<Integer> getPermissionIdSetByRoleId(int roleId) {
-        return this.findList("select  permission_id from role_permission where role_id=?", int.class, roleId);
+    public List<String> getPermissionIdSetByRoleId(String roleId) {
+        return this.findList("select  permission_id from role_permission where role_id=?", String.class, roleId);
     }
 
     /**
      * 根据权限删除role-per
      * @param perId
      */
-    public void deleteByPerId(int perId) {
+    public void deleteByPerId(String perId) {
     	this.execute("delete from role_permission where 1=1 and permission_id=?",perId);
     }
 
@@ -39,7 +39,7 @@ public class RolePermissionDaoImpl extends MiniDao implements IRolePermissionDao
      * 根据角色删除role-per
      * @param roleId
      */
-    public void deleteByRoleId(int roleId) {
+    public void deleteByRoleId(String roleId) {
     	this.execute("delete from role_permission where 1=1 and role_id=?",roleId);
     }
 

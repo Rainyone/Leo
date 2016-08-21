@@ -53,8 +53,11 @@ public class MenuServiceImpl implements IMenuService {
 		if(menuDao.get(menus,menu.getParentId())==null){
 			System.out.println();
 		}
-		if(menu.getParentId()!=null&&!Constants.SUPER_TREE_NODE.equals(menu.getParentId().toString()))
-			m.put("parentName", menuDao.get(menus,menu.getParentId()).getName());
+		if(menu.getParentId()!=null&&!Constants.SUPER_TREE_NODE.equals(menu.getParentId()))
+		{
+			Menu me = menuDao.get(menus,menu.getParentId());
+			m.put("parentName", me!=null?me.getName():"");
+		}
 		return m;
     }
     
@@ -64,11 +67,11 @@ public class MenuServiceImpl implements IMenuService {
      * @param depId
      * @return
      */
-    public static List<Menu> getChildrenMenus(List<Menu> list, Integer _menuId) {
+    public static List<Menu> getChildrenMenus(List<Menu> list, String _menuId) {
         List<Menu> menuIdList = new ArrayList<Menu>();
         for (Menu menu : list) {
-            Integer menuId = menu.getParentId();
-            if ((menuId == null && _menuId == null) || (menuId != null && _menuId != null && menuId.intValue() == _menuId.intValue())) {
+        	String menuId = menu.getParentId();
+            if ((menuId == null && _menuId == null) || (menuId != null && _menuId != null && menuId.equals( _menuId))) {
             	menuIdList.add(menu);
             	menuIdList.addAll(getChildrenMenus(list, menu.getId()));
             }
@@ -90,7 +93,7 @@ public class MenuServiceImpl implements IMenuService {
         	size = menus.size();
         }else if(tree!=null && StrKit.notBlank(tree.getId())&&!Constants.SUPER_TREE_NODE.equals(tree.getId())){
             //获取所有菜单
-            int child = Integer.parseInt(tree.getId());
+        	String child = tree.getId();
             //获取当前菜单
             Menu selectdepart = menuDao.get(menus,child);
             resultMenus.add(getMenuMap(menus,selectdepart));
@@ -153,7 +156,7 @@ public class MenuServiceImpl implements IMenuService {
      *
      * @return
      */
-    public List<Map<String, Object>> selectShowMenus(Integer rootId) {
+    public List<Map<String, Object>> selectShowMenus(String rootId) {
 
         List<Map<String, Object>> maps = new ArrayList<Map<String, Object>>();
         //授权的菜单集合
@@ -165,12 +168,12 @@ public class MenuServiceImpl implements IMenuService {
 
         Subject subject = SecurityUtils.getSubject();
         for (Menu menu : menuList) {
-        	List<Integer> permissionIdSet = menuPermissionDao.selectPermissionIdSet(menu.getId());
+        	List<String> permissionIdSet = menuPermissionDao.selectPermissionIdSet(menu.getId());
             //权限key集合
             List<String> perKeyList = new ArrayList<String>();
             if (permissionIdSet != null && !permissionIdSet.isEmpty()) {
-                for (Integer perId : permissionIdSet) {
-                    Permission permission = permissionDao.get(permissionList, perId.intValue());
+                for (String perId : permissionIdSet) {
+                    Permission permission = permissionDao.get(permissionList, perId);
                     perKeyList.add(permission.getKey());
                 }
             }
@@ -181,7 +184,7 @@ public class MenuServiceImpl implements IMenuService {
                 menuPermittedList.add(menu);
             }
         }
-        List<Integer> childrenIdList = null;
+        List<String> childrenIdList = null;
         if (rootId != null) {
             childrenIdList = getChildrenMenuIds(menuList, rootId);
             childrenIdList.add(rootId);
@@ -218,7 +221,7 @@ public class MenuServiceImpl implements IMenuService {
         ResultVO resultVO = new ResultVO(true);
         //获取所有菜单
         List<Menu> menuList = menuDao.selectAll();
-        Integer parentId = createVO.getParentId();
+        String parentId = createVO.getParentId();
         //父级菜单
         /*if (createVO.getParentId() != null) {
             Menu parentMenu = menuDao.get(menuList, createVO.getParentId());
@@ -257,11 +260,11 @@ public class MenuServiceImpl implements IMenuService {
      * @param menuId
      * @return
      */
-    public ResultVO deleteMenu(int[] menuIds) {
+    public ResultVO deleteMenu(String[] menuIds) {
         ResultVO resultVO = new ResultVO(true);
         //获取所有菜单
         List<Menu> menus = menuDao.selectAll();
-        for(int menuId : menuIds){
+        for(String menuId : menuIds){
 	        //获取菜单
 	        Menu menu = menuDao.get(menus, menuId);
 	        if (menu == null) {
@@ -271,13 +274,13 @@ public class MenuServiceImpl implements IMenuService {
 	        }
         }
         
-        for(int menuId : menuIds){
+        for(String menuId : menuIds){
 	        //获取子级菜单
-	        List<Integer> childrenMenuIds = getChildrenMenuIds(menus, menuId);
+	        List<String> childrenMenuIds = getChildrenMenuIds(menus, menuId);
 	        //删除菜单
 	        menuDao.deleteMenu(menuId);
 	        menuPermissionDao.deleteByMenuId(menuId);
-	        for (Integer id : childrenMenuIds) {
+	        for (String id : childrenMenuIds) {
 	            menuDao.deleteMenu(id);
 	            menuPermissionDao.deleteByMenuId(id);
 	        }
@@ -311,7 +314,7 @@ public class MenuServiceImpl implements IMenuService {
                 resultVO.setMsg("父级菜单不存在");
                 return resultVO;
             }*/
-            List<Integer> childrenMenuIds = getChildrenMenuIds(menus, editVO.getId());
+            List<String> childrenMenuIds = getChildrenMenuIds(menus, editVO.getId());
             childrenMenuIds.add(editVO.getId());
             if (childrenMenuIds.contains(editVO.getParentId())) {
                 resultVO.setOk(false);
@@ -321,7 +324,7 @@ public class MenuServiceImpl implements IMenuService {
         }
         //菜单名字不能重复
         for(Menu m:menus){
-            if(m.getName().equals(editVO.getName())&&menu.getId()!=editVO.getId()){
+            if(m.getName().equals(editVO.getName())&&!menu.getId().equals(editVO.getId())){
                 resultVO.setOk(false);
                 resultVO.setMsg("菜单名字已存在");
                 return resultVO;
@@ -341,7 +344,7 @@ public class MenuServiceImpl implements IMenuService {
     }
     
     
-    public String checkOwnPermissions(List<Permission> permissions,Integer[] perIdArray){
+    public String checkOwnPermissions(List<Permission> permissions,String[] perIdArray){
     	//获取我拥有的权限
         List<Permission> myPermissionList = new ArrayList<Permission>();
         Subject subject = SecurityUtils.getSubject();
@@ -355,10 +358,10 @@ public class MenuServiceImpl implements IMenuService {
         
     	boolean isAlowed = true;
         String perInfo = "";
-        for(Integer perId : perIdArray){
+        for(String perId : perIdArray){
         	boolean subAlowed = false;
         	for(Permission permission : myPermissionList){
-        		if(permission.getId()==perId){
+        		if(permission.getId().equals(perId)){
         			subAlowed = true;
         			break;
         		}
@@ -383,7 +386,7 @@ public class MenuServiceImpl implements IMenuService {
      * @param perIdArray
      * @return
      */
-    public ResultVO grantPermissions(int menuId, Integer[] perIdArray) {
+    public ResultVO grantPermissions(String menuId, String[] perIdArray) {
         ResultVO resultVO = new ResultVO(true);
         //获取所有菜单
         List<Menu> menus = menuDao.selectAll();
@@ -411,9 +414,9 @@ public class MenuServiceImpl implements IMenuService {
              return resultVO;
         }
 
-        Set<Integer> perIdSet = new HashSet<Integer>();
+        Set<String> perIdSet = new HashSet<String>();
 
-        for (Integer id : perIdArray) {
+        for (String id : perIdArray) {
             perIdSet.add(id);
         /*    List<Integer> childrenPermissionIds = PermissionServiceImpl.getChildrenPermissionIds(id, permissions);
             perIdSet.addAll(childrenPermissionIds);*/
@@ -423,7 +426,7 @@ public class MenuServiceImpl implements IMenuService {
         menuPermissionDao.deleteByMenuId(menuId);
         //授权
         if (!perIdSet.isEmpty()) {
-            for (Integer perId : perIdSet) {
+            for (String perId : perIdSet) {
                 MenuPermission menuPermission = new MenuPermission();
                 menuPermission.setMenuId(menuId);
                 menuPermission.setPermissionId(perId);
@@ -442,10 +445,10 @@ public class MenuServiceImpl implements IMenuService {
      * @param parentId
      * @return
      */
-    private List<Map<String, Object>> getChildrenMenus(List<Menu> menus, Integer parentId, List<Integer> excludeChildrenIdList) {
+    private List<Map<String, Object>> getChildrenMenus(List<Menu> menus, String parentId, List<String> excludeChildrenIdList) {
         List<Map<String, Object>> mapList = new ArrayList<Map<String, Object>>();
         for (Menu menu : menus) {
-            if ((parentId == null && menu.getParentId() == null) || (parentId != null && menu.getParentId() != null && menu.getParentId().intValue() == parentId.intValue())) {
+            if ((parentId == null && menu.getParentId() == null) || (parentId != null && menu.getParentId() != null && menu.getParentId().equals(parentId))) {
                 if (excludeChildrenIdList == null || !excludeChildrenIdList.contains(menu.getId())) {
                     Map<String, Object> map = new HashMap<String, Object>();
                     map.put("id", menu.getId());
@@ -479,7 +482,7 @@ public class MenuServiceImpl implements IMenuService {
                 rootMenus.add(menu);
                 continue;
             }
-            Menu parentMenu = menuDao.get(menus, menu.getParentId().intValue());
+            Menu parentMenu = menuDao.get(menus, menu.getParentId());
             if (parentMenu == null) {
                 rootMenus.add(menu);
             }
@@ -494,12 +497,12 @@ public class MenuServiceImpl implements IMenuService {
      * @param parentId
      * @return
      */
-    private List<Integer> getChildrenMenuIds(List<Menu> menuList, Integer parentId) {
-        List<Integer> list = new ArrayList<Integer>();
+    private List<String> getChildrenMenuIds(List<Menu> menuList, String parentId) {
+        List<String> list = new ArrayList<String>();
         for (Menu menu : menuList) {
-            if ((parentId == null && menu.getParentId() == null) || (parentId != null && menu.getParentId() != null && parentId.intValue() == menu.getParentId().intValue())) {
-                list.add(menu.getId().intValue());
-                list.addAll(getChildrenMenuIds(menuList, menu.getId().intValue()));
+            if ((parentId == null && menu.getParentId() == null) || (parentId != null && menu.getParentId() != null && parentId.equals( menu.getParentId()))) {
+                list.add(menu.getId());
+                list.addAll(getChildrenMenuIds(menuList, menu.getId()));
             }
         }
         return list;

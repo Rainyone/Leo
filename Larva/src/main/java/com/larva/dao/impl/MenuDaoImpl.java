@@ -18,7 +18,7 @@ import com.mini.core.dao.MiniDao;
 public class MenuDaoImpl extends MiniDao implements IMenuDao {
     
     /**
-     * 获取所有部门
+     * 获取所有菜单
      *
      * @return
      */
@@ -31,7 +31,7 @@ public class MenuDaoImpl extends MiniDao implements IMenuDao {
      * @return
      */
     public List<Menu> selectAll() {
-        return this.findList("select * from menu", Menu.class);
+        return this.findList("select * from menu order by `order` asc", Menu.class);
     }
 
     /**
@@ -40,9 +40,9 @@ public class MenuDaoImpl extends MiniDao implements IMenuDao {
      * @param id
      * @return
      */
-    public Menu get(List<Menu> menus, int id) {
+    public Menu get(List<Menu> menus, String id) {
         for(Menu menu:menus){
-            if(menu.getId().intValue()==id){
+            if(id.equals(menu.getId())){
                 return menu;
             }
         }
@@ -63,7 +63,7 @@ public class MenuDaoImpl extends MiniDao implements IMenuDao {
      * @param id
      * @return
      */
-    public int deleteMenu(int id) {
+    public int deleteMenu(String id) {
         return this.deleteById(Menu.class,id);
     }
 

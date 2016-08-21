@@ -15,15 +15,15 @@ import com.larva.vo.TreeNode;
  */
 public interface IMenuService {
 
-    List<Map<String,Object>> selectShowMenus(Integer rootId);
+    List<Map<String,Object>> selectShowMenus(String rootId);
 
     ResultVO createMenu(MenuCreateVO createVO);
 
-    ResultVO deleteMenu(int[] menuIds);
+    ResultVO deleteMenu(String[] menuIds);
 
     ResultVO editMenu(MenuEditVO editVO);
 
-    ResultVO grantPermissions(int menuId, Integer[] perIdArray);
+    ResultVO grantPermissions(String menuId, String[] perIdArray);
 
     Pager<Map<String, Object>> getPageMenus(PagerReqVO pagerReqVO, TreeNode tree);
 

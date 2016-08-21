@@ -7,27 +7,27 @@ import javax.validation.constraints.NotNull;
  */
 public class DepartmentEditVO {
     @NotNull(message = "部门id不能为空")
-    private Integer id;
+    private String id;
     @NotNull(message = "上级部门不能为空")
-    private Integer parentId;
+    private String parentId;
     @NotNull(message = "部门名字不能为空")
     private String name;
     @NotNull(message = "部门排序不能为空")
     private Integer order;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Integer getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(Integer parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
     }
 

@@ -254,7 +254,7 @@ public class UserController{
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     public
     @ResponseBody
-    ResultVO delete(@RequestParam("userIds[]") int[] userIds) {
+    ResultVO delete(@RequestParam("userIds[]") String[] userIds) {
         ResultVO resultVO = accountService.deleteUser(userIds);
         return resultVO;
     }
@@ -263,7 +263,7 @@ public class UserController{
     @RequestMapping(value = "/grant", method = RequestMethod.POST)
     public
     @ResponseBody
-    ResultVO grantUserRoles(@RequestParam int userId,@RequestParam(value = "roleArray[]",required = false) Integer [] roleArray) {
+    ResultVO grantUserRoles(@RequestParam String userId,@RequestParam(value = "roleArray[]",required = false) String [] roleArray) {
         ResultVO resultVO = accountService.grantRoles(userId,roleArray);
         return resultVO;
     }

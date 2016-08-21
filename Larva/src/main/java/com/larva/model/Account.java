@@ -7,7 +7,7 @@ import com.mini.core.WeakEntity;
 import com.mini.core.annotation.Entity;
 import com.mini.core.utils.EnumClazz.StrategyType;
 
-@Entity(table="account",id="id", strategy = StrategyType.AUTO)
+@Entity(table="account",id="id", strategy = StrategyType.NULL)
 public class Account extends WeakEntity implements Serializable {
 	/**
 	 * 
@@ -23,11 +23,11 @@ public class Account extends WeakEntity implements Serializable {
 		public static final String password = "password";//account.password (密码)
 		public static final String registerTime = "register_time";//account.register_time (注册时间)
 	}
-    public Integer getId() {
-        return super.getInt(Columns.id);
+    public String getId() {
+        return super.getStr(Columns.id);
     }
 
-    public Account setId(Integer id) {
+    public Account setId(String id) {
         super.set(Columns.id, id);
         return this;
     }

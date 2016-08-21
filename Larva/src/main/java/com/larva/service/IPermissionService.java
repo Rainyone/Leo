@@ -17,15 +17,15 @@ public interface IPermissionService {
 
 	Pager<Map<String,Object>> getShowPermissions(PagerReqVO pagerReqVO,TreeNode tree);
 
-    ResultVO getMenuShowPermissions(int menuId,boolean chkDisabled);
+    ResultVO getMenuShowPermissions(String menuId,boolean chkDisabled);
 
-    ResultVO getRoleShowPermissions(int roleId,boolean chkDisabled);
+    ResultVO getRoleShowPermissions(String roleId,boolean chkDisabled);
 
     ResultVO cratePermission(PermissionCreateVO permissionCreateVO);
 
     ResultVO editPermission(PermissionEditVO permissionEditVO);
 
-    ResultVO delPermission(int[] permIds);
+    ResultVO delPermission(String[] permIds);
 
 	ResultVO getPermissionTree();
 }

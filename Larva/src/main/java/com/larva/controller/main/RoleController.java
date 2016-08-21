@@ -43,7 +43,7 @@ public class RoleController {
     Pager<Map<String,Object>> getShowRoles(PagerReqVO pagerReqVO) {
         Subject subject = SecurityUtils.getSubject();
         Object principal = subject.getPrincipal();
-        Pager<Map<String,Object>> vo = roleService.getShowRoles(pagerReqVO,Integer.parseInt(principal.toString()));
+        Pager<Map<String,Object>> vo = roleService.getShowRoles(pagerReqVO,principal.toString());
         return vo;
     }
     
@@ -53,7 +53,7 @@ public class RoleController {
     @ResponseBody
     ResultVO getAllDeparts() {
         Object principal = SecurityUtils.getSubject().getPrincipal();
-        ResultVO vo = roleService.getRoleTree(Integer.parseInt(principal.toString()));
+        ResultVO vo = roleService.getRoleTree(principal.toString());
         return vo;
     }
 
@@ -73,7 +73,7 @@ public class RoleController {
         }
         Subject subject = SecurityUtils.getSubject();
         Object principal = subject.getPrincipal();
-        resultVO = roleService.createRole(createVO, Integer.parseInt(principal.toString()));
+        resultVO = roleService.createRole(createVO, principal.toString());
         return resultVO;
     }
 
@@ -99,7 +99,7 @@ public class RoleController {
     @RequestMapping(value = "/del", method = RequestMethod.POST)
     public
     @ResponseBody
-    ResultVO delRole(@RequestParam("roleIds[]") int[] roleIds) {
+    ResultVO delRole(@RequestParam("roleIds[]") String[] roleIds) {
         ResultVO resultVO = roleService.deleteRole(roleIds);
         return resultVO;
     }
@@ -108,7 +108,7 @@ public class RoleController {
     @RequestMapping(value = "/grant", method = RequestMethod.POST)
     public
     @ResponseBody
-    ResultVO grantRolePermission(@RequestParam int id,@RequestParam(value = "peridArray[]",required = false) Integer []peridArray) {
+    ResultVO grantRolePermission(@RequestParam String id,@RequestParam(value = "peridArray[]",required = false) String []peridArray) {
         ResultVO resultVO = roleService.grantPermissions(id,peridArray);
         return resultVO;
     }

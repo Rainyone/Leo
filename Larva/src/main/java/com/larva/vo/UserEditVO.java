@@ -11,13 +11,13 @@ public class UserEditVO {
     @NotNull(message = "密码格式错误")
     private String  password;
     @NotNull(message = "请选择部门")
-    private Integer dep;
+    private String dep;
 
-    public Integer getDep() {
+    public String getDep() {
         return dep;
     }
 
-    public void setDep(Integer dep) {
+    public void setDep(String dep) {
         this.dep = dep;
     }
 

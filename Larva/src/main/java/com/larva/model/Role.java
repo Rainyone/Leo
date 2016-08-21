@@ -9,7 +9,7 @@ import com.mini.core.WeakEntity;
 import com.mini.core.annotation.Entity;
 import com.mini.core.utils.EnumClazz.StrategyType;
 
-@Entity(table="role",id="id",strategy = StrategyType.AUTO)
+@Entity(table="role",id="id",strategy = StrategyType.NULL)
 public class Role extends WeakEntity implements Serializable {
 	/**
 	 * 表字段定义静态类
@@ -20,11 +20,11 @@ public class Role extends WeakEntity implements Serializable {
 		public static final String key = "key";//`role`.key (角色key)
 	}
 
-    public Integer getId() {
-        return super.getInt(Columns.id);
+    public String getId() {
+        return super.getStr(Columns.id);
     }
 
-    public Role setId(Integer id) {
+    public Role setId(String id) {
     	super.set(Columns.id, id);
         return this;
     }

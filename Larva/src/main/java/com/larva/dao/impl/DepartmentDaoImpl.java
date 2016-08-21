@@ -43,9 +43,9 @@ public class DepartmentDaoImpl extends MiniDao implements IDepartmentDao {
      * @param id
      * @return
      */
-    public Department get(List<Department> list, int id) {
+    public Department get(List<Department> list, String id) {
         for (Department department : list) {
-            if (department.getId() == id) {
+            if (id.equals(department.getId())) {
                 return department;
             }
         }
@@ -66,7 +66,7 @@ public class DepartmentDaoImpl extends MiniDao implements IDepartmentDao {
      * @param depId
      * @return
      */
-    public int delete(int depId) {
+    public int delete(String depId) {
         return this.deleteById(Department.class,depId);
     }
 

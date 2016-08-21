@@ -15,9 +15,9 @@ import java.util.Set;
  */
 public interface IAccountDao  {
 
-    Account get(int id);
+    Account get(String id);
     
-    Account get(List<Account> list, int id);
+    Account get(List<Account> list, String id);
 
     Account getByAccount(String account);
     
@@ -27,11 +27,11 @@ public interface IAccountDao  {
 
     int save(Account account);
 
-    int delete(int accountId);
+    int delete(String accountId);
 
     PageResult<Account> selectAccountIdManage(String querySql, int pageNow, int pageSize);
 
-    PageResult<Account> selectAccountManage(Set<Integer> depIdSet, Set<Integer> excludeAccountIdSet, int pageNow, int pageSize);
+    PageResult<Account> selectAccountManage(Set<String> depIdSet, Set<String> excludeAccountIdSet, int pageNow, int pageSize);
 
 	int update(Account account);
 }

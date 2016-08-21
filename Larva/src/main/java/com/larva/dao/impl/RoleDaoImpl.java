@@ -22,9 +22,9 @@ public class RoleDaoImpl extends MiniDao implements IRoleDao {
      * @param id
      * @return
      */
-    public Role get(List<Role> roles, int id) {
+    public Role get(List<Role> roles, String id) {
         for(Role role:roles){
-            if(role.getId().intValue()==id){
+            if(id.equals(role.getId())){
                 return role;
             }
         }
@@ -53,7 +53,7 @@ public class RoleDaoImpl extends MiniDao implements IRoleDao {
      * @param roleId
      * @return
      */
-    public int deleteRole(int roleId) {
+    public int deleteRole(String roleId) {
         return this.deleteById(Role.class,roleId);
     }
 

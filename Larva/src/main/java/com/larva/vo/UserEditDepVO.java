@@ -7,23 +7,23 @@ import javax.validation.constraints.NotNull;
  */
 public class UserEditDepVO {
     @NotNull(message = "用户id不能为空")
-    private Integer userId;
+    private String userId;
     @NotNull(message = "部门id不能为空")
-    private Integer depId;
+    private String depId;
 
-    public Integer getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(Integer userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
-    public Integer getDepId() {
+    public String getDepId() {
         return depId;
     }
 
-    public void setDepId(Integer depId) {
+    public void setDepId(String depId) {
         this.depId = depId;
     }
 }

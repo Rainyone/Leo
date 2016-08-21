@@ -46,8 +46,9 @@ public class DepartmentServiceImpl implements IDepartmentService {
 		m.put("name", dep.getName());
 		m.put("order", dep.getOrder());
 		m.put("parentId", dep.getParentId());
-		if(dep.getParentId()!=null&&!Constants.SUPER_TREE_NODE.equals(dep.getParentId().toString()))
-			m.put("parentName", departmentDao.get(deps,dep.getParentId()).getName());
+		if(dep.getParentId()!=null&&!Constants.SUPER_TREE_NODE.equals(dep.getParentId()))
+			{Department d = departmentDao.get(deps,dep.getParentId());
+			m.put("parentName",d!=null?d.getName():"");}
 		return m;
     }
 
@@ -69,7 +70,7 @@ public class DepartmentServiceImpl implements IDepartmentService {
         	size = deps.size();
         }else if(tree!=null && StrKit.notBlank(tree.getId())&&!Constants.SUPER_TREE_NODE.equals(tree.getId())){
             //获取所有部门
-            int child = Integer.parseInt(tree.getId());
+            String child = tree.getId();
             //获取当前部门
             Department selectdepart = departmentDao.get(deps,child);
             resultDeparts.add(getDepartMap(deps,selectdepart));
@@ -164,7 +165,7 @@ public class DepartmentServiceImpl implements IDepartmentService {
      */
     public ResultVO createDepartment(DepartmentCreateVO createVO) {
         ResultVO resultVO = new ResultVO(true);
-        Integer parentId = createVO.getParentId();
+        String parentId = createVO.getParentId();
         /*if (parentId != null) {
             //获取所有部门
             List<Department> departments = departmentDao.selectAll();
@@ -193,9 +194,9 @@ public class DepartmentServiceImpl implements IDepartmentService {
      * @param editVO
      * @return
      */
-    public ResultVO editDepartment(DepartmentEditVO editVO, int accountId) {
+    public ResultVO editDepartment(DepartmentEditVO editVO, String accountId) {
         ResultVO resultVO = new ResultVO(true);
-        Integer parentId = editVO.getParentId();
+        String parentId = editVO.getParentId();
         //获取所有部门
         List<Department> departments = departmentDao.selectAll();
         /*if (parentId != null) {
@@ -214,7 +215,7 @@ public class DepartmentServiceImpl implements IDepartmentService {
             return resultVO;
         }
         //判断是否是自己的部门
-        Integer myDepId = departmentAccountDao.getDepIdByAccountId(accountId);
+        String myDepId = departmentAccountDao.getDepIdByAccountId(accountId);
         if (myDepId == null) {
             resultVO.setOk(false);
             resultVO.setMsg("用户部门不存在");
@@ -226,7 +227,7 @@ public class DepartmentServiceImpl implements IDepartmentService {
             return resultVO;
         }*/
         //上级id是否在自己所在部门或者下级
-        Set<Integer> childrenDepIds = getChildrenDepIds(departments, editVO.getId());
+        Set<String> childrenDepIds = getChildrenDepIds(departments, editVO.getId());
         childrenDepIds.add(editVO.getId());
 
         if(childrenDepIds.contains(editVO.getParentId())){
@@ -253,11 +254,11 @@ public class DepartmentServiceImpl implements IDepartmentService {
      * @param accountId
      * @return
      */
-    public ResultVO deleteDep(int[] depIds, int accountId) {
+    public ResultVO deleteDep(String[] depIds, String accountId) {
         ResultVO resultVO = new ResultVO(true);
         //获取所有部门
         List<Department> departments = departmentDao.selectAll();
-        for(int depId : depIds){
+        for(String depId : depIds){
 	        //获取部门
 	        Department department = departmentDao.get(departments, depId);
 	        if (department == null) {
@@ -266,20 +267,20 @@ public class DepartmentServiceImpl implements IDepartmentService {
 	            return resultVO;
 	        }
 	        //判断是否是自己的部门
-	        Integer myDepId = departmentAccountDao.getDepIdByAccountId(accountId);
-	        if (myDepId != null && myDepId.intValue() == depId) {
+	        String myDepId = departmentAccountDao.getDepIdByAccountId(accountId);
+	        if (myDepId != null && myDepId.equals(depId)) {
 	            resultVO.setOk(false);
 	            resultVO.setMsg("不能删除自己所在部门!");
 	            return resultVO;
 	        }
         }
-        for(int depId : depIds){
+        for(String depId : depIds){
 	        //获取子级部门id
-	        Set<Integer> childrenDepIds = getChildrenDepIds(departments, depId);
+	        Set<String> childrenDepIds = getChildrenDepIds(departments, depId);
 	        //删除
 	        departmentDao.delete(depId);
 	        departmentAccountDao.deleteByDepId(depId);
-	        for (Integer id : childrenDepIds) {
+	        for (String id : childrenDepIds) {
 	            departmentDao.delete(id);
 	            departmentAccountDao.deleteByDepId(id);
 	        }
@@ -294,11 +295,11 @@ public class DepartmentServiceImpl implements IDepartmentService {
      * @param depId
      * @return
      */
-    public static List<Department> getChildrenDepartments(List<Department> list, Integer depId) {
+    public static List<Department> getChildrenDepartments(List<Department> list, String depId) {
         List<Department> depIdList = new ArrayList<Department>();
         for (Department department : list) {
-            Integer departmentId = department.getParentId();
-            if ((departmentId == null && depId == null) || (departmentId != null && depId != null && departmentId.intValue() == depId.intValue())) {
+        	String departmentId = department.getParentId();
+            if ((departmentId == null && depId == null) || (departmentId != null && depId != null && departmentId.equals(depId))) {
                 depIdList.add(department);
                 depIdList.addAll(getChildrenDepartments(list, department.getId()));
             }
@@ -312,11 +313,11 @@ public class DepartmentServiceImpl implements IDepartmentService {
      * @param depId
      * @return
      */
-    public static Set<Integer> getChildrenDepIds(List<Department> list, Integer depId) {
-        Set<Integer> depIdList = new HashSet<Integer>();
+    public static Set<String> getChildrenDepIds(List<Department> list, String depId) {
+        Set<String> depIdList = new HashSet<String>();
         for (Department department : list) {
-            Integer departmentId = department.getParentId();
-            if ((departmentId == null && depId == null) || (departmentId != null && depId != null && departmentId.intValue() == depId.intValue())) {
+        	String departmentId = department.getParentId();
+            if ((departmentId == null && depId == null) || (departmentId != null && depId != null && departmentId.equals(depId))) {
                 depIdList.add(department.getId());
                 depIdList.addAll(getChildrenDepIds(list, department.getId()));
             }
@@ -331,18 +332,18 @@ public class DepartmentServiceImpl implements IDepartmentService {
      * @param depId
      * @return
      */
-    public static List<Map<String, Object>> getChildrenDeps(List<Department> list, Integer depId, Set<Integer> chidlrenDepIdSet,Set<Integer> checkedIdSet) {
+    public static List<Map<String, Object>> getChildrenDeps(List<Department> list, String depId, Set<String> chidlrenDepIdSet,Set<String> checkedIdSet) {
         List<Map<String, Object>> mapList = new ArrayList<Map<String, Object>>();
 
         for (Department department : list) {
-            Integer departmentParentId = department.getParentId();
-            if ((departmentParentId == null && depId == null) || (departmentParentId != null && depId != null && departmentParentId.intValue() == depId.intValue())) {
-                if (chidlrenDepIdSet == null || !chidlrenDepIdSet.contains(department.getId().intValue())) {
+        	String departmentParentId = department.getParentId();
+            if ((departmentParentId == null && depId == null) || (departmentParentId != null && depId != null && departmentParentId.equals(depId))) {
+                if (chidlrenDepIdSet == null || !chidlrenDepIdSet.contains(department.getId())) {
                     Map<String, Object> map = new HashMap<String, Object>();
                     map.put("id", department.getId());
                     map.put("text", department.getName());
                     map.put("order", department.getOrder());
-                    if(checkedIdSet!=null&&checkedIdSet.contains(department.getId().intValue())){
+                    if(checkedIdSet!=null&&checkedIdSet.contains(department.getId())){
                         map.put("checked", true);
                    }else{
                         map.put("checked", false);
@@ -360,8 +361,8 @@ public class DepartmentServiceImpl implements IDepartmentService {
      * 获取 部门树
      */
 	@Override
-	public ResultVO getDeptTree(int userId) {
-        int mydepart = departmentAccountDao.getDepIdByAccountId(userId);
+	public ResultVO getDeptTree(String userId) {
+		String mydepart = departmentAccountDao.getDepIdByAccountId(userId);
         List<TreeNode> trees = new ArrayList<TreeNode>();
         Pager<Map<String,Object>> pager = this.getPageDepartments(null,null);
         List<Map<String,Object>> list = pager.getRows();
@@ -379,7 +380,7 @@ public class DepartmentServiceImpl implements IDepartmentService {
             else{
             	tree.setpId(Constants.SUPER_TREE_NODE);
             }
-            if(mydepart==Integer.parseInt(depart.get("id").toString()))
+            if(mydepart.equals(depart.get("id")))
             	tree.setOpen(true);
             trees.add(tree);
         }

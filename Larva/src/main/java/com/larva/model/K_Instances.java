@@ -9,7 +9,7 @@ import com.mini.core.WeakEntity;
 import com.mini.core.annotation.Entity;
 import com.mini.core.utils.EnumClazz.StrategyType;
 
-@Entity(table="k_instances",id="id",strategy = StrategyType.AUTO)
+@Entity(table="k_instances",id="id",strategy = StrategyType.NULL)
 public class K_Instances extends WeakEntity implements Serializable  {
 	
 	/**

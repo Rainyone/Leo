@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
  */
 public class RoleEditVO {
     @NotNull(message = "角色id不能为空")
-    private Integer id;
+    private String id;
 
     @NotNull(message = "角色名字不能为空")
     private String name;
@@ -29,11 +29,11 @@ public class RoleEditVO {
         this.key = key;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 }

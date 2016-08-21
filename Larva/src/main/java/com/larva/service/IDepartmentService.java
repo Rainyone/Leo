@@ -24,9 +24,9 @@ public interface IDepartmentService {
 
     ResultVO createDepartment(DepartmentCreateVO createVO);
 
-    ResultVO editDepartment(DepartmentEditVO createVO, int accountId);
+    ResultVO editDepartment(DepartmentEditVO createVO, String accountId);
 
-    ResultVO deleteDep(int[] depIds, int accountId);
+    ResultVO deleteDep(String[] depIds, String accountId);
 
-    ResultVO getDeptTree(int userId);
+    ResultVO getDeptTree(String userId);
 }

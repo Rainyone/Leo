@@ -20,7 +20,7 @@ public interface IAccountService {
 
     Account getAccountByAccount(String account);
 
-    SimpleAuthorizationInfo getAccountRolePermission(int accountId);
+    SimpleAuthorizationInfo getAccountRolePermission(String accountId);
     
     Pager<Map<String,Object>> getPageUsers(PagerReqVO pagerReqVO,TreeNode tree);
 
@@ -30,9 +30,9 @@ public interface IAccountService {
     
     ResultVO  editUser(UserEditVO editVO);
 
-    ResultVO deleteUser(int[] userIds);
+    ResultVO deleteUser(String[] userIds);
 
-    ResultVO updateUserDep(int userId,int depId);
+    ResultVO updateUserDep(String userId,String depId);
 
-	ResultVO grantRoles(int userId, Integer[] roleArray);
+	ResultVO grantRoles(String userId, String[] roleArray);
 }

@@ -7,7 +7,7 @@ import com.mini.core.WeakEntity;
 import com.mini.core.annotation.Entity;
 import com.mini.core.utils.EnumClazz.StrategyType;
 
-@Entity(table="app_manage",id="id", strategy = StrategyType.AUTO)
+@Entity(table="t_app_manage",id="id", strategy = StrategyType.NULL)
 public class AppManage extends WeakEntity implements Serializable {
 	/**
 	 * 
@@ -30,11 +30,11 @@ public class AppManage extends WeakEntity implements Serializable {
 		public static final String update_people_name = "update_people_name";
 		public static final String state = "state";
 	}
-    public Integer getId() {
-        return super.getInt(Columns.id);
+    public String getId() {
+        return super.getStr(Columns.id);
     }
 
-    public AppManage setId(Integer id) {
+    public AppManage setId(String id) {
         super.set(Columns.id, id);
         return this;
     }

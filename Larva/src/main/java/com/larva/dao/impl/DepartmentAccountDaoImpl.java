@@ -22,9 +22,9 @@ public class DepartmentAccountDaoImpl extends MiniDao  implements IDepartmentAcc
     	return this.findList("select * from department_account order by id asc", DepartmentAccount.class);
     }
     
-    public DepartmentAccount getByAccountId(List<DepartmentAccount> list,int accountId){
+    public DepartmentAccount getByAccountId(List<DepartmentAccount> list,String accountId){
     	for (DepartmentAccount departmentAccount : list) {
-            if (departmentAccount.getAccountId() == accountId) {
+            if (departmentAccount.getAccountId().equals(accountId)) {
             	return departmentAccount;
             }
         }
@@ -36,8 +36,8 @@ public class DepartmentAccountDaoImpl extends MiniDao  implements IDepartmentAcc
      * @param accountId
      * @return
      */
-    public Integer getDepIdByAccountId(int accountId) {
-        return this.find("select dep_id from department_account where account_id=?",int.class,accountId);
+    public String getDepIdByAccountId(String accountId) {
+        return this.find("select dep_id from department_account where account_id=?",String.class,accountId);
     }
 
     /**
@@ -45,7 +45,7 @@ public class DepartmentAccountDaoImpl extends MiniDao  implements IDepartmentAcc
      * @param depId
      * @return
      */
-    public int deleteByDepId(int depId) {
+    public int deleteByDepId(String depId) {
         return this.execute("delete from department_account where 1=1 and dep_id=?",depId);
     }
     /**
@@ -53,7 +53,7 @@ public class DepartmentAccountDaoImpl extends MiniDao  implements IDepartmentAcc
      * @param accountId
      * @return
      */
-    public int deleteByAccountId(int accountId) {
+    public int deleteByAccountId(String accountId) {
     	return this.execute("delete from department_account where 1=1 and account_id=?",accountId);
     }
     //保存部门-账号
@@ -68,7 +68,7 @@ public class DepartmentAccountDaoImpl extends MiniDao  implements IDepartmentAcc
 	}
 
 	@Override
-	public DepartmentAccount getByAccountId(int accountId) {
+	public DepartmentAccount getByAccountId(String accountId) {
 		return this.find("select * from department_account where account_id = ?",DepartmentAccount.class,accountId);
 	}
 }

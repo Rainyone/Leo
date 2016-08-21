@@ -48,7 +48,7 @@ public class RoleServiceImpl implements IRoleService {
      *
      * @return
      */
-    public Pager<Map<String,Object>> getShowRoles(PagerReqVO pagerReqVO,int userId) {
+    public Pager<Map<String,Object>> getShowRoles(PagerReqVO pagerReqVO,String userId) {
     	List<Map<String,Object>> resultRoles = new ArrayList<Map<String,Object>>();
     	int size = 0;
        /* Set<Integer> roleIdSet = accountRoleDao.selectRoleIdSet(userId);
@@ -94,7 +94,7 @@ public class RoleServiceImpl implements IRoleService {
      * 获取 角色
      */
 	@Override
-	public ResultVO getRoleTree(int userId) {
+	public ResultVO getRoleTree(String userId) {
         List<TreeNode> trees = new ArrayList<TreeNode>();
         Pager<Map<String,Object>> pager = this.getShowRoles(null,userId);
         List<Map<String,Object>> list = pager.getRows();
@@ -131,7 +131,7 @@ public class RoleServiceImpl implements IRoleService {
      * @param createVO
      * @return
      */
-    public ResultVO createRole(RoleCreateVO createVO, int userId) {
+    public ResultVO createRole(RoleCreateVO createVO, String userId) {
         ResultVO resultVO = new ResultVO(true);
         List<Role> roleList = roleDao.selectAll();
         if (isKeyExist(roleList,createVO.getKey())) {
@@ -158,11 +158,11 @@ public class RoleServiceImpl implements IRoleService {
      * @param roleId
      * @return
      */
-    public ResultVO deleteRole(int[] roleIds) {
+    public ResultVO deleteRole(String[] roleIds) {
         ResultVO resultVO = new ResultVO(true);
         //获取所有角色
         List<Role> roles = roleDao.selectAll();
-        for(int roleId:roleIds){
+        for(String roleId:roleIds){
         	Role role = roleDao.get(roles, roleId);
 	        if (role == null) {
 	            resultVO.setOk(false);
@@ -215,7 +215,7 @@ public class RoleServiceImpl implements IRoleService {
      * @param perIdArray
      * @return
      */
-    public ResultVO grantPermissions(int roleId, Integer[] perIdArray) {
+    public ResultVO grantPermissions(String roleId, String[] perIdArray) {
 
         ResultVO resultVO = new ResultVO(true);
         //获取所有角色
@@ -231,9 +231,9 @@ public class RoleServiceImpl implements IRoleService {
         //获取所有权限
         List<Permission> permissions = permissionDao.selectAll();
 
-        Set<Integer> perIdSet = new HashSet<Integer>();
+        Set<String> perIdSet = new HashSet<String>();
 
-        for (Integer id : perIdArray) {
+        for (String id : perIdArray) {
             perIdSet.add(id);
    /*         List<Integer> childrenPermissionIds = PermissionServiceImpl.getChildrenPermissionIds(id, permissions);
             perIdSet.addAll(childrenPermissionIds);*/
@@ -243,7 +243,7 @@ public class RoleServiceImpl implements IRoleService {
         rolePermissionDao.deleteByRoleId(roleId);
         //授权
         if (!perIdSet.isEmpty()) {
-            for (Integer perId : perIdSet) {
+            for (String perId : perIdSet) {
                 RolePermission rolePermission = new RolePermission();
                 rolePermission.setPermissionId(perId);
                 rolePermission.setRoleId(roleId);

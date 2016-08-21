@@ -15,11 +15,11 @@ public interface IDepartmentDao {
 
     List<Department> selectAll();
 
-    Department get(List<Department> list, int id);
+    Department get(List<Department> list, String id);
 
     int create(Department department);
 
-    int delete(int depId);
+    int delete(String depId);
 
     int update(Department department);
 

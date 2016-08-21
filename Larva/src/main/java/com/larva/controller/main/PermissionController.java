@@ -53,7 +53,7 @@ public class PermissionController {
     @RequestMapping(value = "/del", method = RequestMethod.POST)
     public
     @ResponseBody
-    ResultVO delPermission(@RequestParam("permIds[]") int[] permIds) {
+    ResultVO delPermission(@RequestParam("permIds[]") String[] permIds) {
         ResultVO resultVO = permissionService.delPermission(permIds);
         return resultVO;
     }

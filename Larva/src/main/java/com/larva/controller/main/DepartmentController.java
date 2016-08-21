@@ -56,7 +56,7 @@ public class DepartmentController {
     @ResponseBody
     ResultVO getAllDeparts() {
         Object principal = SecurityUtils.getSubject().getPrincipal();
-        ResultVO vo = departmentService.getDeptTree(Integer.parseInt(principal.toString()));
+        ResultVO vo = departmentService.getDeptTree(principal.toString());
         return vo;
     }
 
@@ -114,7 +114,7 @@ public class DepartmentController {
             return resultVO;
         }
         Object principal = SecurityUtils.getSubject().getPrincipal();
-        resultVO = departmentService.editDepartment(createVO,Integer.parseInt(principal.toString()));
+        resultVO = departmentService.editDepartment(createVO,principal.toString());
         return resultVO;
     }
 
@@ -122,9 +122,9 @@ public class DepartmentController {
     @RequestMapping(value = "/del", method = RequestMethod.POST)
     public
     @ResponseBody
-    ResultVO delDepartment(@RequestParam("depIds[]") int[] depIds) {
+    ResultVO delDepartment(@RequestParam("depIds[]") String[] depIds) {
         Object principal = SecurityUtils.getSubject().getPrincipal();
-        ResultVO resultVO = departmentService.deleteDep(depIds, Integer.parseInt(principal.toString()));
+        ResultVO resultVO = departmentService.deleteDep(depIds, principal.toString());
         return resultVO;
     }
 

@@ -13,15 +13,15 @@ public interface IDepartmentAccountDao {
 	
 	List<DepartmentAccount> selectAll();
 	
-	DepartmentAccount getByAccountId(List<DepartmentAccount> list,int accountId);
+	DepartmentAccount getByAccountId(List<DepartmentAccount> list,String accountId);
 	
-	DepartmentAccount getByAccountId(int accountId);
+	DepartmentAccount getByAccountId(String accountId);
 	
-    Integer getDepIdByAccountId(int accountId);
+	String getDepIdByAccountId(String accountId);
 
-    int deleteByDepId(int depId);
+    int deleteByDepId(String depId);
 
-    int deleteByAccountId(int accountId);
+    int deleteByAccountId(String accountId);
 
     int save(DepartmentAccount departmentAccount);
 

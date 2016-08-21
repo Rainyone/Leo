@@ -32,9 +32,9 @@ public class PermissionDaoImpl extends MiniDao implements IPermissionDao {
      * @param permissionList
      * @return
      */
-    public Permission get(List<Permission> permissionList,int id) {
+    public Permission get(List<Permission> permissionList,String id) {
         for(Permission permission:permissionList){
-            if(permission.getId().intValue()==id){
+            if(id.equals(permission.getId())){
                 return permission;
             }
         }
@@ -66,7 +66,7 @@ public class PermissionDaoImpl extends MiniDao implements IPermissionDao {
      * @param perId
      */
     @Override
-    public int deletePermission(int perId) {
+    public int deletePermission(String perId) {
         return this.deleteById(Permission.class,perId);
     }
 

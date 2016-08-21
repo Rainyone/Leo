@@ -23,8 +23,8 @@ public class AccountRoleDaoImpl extends MiniDao implements IAccountRoleDao {
      * @param accountId
      * @return
      */
-    public List<Integer> selectRoleIdSet(int accountId) {
-    	List<Integer> records =  this.findList("select role_id from account_role where account_id = ?",int.class,accountId);
+    public List<String> selectRoleIdSet(String accountId) {
+    	List<String> records =  this.findList("select role_id from account_role where account_id = ?",String.class,accountId);
         return records;
     }
 
@@ -42,7 +42,7 @@ public class AccountRoleDaoImpl extends MiniDao implements IAccountRoleDao {
      * @param roleId
      * @return
      */
-    public int deleteByRoleId(int roleId) {
+    public int deleteByRoleId(String roleId) {
         return this.execute("delete from account_role where role_id = ?", roleId);
     }
 
@@ -51,7 +51,7 @@ public class AccountRoleDaoImpl extends MiniDao implements IAccountRoleDao {
      * @param accountId
      * @return
      */
-    public int deleteByAccountId(int accountId) {
+    public int deleteByAccountId(String accountId) {
     	return this.execute("delete from account_role where account_id = ?", accountId);
     }
 }

@@ -14,15 +14,15 @@ import com.larva.vo.RoleEditVO;
  */
 public interface IRoleService {
 
-    Pager<Map<String,Object>> getShowRoles(PagerReqVO pagerReqVO,int userId);
+    Pager<Map<String,Object>> getShowRoles(PagerReqVO pagerReqVO,String userId);
 
-    ResultVO createRole(RoleCreateVO createVO, int userId);
+    ResultVO createRole(RoleCreateVO createVO, String userId);
 
-    ResultVO deleteRole(int[] roleIds);
+    ResultVO deleteRole(String[] roleIds);
 
     ResultVO editRole(RoleEditVO editVO);
 
-    ResultVO grantPermissions(int roleId, Integer[] perIdArray);
+    ResultVO grantPermissions(String roleId, String[] perIdArray);
     
-    ResultVO getRoleTree(int userId);
+    ResultVO getRoleTree(String userId);
 }

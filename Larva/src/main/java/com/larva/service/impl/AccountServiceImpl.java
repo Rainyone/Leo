@@ -83,7 +83,7 @@ public class AccountServiceImpl implements IAccountService {
          
          int size = 0;
          if(tree!=null && StrKit.notBlank(tree.getId())&&!Constants.SUPER_TREE_NODE.equals(tree.getId())){
-             int child = Integer.parseInt(tree.getId());
+             String child = tree.getId();
              //获取当前部门
              Department selectdepart = departmentDao.get(departments,child);
              
@@ -123,13 +123,16 @@ public class AccountServiceImpl implements IAccountService {
     	map.put("id", account.getId());
 		map.put("account", account.getAccount());
 		map.put("password", account.getPassword());
-		map.put("dep_name", departmentDao.get(departments,departmentAccount.getDepId()).getName());
+		Department d = departmentDao.get(departments,departmentAccount.getDepId());
+		if(d!=null){
+			map.put("dep_name", d.getName());
+		}
 		map.put("dep_id",departmentAccount.getDepId());
 		//用户角色id集合
-        List<Integer> roleIdSet = accountRoleDao.selectRoleIdSet(departmentAccount.getAccountId());
+        List<String> roleIdSet = accountRoleDao.selectRoleIdSet(departmentAccount.getAccountId());
         String roleNames = "";
         String roleIds = "";
-        for (Integer roleId : roleIdSet) {
+        for (String roleId : roleIdSet) {
             Role role = roleDao.get(roles, roleId);
             roleNames += "," + role.getName();
             roleIds += "," + role.getId();
@@ -153,8 +156,8 @@ public class AccountServiceImpl implements IAccountService {
         List<DepartmentAccount> depIdList = new ArrayList<DepartmentAccount>();
         for(Department dept : depts){
         	for (DepartmentAccount departAccount : list) {
-                Integer departmentId = departAccount.getDepId();
-                if(dept.getId()==departmentId){
+        		String departmentId = departAccount.getDepId();
+                if(dept.getId().equals(departmentId)){
                 	depIdList.add(departAccount);
                 }
             }
@@ -167,11 +170,11 @@ public class AccountServiceImpl implements IAccountService {
      *
      * @return
      */
-    public ResultVO selectAccount(int userId, int pageNow, int pageSize) {
+    public ResultVO selectAccount(String userId, int pageNow, int pageSize) {
         ResultVO resultVO = new ResultVO(true);
         Map<String, Object> map = new HashMap<String, Object>();
         //获取用户部门id
-        Integer depIdByAccountId = departmentAccountDao.getDepIdByAccountId(userId);
+        String depIdByAccountId = departmentAccountDao.getDepIdByAccountId(userId);
         if (depIdByAccountId == null) {
             resultVO.setOk(false);
             resultVO.setMsg("用户部门不存在");
@@ -180,10 +183,10 @@ public class AccountServiceImpl implements IAccountService {
         //获取所有部门
         List<Department> departments = departmentDao.selectAll();
         //获取所有子级部门id集合
-        Set<Integer> childrenDepIds = DepartmentServiceImpl.getChildrenDepIds(departments, depIdByAccountId);
+        Set<String> childrenDepIds = DepartmentServiceImpl.getChildrenDepIds(departments, depIdByAccountId);
         childrenDepIds.add(depIdByAccountId);
         //排除不查询的账号id
-        Set<Integer> excludeAccountIdSet = new HashSet<>();
+        Set<String> excludeAccountIdSet = new HashSet<>();
         excludeAccountIdSet.add(userId);
 
 
@@ -195,9 +198,9 @@ public class AccountServiceImpl implements IAccountService {
         for (Account m : mapList) {
             Object idObj = m.get("id");
             //用户角色id集合
-            List<Integer> roleIdSet = accountRoleDao.selectRoleIdSet(Integer.parseInt(idObj.toString()));
+            List<String> roleIdSet = accountRoleDao.selectRoleIdSet(idObj.toString());
             String roleNames = "";
-            for (Integer roleId : roleIdSet) {
+            for (String roleId : roleIdSet) {
                 Role role = roleDao.get(roles, roleId);
                 roleNames += "," + role.getName();
             }
@@ -218,7 +221,7 @@ public class AccountServiceImpl implements IAccountService {
      * @param accountId
      * @return
      */
-    public SimpleAuthorizationInfo getAccountRolePermission(int accountId) {
+    public SimpleAuthorizationInfo getAccountRolePermission(String accountId) {
         SimpleAuthorizationInfo token = new SimpleAuthorizationInfo();
         //获取所有权限
         List<Permission> permissionList = permissionDao.selectAll();
@@ -229,17 +232,17 @@ public class AccountServiceImpl implements IAccountService {
         //获取所有角色
         List<Role> roles = roleDao.selectAll();
         //获取用户角色id
-        List<Integer> roleIdSet = accountRoleDao.selectRoleIdSet(accountId);
+        List<String> roleIdSet = accountRoleDao.selectRoleIdSet(accountId);
         if (roleIdSet != null && !roleIdSet.isEmpty()) {
-            for (Integer roleId : roleIdSet) {
+            for (String roleId : roleIdSet) {
                 Role role = roleDao.get(roles, roleId);
                 if (role != null) {
                     roleNameSet.add(role.getKey());
                 }
                 //获取权限id集合
-                List<Integer> permissionIdSet = rolePermissionDao.getPermissionIdSetByRoleId(roleId);
+                List<String> permissionIdSet = rolePermissionDao.getPermissionIdSetByRoleId(roleId);
                 if (permissionIdSet != null && !permissionIdSet.isEmpty()) {
-                    for (Integer permissionId : permissionIdSet) {
+                    for (String permissionId : permissionIdSet) {
                         //获取权限
                         Permission permission = permissionDao.get(permissionList, permissionId);
                         String key = permission.getKey();
@@ -314,9 +317,9 @@ public class AccountServiceImpl implements IAccountService {
      * @return
      */
     @Override
-    public ResultVO deleteUser(int[] userIds) {
+    public ResultVO deleteUser(String[] userIds) {
         ResultVO resultVO = new ResultVO(true);
-        for(int userId : userIds){
+        for(String userId : userIds){
         	//删除账号
             accountDao.delete(userId);
             //删除账号与角色关联
@@ -335,10 +338,10 @@ public class AccountServiceImpl implements IAccountService {
      * @return
      */
     @Override
-    public ResultVO updateUserDep(int userId, int depId) {
+    public ResultVO updateUserDep(String userId, String depId) {
         ResultVO resultVO = new ResultVO(true);
 
-        Integer depIdByAccountId = departmentAccountDao.getDepIdByAccountId(userId);
+        String depIdByAccountId = departmentAccountDao.getDepIdByAccountId(userId);
         if(depIdByAccountId!=null){
             departmentAccountDao.deleteByAccountId(userId);
         }
@@ -351,7 +354,7 @@ public class AccountServiceImpl implements IAccountService {
     }
 
 	@Override
-	public ResultVO grantRoles(int userId, Integer[] roleArray) {
+	public ResultVO grantRoles(String userId, String[] roleArray) {
 
         ResultVO resultVO = new ResultVO(true);
         //获取所有角色
@@ -364,8 +367,8 @@ public class AccountServiceImpl implements IAccountService {
             return resultVO;
         }
 
-        Set<Integer> roleIdSet = new HashSet<Integer>();
-        for (Integer id : roleArray) {
+        Set<String> roleIdSet = new HashSet<String>();
+        for (String id : roleArray) {
         	roleIdSet.add(id);
         }
 
@@ -373,7 +376,7 @@ public class AccountServiceImpl implements IAccountService {
         accountRoleDao.deleteByAccountId(userId);
         //授权
         if (!roleIdSet.isEmpty()) {
-            for (Integer roleId : roleIdSet) {
+            for (String roleId : roleIdSet) {
                 AccountRole accountRole = new AccountRole();
                 accountRole.setAccountId(userId);
                 accountRole.setRoleId(roleId);

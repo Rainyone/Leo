@@ -9,7 +9,7 @@ import com.mini.core.WeakEntity;
 import com.mini.core.annotation.Entity;
 import com.mini.core.utils.EnumClazz.StrategyType;
 
-@Entity(table="menu",id="id",strategy = StrategyType.AUTO)
+@Entity(table="menu",id="id",strategy = StrategyType.NULL)
 public class Menu extends WeakEntity implements Serializable {
 	/**
 	 * 表字段定义静态类
@@ -23,20 +23,20 @@ public class Menu extends WeakEntity implements Serializable {
 		public static final String icon = "icon";//menu.icon (菜单图片)
 	}
 
-    public Integer getId() {
-        return super.getInt(Columns.id);
+    public String getId() {
+        return super.getStr(Columns.id);
     }
 
-    public Menu setId(Integer id) {
+    public Menu setId(String id) {
     	super.set(Columns.id, id);
         return this;
     }
 
-    public Integer getParentId() {
-        return super.getInt(Columns.parentId);
+    public String getParentId() {
+        return super.getStr(Columns.parentId);
     }
 
-    public Menu setParentId(Integer parentId) {
+    public Menu setParentId(String parentId) {
     	super.set(Columns.parentId, parentId);
         return this;
     }

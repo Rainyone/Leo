@@ -31,7 +31,7 @@ public class AppManageDaoImpl extends MiniDao implements IAppManageDao {
 
 	@Override
 	public PageResult<AppManage> selectAppManages(int pageNow, int pageSize) {
-		return this.paginateResult("select * from app_manage where state = 1 ", pageNow, pageSize, AppManage.class);
+		return this.paginateResult("select * from t_app_manage where state = 1 ", pageNow, pageSize, AppManage.class);
 	}
 
 }

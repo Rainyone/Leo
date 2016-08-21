@@ -9,7 +9,7 @@ import com.mini.core.WeakEntity;
 import com.mini.core.annotation.Entity;
 import com.mini.core.utils.EnumClazz.StrategyType;
 
-@Entity(table="department_account",id="id",strategy = StrategyType.AUTO)
+@Entity(table="department_account",id="id",strategy = StrategyType.NULL)
 public class DepartmentAccount extends WeakEntity implements Serializable {
 	/**
 	 * 表字段定义静态类
@@ -20,29 +20,29 @@ public class DepartmentAccount extends WeakEntity implements Serializable {
 		public static final String accountId = "account_id";//department_account.account_id (账号id)
 	}
 	
-    public Integer getId() {
-        return super.getInt(Columns.id);
+    public String getId() {
+        return super.getStr(Columns.id);
     }
 
-    public DepartmentAccount setId(Integer id) {
+    public DepartmentAccount setId(String id) {
     	super.set(Columns.id, id);
         return this;
     }
 
-    public Integer getDepId() {
-        return super.getInt(Columns.depId);
+    public String getDepId() {
+        return super.getStr(Columns.depId);
     }
 
-    public DepartmentAccount setDepId(Integer depId) {
+    public DepartmentAccount setDepId(String depId) {
     	super.set(Columns.depId, depId);
         return this;
     }
 
-    public Integer getAccountId() {
-        return super.getInt(Columns.accountId);
+    public String getAccountId() {
+        return super.getStr(Columns.accountId);
     }
 
-    public DepartmentAccount setAccountId(long accountId) {
+    public DepartmentAccount setAccountId(String accountId) {
     	super.set(Columns.accountId, accountId);
         return this;
     }

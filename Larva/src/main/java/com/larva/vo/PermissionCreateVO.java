@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
  */
 public class PermissionCreateVO {
     @NotNull(message = "父级权限不能为空")
-    private Integer parentId;
+    private String parentId;
     @NotNull(message = "权限名字不能为空")
     private String name;
     @NotNull(message = "权限键值不能为空")
@@ -15,11 +15,11 @@ public class PermissionCreateVO {
     @NotNull(message = "权限排序不能为空")
     private Integer order;
 
-    public Integer getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(Integer parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
     }
 

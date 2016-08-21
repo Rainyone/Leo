@@ -10,13 +10,13 @@ import com.larva.model.Permission;
  */
 public interface IPermissionDao {
 
-    Permission get(List<Permission> permissionList, int id);
+    Permission get(List<Permission> permissionList, String id);
 
     List<Permission> selectAll();
 
     int createPermission(Permission permission);
 
-    int deletePermission(int perId);
+    int deletePermission(String perId);
 
     int updatePermission(Permission permission);
 

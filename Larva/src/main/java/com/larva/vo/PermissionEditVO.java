@@ -7,9 +7,9 @@ import javax.validation.constraints.NotNull;
  */
 public class PermissionEditVO {
     @NotNull(message = "权限id不能为空")
-    private Integer id;
+    private String id;
     @NotNull(message = "父级权限不能为空")
-    private Integer parentId;
+    private String parentId;
     @NotNull(message = "权限名字不能为空")
     private String name;
     @NotNull(message = "权限键值不能为空")
@@ -25,19 +25,19 @@ public class PermissionEditVO {
         this.order = order;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Integer getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(Integer parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
     }
 

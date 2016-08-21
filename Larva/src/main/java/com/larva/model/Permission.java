@@ -9,7 +9,7 @@ import com.mini.core.WeakEntity;
 import com.mini.core.annotation.Entity;
 import com.mini.core.utils.EnumClazz.StrategyType;
 
-@Entity(table="permission",id="id",strategy = StrategyType.AUTO)
+@Entity(table="permission",id="id",strategy = StrategyType.NULL)
 public class Permission extends WeakEntity implements Serializable {
 	/**
 	 * 表字段定义静态类
@@ -22,11 +22,11 @@ public class Permission extends WeakEntity implements Serializable {
 		public static final String order = "order";//permission.order (权限排序)
 	}
 
-    public Integer getId() {
-        return super.getInt(Columns.id);
+    public String getId() {
+        return super.getStr(Columns.id);
     }
 
-    public Permission setId(Integer id) {
+    public Permission setId(String id) {
     	super.set(Columns.id, id);
         return this;
     }
@@ -49,11 +49,11 @@ public class Permission extends WeakEntity implements Serializable {
         return this;
     }
 
-    public Integer getParentId() {
-        return super.getInt(Columns.parentId);
+    public String getParentId() {
+        return super.getStr(Columns.parentId);
     }
 
-    public Permission setParentId(Integer parentId) {
+    public Permission setParentId(String parentId) {
     	super.set(Columns.parentId, parentId);
         return this;
     }

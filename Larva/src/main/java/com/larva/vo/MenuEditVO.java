@@ -7,8 +7,8 @@ import javax.validation.constraints.NotNull;
  */
 public class MenuEditVO {
     @NotNull(message = "菜单id不能为空")
-    private Integer id;
-    private Integer parentId;
+    private String id;
+    private String parentId;
     @NotNull(message = "菜单名字不能为空")
     private String name;
     private String url;
@@ -16,19 +16,19 @@ public class MenuEditVO {
     @NotNull(message = "菜单排序不能为空")
     private Integer order;
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Integer getParentId() {
+    public String getParentId() {
         return parentId;
     }
 
-    public void setParentId(Integer parentId) {
+    public void setParentId(String parentId) {
         this.parentId = parentId;
     }
 

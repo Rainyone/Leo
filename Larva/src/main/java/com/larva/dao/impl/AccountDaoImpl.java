@@ -32,7 +32,7 @@ public class AccountDaoImpl extends MiniDao implements IAccountDao {
     }
 
     @Override
-    public Account get(int id) {
+    public Account get(String id) {
         return this.findById(Account.class, id);
     }
     
@@ -43,9 +43,9 @@ public class AccountDaoImpl extends MiniDao implements IAccountDao {
      * @param id
      * @return
      */
-    public Account get(List<Account> list, int id) {
+    public Account get(List<Account> list, String id) {
         for (Account account : list) {
-            if (account.getId() == id) {
+            if (id.equals(account.getId())) {
                 return account;
             }
         }
@@ -81,7 +81,7 @@ public class AccountDaoImpl extends MiniDao implements IAccountDao {
      * @return
      */
     @Override
-    public int delete(int accountId) {
+    public int delete(String accountId) {
         return this.deleteById(Account.class, accountId);
     }
 
@@ -105,11 +105,11 @@ public class AccountDaoImpl extends MiniDao implements IAccountDao {
      * @return
      */
     @Override
-    public PageResult<Account> selectAccountManage(Set<Integer> depIdSet, Set<Integer> excludeAccountIdSet, int pageNow, int pageSize) {
+    public PageResult<Account> selectAccountManage(Set<String> depIdSet, Set<String> excludeAccountIdSet, int pageNow, int pageSize) {
     	 String sql = "select * from account_manage where 1=1";
     	 if(depIdSet!=null&&depIdSet.size()>0){
     		 sql += " and dep_id in(";
-    		 Iterator<Integer> it = depIdSet.iterator();  
+    		 Iterator<String> it = depIdSet.iterator();  
     		 while (it.hasNext()) {  
     			 sql += it.next()+",";  
     		 } 
@@ -119,7 +119,7 @@ public class AccountDaoImpl extends MiniDao implements IAccountDao {
     	 
     	 if(excludeAccountIdSet!=null&&excludeAccountIdSet.size()>0){
     		 sql += " and id not in(";
-    		 Iterator<Integer> it = excludeAccountIdSet.iterator();  
+    		 Iterator<String> it = excludeAccountIdSet.iterator();  
     		 while (it.hasNext()) {  
     			 sql += it.next()+",";  
     		 } 

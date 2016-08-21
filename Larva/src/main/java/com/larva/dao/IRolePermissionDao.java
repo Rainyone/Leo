@@ -10,11 +10,11 @@ import com.larva.model.RolePermission;
  */
 public interface IRolePermissionDao {
 
-	List<Integer> getPermissionIdSetByRoleId(int roleId);
+	List<String> getPermissionIdSetByRoleId(String roleId);
 
-    void deleteByPerId(int perId);
+    void deleteByPerId(String perId);
 
-    void deleteByRoleId(int roleId);
+    void deleteByRoleId(String roleId);
 
     int addRolePermission(RolePermission rolePermission);
 }

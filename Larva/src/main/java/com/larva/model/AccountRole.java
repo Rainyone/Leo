@@ -9,7 +9,7 @@ import com.mini.core.WeakEntity;
 import com.mini.core.annotation.Entity;
 import com.mini.core.utils.EnumClazz.StrategyType;
 
-@Entity(table="account_role",id="id",strategy = StrategyType.AUTO)
+@Entity(table="account_role",id="id",strategy = StrategyType.NULL)
 public class AccountRole extends WeakEntity implements Serializable {
 	
 	/**
@@ -22,29 +22,29 @@ public class AccountRole extends WeakEntity implements Serializable {
 	}
 	
 
-    public Integer getId() {
-        return super.getInt(Columns.id);
+    public String getId() {
+        return super.getStr(Columns.id);
     }
 
-    public AccountRole setId(Integer id) {
+    public AccountRole setId(String id) {
     	super.set(Columns.id, id);
         return this;
     }
 
-    public Integer getAccountId() {
-        return super.getInt(Columns.accountId);
+    public String getAccountId() {
+        return super.getStr(Columns.accountId);
     }
 
-    public AccountRole setAccountId(Integer accountId) {
+    public AccountRole setAccountId(String accountId) {
     	super.set(Columns.accountId, accountId);
         return this;
     }
 
-    public Integer getRoleId() {
-        return super.getInt(Columns.roleId);
+    public String getRoleId() {
+        return super.getStr(Columns.roleId);
     }
 
-    public AccountRole setRoleId(Integer roleId) {
+    public AccountRole setRoleId(String roleId) {
     	super.set(Columns.roleId, roleId);
         return this;
     }

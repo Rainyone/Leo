@@ -10,12 +10,12 @@ import com.larva.model.AccountRole;
  */
 public interface IAccountRoleDao {
 
-	List<Integer> selectRoleIdSet(int accountId);
+	List<String> selectRoleIdSet(String accountId);
 
     int createAccountRole(AccountRole accountRole);
 
-    int deleteByRoleId(int roleId);
+    int deleteByRoleId(String roleId);
 
-    int deleteByAccountId(int accountId);
+    int deleteByAccountId(String accountId);
 
 }

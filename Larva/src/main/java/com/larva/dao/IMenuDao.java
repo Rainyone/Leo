@@ -13,11 +13,11 @@ public interface IMenuDao {
 
     List<Menu> selectAll();
 
-    Menu get(List<Menu> menus, int id);
+    Menu get(List<Menu> menus, String id);
 
     int createMenu(Menu menu);
 
-    int deleteMenu(int id);
+    int deleteMenu(String id);
 
     int updateMenu(Menu menu);
 

@@ -117,7 +117,7 @@ public class MenuController {
     @RequestMapping(value = "/del", method = RequestMethod.POST)
     public
     @ResponseBody
-    ResultVO delMenu(@RequestParam("menuIds[]") int[] menuIds) {
+    ResultVO delMenu(@RequestParam("menuIds[]") String[] menuIds) {
         ResultVO resultVO = menuService.deleteMenu(menuIds);
         return resultVO;
     }
@@ -126,7 +126,7 @@ public class MenuController {
     @RequestMapping(value = "/grant", method = RequestMethod.POST)
     public
     @ResponseBody
-    ResultVO grantMenuPermission(@RequestParam int id,@RequestParam(value = "peridArray[]",required = false) Integer []peridArray) {
+    ResultVO grantMenuPermission(@RequestParam String id,@RequestParam(value = "peridArray[]",required = false) String []peridArray) {
         ResultVO resultVO = menuService.grantPermissions(id,peridArray);
         return resultVO;
     }

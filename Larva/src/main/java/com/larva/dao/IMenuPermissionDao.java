@@ -9,11 +9,11 @@ import com.larva.model.MenuPermission;
  */
 public interface IMenuPermissionDao {
 
-	List<Integer> selectPermissionIdSet(int menuId);
+	List<String> selectPermissionIdSet(String menuId);
 
-    void deleteByPerId(int perId);
+    void deleteByPerId(String perId);
 
-    void deleteByMenuId(int menuId);
+    void deleteByMenuId(String menuId);
 
     int addMenuPermission(MenuPermission menuPermission);
 

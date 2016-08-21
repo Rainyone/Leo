@@ -53,12 +53,12 @@ public class PermissionServiceImpl implements IPermissionService {
      * @param perId
      * @return
      */
-    public ResultVO delPermission(int[] permIds) {
+    public ResultVO delPermission(String[] permIds) {
         ResultVO resultVO = new ResultVO(true);
         //获取所有权限
         List<Permission> permissionList = permissionDao.selectAll();
         Subject subject = SecurityUtils.getSubject();
-        for(int perId : permIds){
+        for(String perId : permIds){
 	        Permission permission = permissionDao.get(permissionList, perId);
 	        if (permission == null) {
 	            resultVO.setOk(false);
@@ -86,21 +86,21 @@ public class PermissionServiceImpl implements IPermissionService {
 	        List<Permission> rootPermissions = getRootPermissions(myPermissionList);
 	        
 		        for (Permission p : rootPermissions) {
-		            if (p.getId().intValue() == perId) {
+		            if (p.getId().equals( perId)) {
 		                resultVO.setOk(false);
 		                resultVO.setMsg("根级权限不能删除");
 		                return resultVO;
 		            }
 		        }
         }
-	    for(int perId : permIds){
+	    for(String perId : permIds){
 	        //获取子级权限id集合
-	        List<Integer> childrenPermissionIds = getChildrenPermissionIds(perId, permissionList);
+	        List<String> childrenPermissionIds = getChildrenPermissionIds(perId, permissionList);
 	
 	        //删除权限
 	        int num = permissionDao.deletePermission(perId);
 	
-	        for (Integer id : childrenPermissionIds) {
+	        for (String id : childrenPermissionIds) {
 	            num = permissionDao.deletePermission(id);
 	            if (num == 1) {
 	                rolePermissionDao.deleteByPerId(id);
@@ -122,10 +122,10 @@ public class PermissionServiceImpl implements IPermissionService {
      * @param permissions
      * @return
      */
-    public static List<Integer> getChildrenPermissionIds(Integer parentId, List<Permission> permissions) {
-        List<Integer> list = new ArrayList<Integer>();
+    public static List<String> getChildrenPermissionIds(String parentId, List<Permission> permissions) {
+        List<String> list = new ArrayList<String>();
         for (Permission permission : permissions) {
-            if ((parentId == null && permission.getParentId() == null) || (parentId != null && permission.getParentId() != null && parentId.intValue() == permission.getParentId().intValue())) {
+            if ((parentId == null && permission.getParentId() == null) || (parentId != null && permission.getParentId() != null && parentId.equals(permission.getParentId()))) {
                 list.add(permission.getId());
                 list.addAll(getChildrenPermissionIds(permission.getId(), permissions));
             }
@@ -141,7 +141,8 @@ public class PermissionServiceImpl implements IPermissionService {
 		m.put("key", perm.getKey());
 		m.put("parentId", perm.getParentId());
 		if(perm.getParentId()!=null&&!Constants.SUPER_TREE_NODE.equals(perm.getParentId().toString()))
-			m.put("parentName", permissionDao.get(perms,perm.getParentId()).getName());
+		{	Permission p =  permissionDao.get(perms,perm.getParentId());
+			m.put("parentName",p!=null?p.getName():"");}
 		return m;
     }
     
@@ -151,11 +152,11 @@ public class PermissionServiceImpl implements IPermissionService {
      * @param depId
      * @return
      */
-    public static List<Permission> getChildrenPermissions(List<Permission> list, Integer permId) {
+    public static List<Permission> getChildrenPermissions(List<Permission> list, String permId) {
         List<Permission> permIdList = new ArrayList<Permission>();
         for (Permission perm : list) {
-            Integer permissionId = perm.getParentId();
-            if ((permissionId == null && permId == null) || (permissionId != null && permId != null && permissionId.intValue() == permId.intValue())) {
+        	String permissionId = perm.getParentId();
+            if ((permissionId == null && permId == null) || (permissionId != null && permId != null && permissionId.equals(permId))) {
             	permIdList.add(perm);
             	permIdList.addAll(getChildrenPermissions(list, perm.getId()));
             }
@@ -209,7 +210,7 @@ public class PermissionServiceImpl implements IPermissionService {
          	size = perms.size();
          }else if(tree!=null && StrKit.notBlank(tree.getId())&&!Constants.SUPER_TREE_NODE.equals(tree.getId())){
              //获取所有部门
-             int child = Integer.parseInt(tree.getId());
+        	 String child = tree.getId();
              //获取当前部门
              Permission selectdepart = permissionDao.get(perms,child);
              resultPerms.add(getPermsMap(perms,selectdepart));
@@ -253,11 +254,11 @@ public class PermissionServiceImpl implements IPermissionService {
 		return filterPermissionList;
     }
     
-    private boolean notLeaf(List<Permission> permissionList, Integer perId){
+    private boolean notLeaf(List<Permission> permissionList, String perId){
     	boolean notLeaf = false;
     	for(Permission perm : permissionList){
-    		Integer parentId = perm.getParentId();
-    		if(parentId != null && parentId == perId){
+    		String parentId = perm.getParentId();
+    		if(parentId != null && parentId.equals(perId)){
     			notLeaf=true;
     			break;
     		}
@@ -272,7 +273,7 @@ public class PermissionServiceImpl implements IPermissionService {
      * @param menuId
      * @return
      */
-    public ResultVO getMenuShowPermissions(int menuId,boolean chkDisabled) {
+    public ResultVO getMenuShowPermissions(String menuId,boolean chkDisabled) {
 
         ResultVO resultVO = new ResultVO(true);
         
@@ -293,7 +294,7 @@ public class PermissionServiceImpl implements IPermissionService {
         List<Permission> filterPermissionList = filterChildNode(permissionList);
         
         //获取菜单拥有的权限id
-        List<Integer> permissionIdSet = menuPermissionDao.selectPermissionIdSet(menuId);
+        List<String> permissionIdSet = menuPermissionDao.selectPermissionIdSet(menuId);
         
         TreeNode superTree = new TreeNode();
         superTree.setId(Constants.SUPER_TREE_NODE);
@@ -304,13 +305,13 @@ public class PermissionServiceImpl implements IPermissionService {
         
         for (Permission permission : filterPermissionList) {
         	TreeNode treeNode = new TreeNode();
-        	treeNode.setId(permission.getId().toString());
+        	treeNode.setId(permission.getId());
         	treeNode.setChkDisabled(chkDisabled);
         	treeNode.setName(permission.getName());
         	treeNode.setChecked(permissionIdSet.contains(permission.getId()));
         	treeNode.setOpen(true);
         	if(permission.getParentId()!=null)
-        		treeNode.setpId(permission.getParentId().toString());
+        		treeNode.setpId(permission.getParentId());
             else{
             	treeNode.setpId(Constants.SUPER_TREE_NODE);
             }
@@ -327,7 +328,7 @@ public class PermissionServiceImpl implements IPermissionService {
      * @param roleId
      * @return
      */
-    public ResultVO getRoleShowPermissions(int roleId,boolean chkDisabled) {
+    public ResultVO getRoleShowPermissions(String roleId,boolean chkDisabled) {
         ResultVO resultVO = new ResultVO(true);
 
         List<TreeNode> mapList = new ArrayList<TreeNode>();
@@ -344,7 +345,7 @@ public class PermissionServiceImpl implements IPermissionService {
         List<Permission> permissionList = permissionDao.selectAll();
         
         //获取角色拥有的权限id
-        List<Integer> permissionIdSet = rolePermissionDao.getPermissionIdSetByRoleId(roleId);
+        List<String> permissionIdSet = rolePermissionDao.getPermissionIdSetByRoleId(roleId);
 
 
         TreeNode superTree = new TreeNode();
@@ -381,9 +382,9 @@ public class PermissionServiceImpl implements IPermissionService {
         return resultVO;
     }
     
-    public Set<Integer> getChildSubPermissionId(List<Permission> permissionList,int permissionId,Set<Integer> allPermissionIdSet){
+    public Set<String> getChildSubPermissionId(List<Permission> permissionList,String permissionId,Set<String> allPermissionIdSet){
 	    for(Permission permission : permissionList){
-		    if(permission.getParentId()!=null&&permission.getParentId()==permissionId){
+		    if(permission.getParentId()!=null&&permission.getParentId().equals(permissionId)){
 		    	allPermissionIdSet.add(permission.getId());
 		 	   getChildSubPermissionId(permissionList,permission.getId(),allPermissionIdSet);
 		    }
@@ -411,9 +412,9 @@ public class PermissionServiceImpl implements IPermissionService {
         //所有权限
         List<Permission> permissionList = permissionDao.selectAll();
         //查看父级权限是否存在
-        Integer parentId = permissionCreateVO.getParentId();
+        String parentId = permissionCreateVO.getParentId();
         if (parentId != null) {
-            Permission permission = permissionDao.get(permissionList, parentId.intValue());
+            Permission permission = permissionDao.get(permissionList, parentId);
             if (permission == null) {
                 resultVO.setOk(false);
                 resultVO.setMsg("父级权限不存在");
@@ -491,7 +492,7 @@ public class PermissionServiceImpl implements IPermissionService {
             }
         }
 
-        List<Integer> childrenPermissionIds = getChildrenPermissionIds(permissionEditVO.getId(), permissionList);
+        List<String> childrenPermissionIds = getChildrenPermissionIds(permissionEditVO.getId(), permissionList);
         childrenPermissionIds.add(permissionEditVO.getId());
         if(childrenPermissionIds.contains(permissionEditVO.getParentId())){
             resultVO.setOk(false);
@@ -523,10 +524,10 @@ public class PermissionServiceImpl implements IPermissionService {
      * @param parentId
      * @return
      */
-    public static List<Map<String, Object>> getChildrenPermissions(List<Permission> permissions, Integer parentId, Set<Integer> checkedPermissionIdSet,List<Integer> childrenIdList) {
+    public static List<Map<String, Object>> getChildrenPermissions(List<Permission> permissions, String parentId, Set<String> checkedPermissionIdSet,List<String> childrenIdList) {
         List<Map<String, Object>> mapList = new ArrayList<Map<String, Object>>();
         for (Permission permission : permissions) {
-            if ((parentId == null && permission.getParentId() == null) || (parentId != null && permission.getParentId() != null && permission.getParentId().intValue() == parentId.intValue())) {
+            if ((parentId == null && permission.getParentId() == null) || (parentId != null && permission.getParentId() != null && permission.getParentId().equals(parentId))) {
                 if(childrenIdList==null||!childrenIdList.contains(permission.getId())) {
                     Map<String, Object> map = new HashMap<String, Object>();
                     map.put("id", permission.getId());
@@ -556,7 +557,7 @@ public class PermissionServiceImpl implements IPermissionService {
                 rootPermissions.add(permission);
                 continue;
             }
-            Permission parentPermission = permissionDao.get(permissionList, permission.getParentId().intValue());
+            Permission parentPermission = permissionDao.get(permissionList, permission.getParentId());
             if (parentPermission == null) {
                 rootPermissions.add(permission);
             }
