@@ -22,6 +22,7 @@ import com.larva.model.Permission;
 import com.larva.service.IMenuService;
 import com.larva.utils.Constants;
 import com.larva.utils.StrKit;
+import com.larva.utils.UUIDUtil;
 import com.larva.vo.MenuCreateVO;
 import com.larva.vo.MenuEditVO;
 import com.larva.vo.Pager;
@@ -244,6 +245,7 @@ public class MenuServiceImpl implements IMenuService {
 
         //添加菜单
         Menu menu = new Menu();
+        menu.setId(UUIDUtil.getUUID());
         menu.setOrder(createVO.getOrder());
         menu.setName(createVO.getName());
         menu.setParentId(parentId);
