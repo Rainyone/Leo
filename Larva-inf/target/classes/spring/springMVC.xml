@@ -44,13 +44,6 @@
    <!--  <mvc:annotation-driven /> -->
     <!-- 静态资源访问 -->
     <mvc:default-servlet-handler/>
-    <!-- 视图解释类 -->
-    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
-        <property name="prefix" value="/WEB-INF/pages/"/>
-        <property name="suffix" value=".jsp"/>
-        <property name="order" value="0"/> 
-    </bean>
     
     <!-- 控制器异常处理 -->
     <bean id="exceptionHandlerExceptionResolver" class="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver" />

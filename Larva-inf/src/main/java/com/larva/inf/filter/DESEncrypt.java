@@ -106,7 +106,8 @@ public class DESEncrypt {
 		return sign;
 	}
 	public static void main(String[] args) {
-		String url = "setCharge?app_id=6&app_key=testapp&channel=431233&price=1000&imei=32323132&imsi=33112334&bsc_lac=3322&bsc_cid=33884&mobile=1390023133&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985";
+		String url = "setCharge?app_id=6&app_key=testapp&channel=431233&price=1000&imei=32323132&request_type=1&imsi=33112334&bsc_lac=3322&bsc_cid=33884&mobile=1390023133&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985&isp=1001";
+		String verUrl = "setCharge?app_id=6&app_key=testapp&channel=431233&price=1000&imei=32323132&request_type=2&imsi=33112334&bsc_lac=3322&bsc_cid=33884&mobile=1390023133&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985&isp=1001&code_id=1&order_id=32133&ver_code=3332244";
 		try {
 			String encode = Base64.encodeBase64String(DESEncrypt.encrypt(url.getBytes()));
 			System.out.println("encode:" + URLEncoder.encode(encode));
