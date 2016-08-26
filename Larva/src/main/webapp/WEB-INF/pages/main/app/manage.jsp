@@ -7,7 +7,7 @@
 <body>
 <div class='span12 box bordered-box blue-border' style='margin-bottom:0;'>
   <div class='box-header' id="menu-header">
-    <div class='title'>菜单设置</div>
+    <div class='title'>APP管理</div>
     <div class='actions'></div>
   </div>
   <div class='box-content box-no-padding'>
@@ -18,22 +18,32 @@
     </div>
   </div>
 </div>
-<div class='modal hide fade' id='modal-Menu' role='dialog' tabindex='-1'>
+<div class='modal hide fade' id='modal-Menu' role='dialog' tabindex='-1' style='margin-bottom: 0;width:800px;height:500px;'>
     <div class='modal-header'>
         <button class='close' data-dismiss='modal' type='button'>&times;</button>
         <h3></h3>
     </div>
-    <form class='form validate-form' id='submit-form' method="post" role="form"  style='margin-bottom: 0;'>
+    <form class='form validate-form' id='submit-form' method="post" role="form"  >
 	    <div class='modal-body'>
 	        <div class='control-group'>
-	            <label class='control-label'>APP名称</label>
-	            <div class='controls'>
-	               		<input type='hidden' id='id' name="id"/>
-	                    <input class='span8' id='app_name' name="app_name" required placeholder='APP名称' type='text' />
-	            </div>
+	        	<label class='control-label'>APP名称</label>
+	        	<div class='controls' style="margin-top:10px;margin:left:10px;">
+               		<input type='hidden' id='id' name="id"/>
+                    <input class='span8' id='app_name' name="app_name" required placeholder='APP名称' type='text' />
+           		 </div>
 	        </div>
 	        <div class='control-group'>
-	            <label class='control-label'>APP包名</label>
+	        	<label class='control-label'>APP包名</label>
+	        	<div class='controls' style="margin-top:10px;margin:left:10px;">
+               		<input class='span8' id='app_package_name' required name="app_package_name" placeholder='App包名' type='text' />
+           		</div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>日限量</label>
+	            <div class='controls'>
+	                <input class='span8' id='app_package_name' required name="app_package_name" placeholder='菜单名称' type='text' />
+	            </div>
+	             <label class='control-label'>月限量</label>
 	            <div class='controls'>
 	                <input class='span8' id='app_package_name' required name="app_package_name" placeholder='菜单名称' type='text' />
 	            </div>

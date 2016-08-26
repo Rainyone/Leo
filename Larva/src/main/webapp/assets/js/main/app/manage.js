@@ -99,18 +99,33 @@ define(function (require, exports, module) {
 		                    {
 		        		        checkbox:true
 		        		    },{
+		        		        field: 'id',
+		        		        title: 'APP ID'
+		        		    },{
+		        		        field: 'app_key',
+		        		        title: 'APP密钥'
+		        		    },{
+		        		        field: 'channel',
+		        		        title: '渠道'
+		        		    },{
 		        		        field: 'app_name',
 		        		        title: 'APP名称'
 		        		    }, {
 		        		        field: 'app_package_name',
 		        		        title: 'APP包名'
 		        		    }, {
+		        		        field: 'date_limit',
+		        		        title: '日限量'
+		        		    },{
+		    			        field: 'month_limit',
+		    			        title: '月限量'
+		    		        },{
 		        		        field: 'link_name',
 		        		        title: '联系人'
 		        		    },{
-		    			        field: 'phone_no',
-		    			        title: '联系电话'
-		    		        },{
+		        		        field: 'phone_no',
+		        		        title: '联系电话'
+		        		    },{
 		    			        field: 'description',
 		    			        title: '简介',
 		    			        events: operateEvents,
@@ -118,10 +133,6 @@ define(function (require, exports, module) {
 		    		        },{
 		    			        field: 'create_time',
 		    			        title: '创建时间'
-		    		        },{
-		    			        field: 'id',
-		    			        title: '菜单主键',
-		    			        visible:false
 		    		        }];
 		        //是否需要操作列
 		        if(base.perList.menu.edit||base.perList.menu.del||base.perList.menu.grant||base.perList.menu.checkPermission)
@@ -138,7 +149,7 @@ define(function (require, exports, module) {
 				 * 打开模态框
 				 */
 				$('#addMenu').click(function(){
-					core.openModel('modal-Menu','新增菜单',function(){
+					core.openModel('modal-Menu','新增APP',function(){
 						//F.radioTree.load();
 					});
 				});
