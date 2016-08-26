@@ -21,6 +21,7 @@ import com.larva.model.Department;
 import com.larva.service.IDepartmentService;
 import com.larva.utils.Constants;
 import com.larva.utils.StrKit;
+import com.larva.utils.UUIDUtil;
 import com.larva.vo.DepartmentCreateVO;
 import com.larva.vo.DepartmentEditVO;
 import com.larva.vo.Pager;
@@ -180,6 +181,7 @@ public class DepartmentServiceImpl implements IDepartmentService {
         if(Constants.SUPER_TREE_NODE.equals(parentId))
         	parentId=null;
         Department department = new Department();
+        department.setId(UUIDUtil.getUUID());
         department.setParentId(parentId);
         department.setName(createVO.getName());
         department.setOrder(createVO.getOrder());

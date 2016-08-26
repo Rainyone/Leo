@@ -30,6 +30,7 @@ import com.larva.model.Role;
 import com.larva.service.IAccountService;
 import com.larva.utils.Constants;
 import com.larva.utils.StrKit;
+import com.larva.utils.UUIDUtil;
 import com.larva.vo.Pager;
 import com.larva.vo.PagerReqVO;
 import com.larva.vo.ResultVO;
@@ -276,6 +277,7 @@ public class AccountServiceImpl implements IAccountService {
         }
         //保存
         Account account = new Account();
+        account.setId(UUIDUtil.getUUID());
         account.setAccount(createVO.getAccount());
         account.setPassword(createVO.getPassword());
         account.setRegisterTime(new Date());

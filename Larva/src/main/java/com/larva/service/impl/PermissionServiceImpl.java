@@ -23,6 +23,7 @@ import com.larva.model.Role;
 import com.larva.service.IPermissionService;
 import com.larva.utils.Constants;
 import com.larva.utils.StrKit;
+import com.larva.utils.UUIDUtil;
 import com.larva.vo.Pager;
 import com.larva.vo.PagerReqVO;
 import com.larva.vo.PermissionCreateVO;
@@ -454,6 +455,7 @@ public class PermissionServiceImpl implements IPermissionService {
         }*/
         
         Permission permission = new Permission();
+        permission.setId(UUIDUtil.getUUID());
         permission.setKey(permissionCreateVO.getKey());
         permission.setName(permissionCreateVO.getName());
         permission.setParentId(permissionCreateVO.getParentId());

@@ -21,6 +21,7 @@ import com.larva.model.Role;
 import com.larva.model.RolePermission;
 import com.larva.service.IRoleService;
 import com.larva.utils.Constants;
+import com.larva.utils.UUIDUtil;
 import com.larva.vo.Pager;
 import com.larva.vo.PagerReqVO;
 import com.larva.vo.ResultVO;
@@ -140,14 +141,18 @@ public class RoleServiceImpl implements IRoleService {
             return resultVO;
         }
         Role role = new Role();
+        role.setId(UUIDUtil.getUUID());
         role.setName(createVO.getName());
         role.setKey(createVO.getKey());
         roleDao.createRole(role);
+        
         //添加账号角色关联
-        AccountRole accountRole = new AccountRole();
-        accountRole.setAccountId(userId);
-        accountRole.setRoleId(role.getId());
-        accountRoleDao.createAccountRole(accountRole);
+        //创建角色不需要和账号关联。
+        //AccountRole accountRole = new AccountRole();
+        //accountRole.setAccountId(userId);
+        //accountRole.setRoleId(role.getId());
+        //accountRoleDao.createAccountRole(accountRole);
+        
         resultVO.setMsg("创建角色成功");
         return resultVO;
     }
