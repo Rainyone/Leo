@@ -17,13 +17,13 @@ define(function (require, exports, module) {
              * 是否具有添加菜单权限
              */
             if(base.perList.menu.create){
-            	$("#menu-header .actions").append("<a href='#' id='addMenu' data-toggle='modal' class='btn btn-success btn-small' style='margin-left:5px'><i class='icon-plus'></i>添加</a>");
+            	$("#menu-header .actions").append("<a href='#' id='addApp' data-toggle='modal' class='btn btn-success btn-small' style='margin-left:5px'><i class='icon-plus'></i>添加</a>");
             }
             /**
              * 是否具有删除菜单权限
              */
             if(base.perList.menu.del){
-            	$("#menu-header .actions").append("<a href='#' id='delMenus' class='btn btn-danger btn-small' style='margin-left:5px'><i class='icon-remove'></i>删除</a>");
+            	$("#menu-header .actions").append("<a href='#' id='delApps' class='btn btn-danger btn-small' style='margin-left:5px'><i class='icon-remove'></i>删除</a>");
             }
             
             /**
@@ -35,18 +35,19 @@ define(function (require, exports, module) {
 					/**
 					 *修改菜单
 					 */
-			        'click .editMenu': function (e, value, row, index) {
-			        	core.openModel('modal-Menu','修改菜单',function(){
+			        'click .editApp': function (e, value, row, index) {
+			        	core.openModel('modal-Menu','修改APP',function(){
 			        		F.radioTree.load();
 			        		if(row!=null){
 			            		$('#id').val(row.id);
-			            		$('#name').val(row.name);
-			            		$('#icon').val(row.icon);
-			            		picSelect.set(picSelect.hid,picSelect.sid,row.icon);
-			            		$('#order').val(row.order);
-			            		$('#url').val(row.url);
-			            		$("#"+F.radioTree.showId).val(row.parentName!=null?row.parentName:'所有菜单');
-			    				$("#"+F.radioTree.hideId).val(row.parentId);
+			            		$('#app_name').val(row.app_name);
+			            		$('#app_package_name').val(row.app_package_name);
+			            		$('#channel').val(row.channel);
+			            		$('#date_limit').val(row.date_limit);
+			            		$('#month_limit').val(row.month_limit);
+			            		$('#link_name').val(row.link_name);
+			            		$('#phone_no').val(row.phone_no);
+			            		$('#description').val(row.description);
 			            	}
 			        	});
 						return false;
@@ -54,11 +55,11 @@ define(function (require, exports, module) {
 			        /**
 					 * 删除菜单
 					 */
-			        'click .delMenu': function (e, value, row, index) {
+			        'click .delApp': function (e, value, row, index) {
 			        	base.bootConfirm("是否确定删除？",function(){
 			        		var ids = new Array();  
 			        		ids.push(row.id);   
-			    			F.delMenu(ids);
+			    			F.delApp(ids);
 			    		});
 			        },
 			        
@@ -99,21 +100,15 @@ define(function (require, exports, module) {
 		                    {
 		        		        checkbox:true
 		        		    },{
-		        		        field: 'id',
-		        		        title: 'APP ID'
-		        		    },{
-		        		        field: 'app_key',
-		        		        title: 'APP密钥'
-		        		    },{
-		        		        field: 'channel',
-		        		        title: '渠道'
-		        		    },{
 		        		        field: 'app_name',
 		        		        title: 'APP名称'
 		        		    }, {
 		        		        field: 'app_package_name',
 		        		        title: 'APP包名'
 		        		    }, {
+		        		        field: 'channel',
+		        		        title: '渠道'
+		        		    },{
 		        		        field: 'date_limit',
 		        		        title: '日限量'
 		        		    },{
@@ -148,7 +143,7 @@ define(function (require, exports, module) {
 	    		/**
 				 * 打开模态框
 				 */
-				$('#addMenu').click(function(){
+				$('#addApp').click(function(){
 					core.openModel('modal-Menu','新增APP',function(){
 						//F.radioTree.load();
 					});
@@ -183,14 +178,14 @@ define(function (require, exports, module) {
 				/**
 				 * 批量删除
 				 */
-				$('#delMenus').click(function(){
+				$('#delApps').click(function(){
 					var ids = F.table.getIdSelections();
 					if(ids!=null&&ids.length>0){
-						base.bootConfirm("是否确定删除选定的"+ids.length+"个菜单？",function(){
-							F.delMenu(ids);
+						base.bootConfirm("是否确定删除选定的"+ids.length+"个APP？",function(){
+							F.delApp(ids);
 						});
 					}else{
-						base.bootAlert({"ok":false,"msg":"请选择你要删除的菜单！"});
+						base.bootAlert({"ok":false,"msg":"请选择你要删除的APP！"});
 					}
 				});
         },permissionSubmit:function(){
@@ -213,7 +208,7 @@ define(function (require, exports, module) {
         },submit:function(){
         	var url = F.basepath+'/main/app/create';
         	if($("#id").val()!=null&&$("#id").val()!="")
-        		url =F.basepath+'/main/menu/edit';
+        		url =F.basepath+'/main/app/edit';
         	var options = {
                     success: F.showResponse,      //提交后的回调函数
                     url: url,       //默认是form的action， 如果申明，则会覆盖
@@ -229,15 +224,18 @@ define(function (require, exports, module) {
             	core.closeModel('modal-Menu');
             	F.reload();
             }
-        },delMenu:function(ids){
-        	base.ajaxRequest(F.basepath+'/main/menu/del',{"menuIds":ids},function(data){
-        		base.ajaxSuccess(data);
-        		F.reload();
+        },delApp:function(ids){
+        	base.ajaxRequest(F.basepath+'/main/app/del',{"appIds":ids},function(data){
+        		//base.ajaxSuccess(data);
+        		base.bootAlert(data);
+        		if (data.ok) {
+                 	F.reload();
+                }
         	},function(){
         		base.bootAlert({"ok":false,"msg":"网络异常"});
         	});
         },reload:function(){
-        	F.tree.load();
+        	//F.tree.load();
         	F.table.reload();
         },onClick:function(event, treeId, treeNode, clickFlag) {
 			F.table.query({query: {'id':treeNode.id}});
@@ -263,10 +261,10 @@ define(function (require, exports, module) {
         		_btnAction += "<a class='checkPermission btn btn-info btn-small' href='#' title='查看授权' style='margin-left:5px'>查看</a>";
         	}
         	if (base.perList.menu.edit) {
-        		_btnAction += "<a data-toggle='modal' class='editMenu btn btn-success btn-small' href='#' title='编辑菜单' style='margin-left:5px'>编辑</a>";
+        		_btnAction += "<a data-toggle='modal' class='editApp btn btn-success btn-small' href='#' title='编辑APP' style='margin-left:5px'>编辑</a>";
         	}
         	if (base.perList.menu.del) {
-        		_btnAction += "<a class='delMenu btn btn-danger btn-small' href='#' title='删除菜单' style='margin-left:5px'>删除</a>";
+        		_btnAction += "<a class='delApp btn btn-danger btn-small' href='#' title='删除APP' style='margin-left:5px'>删除</a>";
         	}
         	return _btnAction;
         },picFormatter:function (value, row, index) {

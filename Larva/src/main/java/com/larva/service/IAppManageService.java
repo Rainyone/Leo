@@ -2,18 +2,11 @@ package com.larva.service;
 
 import java.util.Map;
 
-import org.apache.shiro.authz.SimpleAuthorizationInfo;
-
-import com.larva.model.Account;
-import com.larva.model.AppManage;
 import com.larva.vo.AppManageCreateVO;
+import com.larva.vo.AppManageEditVO;
 import com.larva.vo.Pager;
 import com.larva.vo.PagerReqVO;
 import com.larva.vo.ResultVO;
-import com.larva.vo.TreeNode;
-import com.larva.vo.UserCreateVO;
-import com.larva.vo.UserEditVO;
-import com.mini.core.PageResult;
 
 /**
  * @author Rainy Wang
@@ -22,6 +15,10 @@ import com.mini.core.PageResult;
 public interface IAppManageService {
 
     ResultVO  saveAppManage(AppManageCreateVO createVO);
+    
+    ResultVO  editAppManage(AppManageEditVO createVO);
+    
+    ResultVO deleteAppManage(String[] appIds, String czr);
 
     Pager<Map<String, Object>> getAppManages(PagerReqVO pagerReqVO);
 }
