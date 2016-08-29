@@ -130,7 +130,7 @@ public class InfController {
 			}
 			List<Record>  list = (List<Record>) vo.getData();
 			logger.debug(list);
-			List<String> backList = new ArrayList<String>();
+			List<Object> backList = new ArrayList<Object>();
 			List<String> errorBackList = new ArrayList<String>();
 			for(Record r:list){
 				String id = r.getStr("id");
@@ -161,6 +161,9 @@ public class InfController {
 				}else{
 					errorBackList.add("id:" + id + ",code_name:"+code_name+";请求方式不对POST/GET");
 				}
+				if(backMsg!=null){//判断成功标示
+					//TODO 保存日志
+				}
 				if(InfStatic.BACK_MSG_JSON.equals(back_msg_type)){//json方式
 					analysisBackMsg = this.analysisJson(backMsg, returnForm,backForm);
 				}else if(InfStatic.BACK_MSG_XML.equals(back_msg_type)){
@@ -168,14 +171,16 @@ public class InfController {
 				}else{
 					errorBackList.add("id:" + id + ",code_name:"+code_name+";反馈报文格式不对JSON/XML");
 				}
-				backList.add(analysisBackMsg.replace("${code_id}", id));
+				analysisBackMsg = analysisBackMsg.replace("${code_id}", id);
+				Object o = (analysisBackMsg!=null&&!"".equals(analysisBackMsg))?JSONUtil.getJSONFromString(analysisBackMsg):"";
+				backList.add(o);
 			}
-			Map<String, List> backMap = new HashMap<String,List>();
+			Map<String, List<Object>> backMap = new HashMap<String,List<Object>>();
 			backMap.put("data_list", backList);
-			backMap.put("error", errorBackList);
 			vo.setOk(true);
 			vo.setMsg("ok");
 			vo.setData(backMap);//只反馈请求成功的计费代码
+			System.out.println(JSONUtil.toJson(vo));
 		}else if("2".equals(request_type)){//验证请求
 			if(StringUtils.isBlank(code_id)) {
 				vo.setOk(false);
@@ -245,7 +250,6 @@ public class InfController {
 		//节点名(single/more):子节点(single/more):末节点->反馈报文参数字段|节点名(single/more):子节点(single/more):末节点->反馈报文参数字段
 		//datas(s):data(m):msg(m):port->port,content->msg|datas(s):data(m):isHaveVer->needVerCode(解析出的结果要么是多个对应，要么只有一个)
 		String[] returnForms = returnForm.split("\\|");//判断需要解析那些参数
-		JSONObject respJson = new JSONObject(); 
 		Map<String, List<String>> map = new TreeMap<String, List<String>>();
 		for(String one:returnForms){
 		//	String[] temps = one.split("->");//解析参数和反馈参数
@@ -253,12 +257,11 @@ public class InfController {
 			String[] reqEnds = one.substring(one.lastIndexOf(":")+1,one.length()).split(",");
 			for(String reqEnd:reqEnds){
 				String[] t = reqEnd.split("->");//前面的是原始节点，后面的是替换参数
-				List<String> result = getElement(backJson, reqpara+"e", t[0], null);
+				List<String> result = getElement(backJson,(reqpara!=null&&!"".equals(reqpara))?"": reqpara+"e", t[0], null);
 				map.put(t[1], result);
 				
 			}
 		}
-		Map<String, List<String>> oneParaMap = new TreeMap<String, List<String>>();
 		if(map!=null&&map.size()>0){
 			List<Map<String, String>> list = new ArrayList<Map<String,String>>();//记录转换后的map
 			Map<String, String> singleList = new HashMap<String, String>();//单个map值需要遍历后填充所有
@@ -283,12 +286,16 @@ public class InfController {
 			}
 			//处理单个
 			if(singleList!=null&&singleList.size()>0){
-				for(Entry<String,String> single:singleList.entrySet()){
-					String key = single.getKey();
-					String value = single.getValue();
-					for(Map<String, String> oneMap:list){
-						oneMap.put(key, value);
+				if(list!=null&&list.size()>0){
+					for(Entry<String,String> single:singleList.entrySet()){
+						String key = single.getKey();
+						String value = single.getValue();
+						for(Map<String, String> oneMap:list){
+							oneMap.put(key, value);
+						}
 					}
+				}else{
+					list.add(singleList);
 				}
 			}
 			String oldbackForm = backForm;//保存一份原始参数
@@ -458,8 +465,10 @@ public class InfController {
 				httpConn.disconnect();
 			}
 		}
+		String str5 = "{\"resultCode\": 0,\"count\": 1,\"port1\": \"10086\",\"msg1\": \"1\", " +
+				" \"type1\": 0, \"port2\": \"10086\",\"msg2\": \"2\",\"type2\": 0}";
 		logger.debug("===***response msg==:" + resultXml);
-		return resultXml;
+		return str5;
 	}
 	/**
 	 * 失败跳转
@@ -523,7 +532,7 @@ public class InfController {
 				+"        }                                     "
 				+"    ]                                         "
 				+"}                                             ";
-		String str3 = "{                               							"	
+		String  str3 = "{                               							"	
 				+"    \"datas\": [                              "
 				+"        {                                     "
 				+"            \"data\":                       "
@@ -568,15 +577,17 @@ public class InfController {
 				+"        }                                     "
 				+"    ]                                         "
 				+"}                                             ";
+		String str5 = "{\"resultCode\": 0,\"count\": 1,\"port1\": \"10086\",\"msg1\": \"1\", " +
+				" \"type1\": 0, \"port2\": \"10086\",\"msg2\": \"2\",\"type2\": 0}";
 		JSONObject backJson = JSONUtil.getJSONFromString(str3);
 		System.out.println(backJson);
 		//System.out.println(backJson.getJSONArray("data_list").get(0));
 		String r = "data_list(m):port1";
-		List<String > list = getElement(backJson,"datas(m):data(s):msg(m)e","port",null);
-		for(String s :list){
-			System.out.println(s);
-		}
-		String result = analysisJson(str3, "datas(m):data(s):msg(m):port->port,cont->sum,tel->phone","{\"code_id\": \"${port}\",\"needVerCode\": \"${sum}\",\"phone\": \"${phone}\"}");
+//		List<String > list = getElement(backJson,"resultCode(s)e","resultCode",null);
+//		for(String s :list){
+//			System.out.println(s);
+//		}
+		String result = analysisJson(str5, "\"\":resultCode->result,port1->resultPort1,port2->resultPort2,type1->resultType1,type2->resultType2,msg1->resultMsg1,msg2->resultMsg2","{\"result\":\"${result}\",\"resultPort1\":\"${resultPort1}\",\"resultPort2\":\"${resultPort2}\",\"resultType2\":\"${resultType2}\",\"msg1\":\"${resultMsg1}\",\"msg2\":\"${resultMsg2}\",\"charge_code\":\"${code_id}\"}");
 		System.out.println(result);
 	}
 	

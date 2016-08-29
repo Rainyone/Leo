@@ -62,14 +62,17 @@ public class InfServiceImpl implements InfService {
 				Integer chargeAreaCount = iInfDao.getChargeArea(id,area_id);
 				if(chargeAreaCount<=0){//获取可用区域，判断日月限量 ,没有通过校验
 //					list.remove(r);
+					logger.debug("area not avalible:"+id);
 				}else{//继续其他判断
 					Integer chargeIspCount = iInfDao.getChargeIsps(id,isp);
 					if(chargeIspCount<=0){//运营商校验失败
-						list.remove(r);
+//						list.remove(r);
+						logger.debug("isp not avalible:"+id);
 					}else{
 						Integer chargeDisableTimeCount = iInfDao.getChargeDisableTimes(id);
 						if(chargeDisableTimeCount>0){//在不可用时间范围内则校验不通过
 //							list.remove(r);
+							logger.debug("disable time:"+id);
 						}else{//通过考验的
 							returnList.add(r);
 							logger.debug("send msg to url" + r.getStr("IN_URL"));

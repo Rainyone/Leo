@@ -14,8 +14,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.util.URIUtil;
 
 public class DESEncrypt {
-	private static String _KEY = "bec99deaaf19c593613ffbcc6250329d";
-	private static String shaKeyStr = "charge";
+	private static String KEY = "bec99deaaf19c593613ffbcc6250329d";
+	private static String SHA_KEY = "charge";
 
 	public static String EncryptBody(String response) {
 		try {
@@ -45,7 +45,7 @@ public class DESEncrypt {
 
 	public static byte[] encrypt(byte[] src) {
 		try {
-			return encrypt(src, _KEY.getBytes());
+			return encrypt(src, KEY.getBytes());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -69,7 +69,7 @@ public class DESEncrypt {
 	}
 
 	public static byte[] decrypt(byte[] src) throws Exception {
-		return decrypt(src, _KEY.getBytes());
+		return decrypt(src, KEY.getBytes());
 	}
 
 	public static String showByteArray(byte[] data) {
@@ -94,7 +94,7 @@ public class DESEncrypt {
 
 	public static String getSign(String appId, String appSecret,String imei,
 			String timestamp) {
-		String sign = appId + reverse(appSecret) +imei+ shaKeyStr + timestamp ;
+		String sign = appId + reverse(appSecret) +imei+ SHA_KEY + timestamp ;
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-1");
 			md.update(sign.getBytes());
@@ -106,7 +106,7 @@ public class DESEncrypt {
 		return sign;
 	}
 	public static void main(String[] args) {
-		String url = "setCharge?app_id=6&app_key=testapp&channel=431233&price=1000&imei=32323132&request_type=1&imsi=33112334&bsc_lac=3322&bsc_cid=33884&mobile=1390023133&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985&isp=1001";
+		String url = "setCharge?app_id=7&app_key=201608test&channel=1&price=1000&imei=32323132&request_type=1&imsi=33112334&bsc_lac=3322&bsc_cid=33884&mobile=1390023133&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985&isp=1001";
 		String verUrl = "setCharge?app_id=6&app_key=testapp&channel=431233&price=1000&imei=32323132&request_type=2&imsi=33112334&bsc_lac=3322&bsc_cid=33884&mobile=1390023133&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985&isp=1001&code_id=1&order_id=32133&ver_code=3332244";
 		try {
 			String encode = Base64.encodeBase64String(DESEncrypt.encrypt(url.getBytes()));
@@ -117,7 +117,7 @@ public class DESEncrypt {
 			e.printStackTrace();
 		}
 		
-		String signself = DESEncrypt.getSign("6", "testapp","32323132", "1829304985");
+		String signself = DESEncrypt.getSign("7", "201608test","32323132", "1829304985");
 		System.out.println(URLEncoder.encode(signself));
 	}
 }
