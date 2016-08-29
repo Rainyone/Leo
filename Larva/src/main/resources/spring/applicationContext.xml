@@ -42,6 +42,9 @@
             </bean>
         </property>
     </bean>
+    
+    <bean id="exceptionHandler" class="com.larva.utils.MyExceptionHandler"/>  
+    
     <!--注解扫描的包-->
     <context:component-scan base-package="com.larva.*,com.mini.core.cfg"/>
     <!-- 启动对@AspectJ注解的支持-->

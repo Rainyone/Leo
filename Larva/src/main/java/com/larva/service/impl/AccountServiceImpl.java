@@ -344,10 +344,12 @@ public class AccountServiceImpl implements IAccountService {
         ResultVO resultVO = new ResultVO(true);
 
         String depIdByAccountId = departmentAccountDao.getDepIdByAccountId(userId);
+        
         if(depIdByAccountId!=null){
             departmentAccountDao.deleteByAccountId(userId);
         }
         DepartmentAccount departmentAccount = new DepartmentAccount();
+        departmentAccount.setId(UUIDUtil.getUUID());
         departmentAccount.setDepId(depId);
         departmentAccount.setAccountId(userId);
         departmentAccountDao.save(departmentAccount);

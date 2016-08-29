@@ -12,6 +12,7 @@ import com.larva.dao.IAccountDao;
 import com.larva.dao.IAppManageDao;
 import com.larva.model.Account;
 import com.larva.model.AppManage;
+import com.larva.model.Menu;
 import com.mini.core.PageResult;
 import com.mini.core.dao.IMiniDao;
 import com.mini.core.dao.MiniDao;
@@ -28,7 +29,17 @@ public class AppManageDaoImpl extends MiniDao implements IAppManageDao {
     public int save(AppManage appManage) {
         return this.insert(appManage);
     }
+    
+    @Override
+    public int edit(AppManage appManage) {
+        return this.update(appManage);
+    }
 
+    public int deleteAPP(String ids, String czr) {
+    	String sql = "update t_app_manage set state = '0',update_user_name = '"+czr+"',update_time = CURRENT_TIMESTAMP() where id in("+ids+") " ;
+        return this.execute(sql);
+    }
+    
 	@Override
 	public PageResult<AppManage> selectAppManages(int pageNow, int pageSize) {
 		return this.paginateResult("select * from t_app_manage where state = 1 ", pageNow, pageSize, AppManage.class);

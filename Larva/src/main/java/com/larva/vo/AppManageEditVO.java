@@ -4,8 +4,10 @@ import javax.validation.constraints.NotNull;
 
 /**
  */
-public class AppManageCreateVO {
-    @NotNull(message = "APP名称不能为空")
+public class AppManageEditVO {
+    @NotNull(message = "APPid不能为空")
+    private String id;
+	@NotNull(message = "APP名称不能为空")
     private String app_name = "app_name";
     @NotNull(message = "APP包名不能为空")
     private String app_package_name = "app_package_name";
@@ -21,6 +23,13 @@ public class AppManageCreateVO {
     private String create_user_name = "create_user_name";
     private String update_user_name = "update_user_name";
     
+    public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	
     public String getCreate_user_name() {
 		return create_user_name;
 	}
