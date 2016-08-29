@@ -7,7 +7,7 @@
 <body>
 <div class='span12 box bordered-box blue-border' style='margin-bottom:0;'>
   <div class='box-header' id="menu-header">
-    <div class='title'>菜单设置</div>
+    <div class='title'>APP管理</div>
     <div class='actions'></div>
   </div>
   <div class='box-content box-no-padding'>
@@ -18,42 +18,68 @@
     </div>
   </div>
 </div>
-<div class='modal hide fade' id='modal-Menu' role='dialog' tabindex='-1'>
+<div class='modal hide fade' id='modal-Menu' role='dialog' tabindex='-1' style='margin-bottom: 0;width:750px;height:600px;'>
     <div class='modal-header'>
         <button class='close' data-dismiss='modal' type='button'>&times;</button>
         <h3></h3>
     </div>
-    <form class='form validate-form' id='submit-form' method="post" role="form"  style='margin-bottom: 0;'>
-	    <div class='modal-body'>
+    <form class='form-horizontal' id='submit-form' method="post" role="form"  >
+	    <div class='modal-body' style="height:550px;">
+	    
 	        <div class='control-group'>
-	            <label class='control-label'>APP名称</label>
-	            <div class='controls'>
-	               		<input type='hidden' id='id' name="id"/>
-	                    <input class='span8' id='app_name' name="app_name" required placeholder='APP名称' type='text' />
-	            </div>
+	        	<label class='control-label'>APP名称</label>
+	        	<div class='controls'>
+               		<input type='hidden' id='id' name="id"/>
+                    <input class='span8' id='app_name' name="app_name" required placeholder='APP名称' type='text' />
+           		 </div>
 	        </div>
 	        <div class='control-group'>
-	            <label class='control-label'>APP包名</label>
-	            <div class='controls'>
-	                <input class='span8' id='app_package_name' required name="app_package_name" placeholder='菜单名称' type='text' />
-	            </div>
+	        	<label class='control-label'>APP包名</label>
+	        	<div class='controls'>
+               		<input class='span8' id='app_package_name' required name="app_package_name" placeholder='App包名' type='text' />
+           		</div>
 	        </div>
+	        <div class='control-group'>
+	        	<label class='control-label'>渠道</label>
+	        	<div class='controls'>
+               		<input class='span8' id='channel' required name="channel" placeholder='渠道' type='text' />
+           		</div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>日限量</label>
+	            <div class='controls'>
+	                <input class='span8' id='date_limit' required name="date_limit" placeholder='日限量' type='text' />
+	            </div>
+	            
+	        </div>
+	         <div class='control-group'>
+	         	 <label class='control-label'>月限量</label>
+	             <div class='controls'>
+	                <input class='span8' id='month_limit' required name="month_limit" placeholder='月限量' type='text' />
+	             </div>
+	         </div>
 	         <div class='control-group'>
 	            <label class='control-label'>联系人</label>
 	            <div class='controls'>
-	                <input class='span8' id='link_name' name="link_name" placeholder='菜单图片' type='text' />
+	                <input class='span8' id='link_name' name="link_name" placeholder='联系人' type='text' />
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>联系电话</label>
 	            <div class='controls'>
-	                <input class='span8' id='phone_no' name="phone_no" placeholder='菜单地址' type='text' digits="true" />
+	                <input class='span8' id='phone_no' name="phone_no" placeholder='联系电话' type='text' digits="true" />
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>简介</label>
 	            <div class='controls'>
-	                <input class='span8' id='description' required name='description' digits="true" placeholder='排序' type='text' />
+	                 <textarea class="span8" rows="3" id="description" name="description" placeholder='简介' type='text'></textarea>
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>适用区域</label>
+	            <div class='controls'>
+	               
 	            </div>
 	        </div>
 	    </div>
