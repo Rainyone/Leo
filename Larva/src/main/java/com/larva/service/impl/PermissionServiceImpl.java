@@ -510,11 +510,11 @@ public class PermissionServiceImpl implements IPermissionService {
         update.setOrder(permissionEditVO.getOrder());
         int num = permissionDao.updatePermission(update);
         if (num == 1) {
-            resultVO.setMsg("更新权限成功");
+            resultVO.setMsg("编辑权限成功");
             return resultVO;
         } else {
             resultVO.setOk(false);
-            resultVO.setMsg("更新权限失败");
+            resultVO.setMsg("编辑权限失败");
             return resultVO;
         }
     }

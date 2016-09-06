@@ -430,6 +430,7 @@ public class MenuServiceImpl implements IMenuService {
         if (!perIdSet.isEmpty()) {
             for (String perId : perIdSet) {
                 MenuPermission menuPermission = new MenuPermission();
+                menuPermission.setId(UUIDUtil.getUUID());
                 menuPermission.setMenuId(menuId);
                 menuPermission.setPermissionId(perId);
                 menuPermissionDao.addMenuPermission(menuPermission);

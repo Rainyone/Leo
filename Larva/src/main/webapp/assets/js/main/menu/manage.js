@@ -215,8 +215,10 @@ define(function (require, exports, module) {
             }
         },delMenu:function(ids){
         	base.ajaxRequest(F.basepath+'/main/menu/del',{"menuIds":ids},function(data){
-        		base.ajaxSuccess(data);
-        		F.reload();
+        		base.bootAlert(data);
+        		if (data.ok) {
+                 	F.reload();
+                }
         	},function(){
         		base.bootAlert({"ok":false,"msg":"网络异常"});
         	});

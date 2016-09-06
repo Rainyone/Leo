@@ -147,8 +147,10 @@ define(function (require, exports, module) {
         	$('#submit-form').ajaxForm(options);
         },delPerm:function(ids){
         	base.ajaxRequest(F.basepath+'/main/permission/del',{"permIds":ids},function(data){
-        		base.ajaxSuccess(data);
-        		F.reload();
+        		base.bootAlert(data);
+        		if (data.ok) {
+                 	F.reload();
+                }
         	},function(){
         		base.bootAlert({"ok":false,"msg":"网络异常"});
         	});

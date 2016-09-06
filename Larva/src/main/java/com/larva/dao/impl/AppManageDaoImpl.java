@@ -1,20 +1,14 @@
 package com.larva.dao.impl;
 
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-
-import javax.annotation.Resource;
 
 import org.springframework.stereotype.Repository;
 
-import com.larva.dao.IAccountDao;
 import com.larva.dao.IAppManageDao;
-import com.larva.model.Account;
 import com.larva.model.AppManage;
-import com.larva.model.Menu;
+import com.larva.model.AreaManage;
+import com.larva.model.Permission;
 import com.mini.core.PageResult;
-import com.mini.core.dao.IMiniDao;
 import com.mini.core.dao.MiniDao;
 
 /**
@@ -45,4 +39,16 @@ public class AppManageDaoImpl extends MiniDao implements IAppManageDao {
 		return this.paginateResult("select * from t_app_manage where state = 1 ", pageNow, pageSize, AppManage.class);
 	}
 
+    public List<AreaManage> selectAllAreas() {
+        return this.findList("select * from t_areas where status = '1'", AreaManage.class);
+    }
+    
+    public AreaManage get(List<AreaManage> areaManageList,String id) {
+        for(AreaManage areaManage:areaManageList){
+            if(id.equals(areaManage.getAreaId())){
+                return areaManage;
+            }
+        }
+        return null;
+    }
 }

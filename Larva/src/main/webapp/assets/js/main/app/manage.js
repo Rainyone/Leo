@@ -145,7 +145,8 @@ define(function (require, exports, module) {
 				 */
 				$('#addApp').click(function(){
 					core.openModel('modal-Menu','新增APP',function(){
-						//F.radioTree.load();
+						F.radioTree.load();
+						//core.initDropDownCheckTree('areaId',F.basepath+'/main/app/get-all-areas');
 					});
 				});
 				
@@ -240,17 +241,9 @@ define(function (require, exports, module) {
         },onClick:function(event, treeId, treeNode, clickFlag) {
 			F.table.query({query: {'id':treeNode.id}});
 		},treeLoad:function(){
-			F.tree = core.initTree("menuTree",F.basepath+'/main/menu/get-all-menus',F.onClick);
-        	F.tree.load();
-        	if (base.perList.menu.edit||base.perList.menu.create) {
-        		F.radioTree = core.initDropDownRadioTree("parentId",F.basepath+'/main/menu/get-all-menus');
-        	}
-        	if (base.perList.menu.grant) {
-        		F.distributePermissionTree = core.initRadioTree('distributePermissionTree',F.basepath+'/main/get-menu-check-permissions','distributePermissionTreeHidden')
-        	}
-        	if (base.perList.menu.checkPermission) {
-        		F.checkPermissionTree = core.initRadioTree('checkPermissionTree',F.basepath+'/main/get-menu-show-permissions');
-        	}
+			//if (base.perList.department.edit||base.perList.department.create) {
+        		F.radioTree = core.initDropDownRadioTree("parentId",F.basepath+'/main/app/get-all-areas');
+        	//}
         },
         operateFormatter:function (value, row, index) {
         	var _btnAction = "";
