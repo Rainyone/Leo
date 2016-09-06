@@ -105,19 +105,25 @@ public class DESEncrypt {
 		}
 		return sign;
 	}
+	
+	public static String getDesUrl(String url){
+		String encode = Base64.encodeBase64String(DESEncrypt.encrypt(url.getBytes()));
+		return URLEncoder.encode(encode);
+	}
+	
 	public static void main(String[] args) {
-		String url = "setCharge?app_id=7&app_key=201608test&channel=1&price=1000&imei=32323132&request_type=1&imsi=33112334&bsc_lac=3322&bsc_cid=33884&mobile=1390023133&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985&isp=1001";
-		String verUrl = "setCharge?app_id=6&app_key=testapp&channel=431233&price=1000&imei=32323132&request_type=2&imsi=33112334&bsc_lac=3322&bsc_cid=33884&mobile=1390023133&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985&isp=1001&code_id=1&order_id=32133&ver_code=3332244";
+		String url = "setCharge?app_id=613c6412db374a519cf98410085489c8&app_key=4c4a824602c948a2bc87b1382dd3a5dc&channel=1&price=1000&imei=860917020646570&request_type=1&imsi=460020586922644&bsc_lac=3322&bsc_cid=33884&mobile=1390023133&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985&isp=1001";
+		String verUrl = "setCharge?app_id=6&app_key=testapp&channel=431233&price=1000&imei=32323132&request_type=2&imsi=33112334&bsc_lac=3322&bsc_cid=33884&mobile=13800138000&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985&isp=1001&code_id=1&order_id=32133&ver_code=3332244";
 		try {
 			String encode = Base64.encodeBase64String(DESEncrypt.encrypt(url.getBytes()));
 			System.out.println("encode:" + URLEncoder.encode(encode));
-			String plainText = URIUtil.getPathQuery(new String(DESEncrypt.decrypt(Base64.decodeBase64(encode))));
-			System.out.println("plainText:" + plainText);
+//			String plainText = URIUtil.getPathQuery(new String(DESEncrypt.decrypt(Base64.decodeBase64(encode))));
+//			System.out.println("plainText:" + plainText);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		String signself = DESEncrypt.getSign("7", "201608test","32323132", "1829304985");
-		System.out.println(URLEncoder.encode(signself));
+		String sign = DESEncrypt.getSign("613c6412db374a519cf98410085489c8", "4c4a824602c948a2bc87b1382dd3a5dc","860917020646570", "1829304985");
+		System.out.println(URLEncoder.encode(sign));
 	}
 }

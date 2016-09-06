@@ -1,5 +1,6 @@
 package com.larva.dao;
 
+import com.larva.model.LogOrder;
 import com.mini.core.Record;
 
 import java.util.List;
@@ -58,5 +59,51 @@ public interface IInfDao  {
 	 * @param order_id
 	 * @return
 	 */
-	String getVerCodeUrlById(String order_id);
+	Record getVerCodeUrlById(String order_id);
+	/**
+	 * 入库日志记录
+	 * @param logOrder
+	 * @return
+	 */
+	Integer saveLogOrder(LogOrder logOrder);
+	/**
+	 * 更新日志记录状态
+	 * @param id
+	 * @param inState
+	 * @param oldState
+	 * @return
+	 */
+	Integer updateLogOrder(String id,int inState,int oldState);
+	/**
+	 * 根据imsi号获取areaid
+	 * @param imsi
+	 * @return
+	 */
+	String getAreaIdByImsi(String imsi);
+	/**
+	 * 更新app的日月限量统计
+	 * @param app_id
+	 * @return
+	 */
+	Integer updateAppCount(String app_id);
+	/**
+	 * 更新计费代码的日月限量统计
+	 * @param charge_id
+	 * @return
+	 */
+	Integer updateChargeCodeCount(String charge_id,String area_id);
+	/**
+	 * 根据orderNo更新定单状态
+	 * @param orderNo
+	 * @param orderState
+	 * @return
+	 */
+	Integer updateLogOrderByOrderNo(String orderNo, Integer orderState);
+	/**
+	 * 根据id更新OrderNO
+	 * @param id
+	 * @param orderNo
+	 * @return
+	 */
+	Integer updateOrderNoById(String id, String orderNo);
 }

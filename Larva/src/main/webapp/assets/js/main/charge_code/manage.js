@@ -9,7 +9,7 @@ define(function (require, exports, module) {
         checkPermissionTree:{},
         distributePermissionTree:{},
         radioTree:{},
-        table:new core.Table('menuTable'),
+        table:new core.Table('chargeCodeTable'),
         init:function(_basepath) {
             F.basepath = _basepath;
             var picSelect =new core.PicSelect('icon')
@@ -17,19 +17,19 @@ define(function (require, exports, module) {
              * 是否具有添加菜单权限
              */
             if(base.perList.menu.create){
-            	$("#menu-header .actions").append("<a href='#' id='addMenu' data-toggle='modal' class='btn btn-success btn-small' style='margin-left:5px'><i class='icon-plus'></i>添加</a>");
+            	$("#charge-code-header .actions").append("<a href='#' id='addChargeCode' data-toggle='modal' class='btn btn-success btn-small' style='margin-left:5px'><i class='icon-plus'></i>添加</a>");
             }
             /**
              * 是否具有删除菜单权限
              */
             if(base.perList.menu.del){
-            	$("#menu-header .actions").append("<a href='#' id='delMenus' class='btn btn-danger btn-small' style='margin-left:5px'><i class='icon-remove'></i>删除</a>");
+            	$("#charge-code-header .actions").append("<a href='#' id='delChargeCode' class='btn btn-danger btn-small' style='margin-left:5px'><i class='icon-remove'></i>删除</a>");
             }
             
             /**
 			 * 请求菜单数据
-			 */
 	        F.treeLoad();
+			 */
 	        
 	        operateEvents = {
 					/**
@@ -99,28 +99,100 @@ define(function (require, exports, module) {
 		                    {
 		        		        checkbox:true
 		        		    },{
-		        		        field: 'app_name',
-		        		        title: 'APP名称'
+		        		        field: 'code_name',
+		        		        title: '计费代码名称'
 		        		    }, {
-		        		        field: 'app_package_name',
-		        		        title: 'APP包名'
-		        		    }, {
+		        		        field: 'url',
+		        		        title: '请求url',
+		    			        formatter:F.urlFormate
+		        		    },{
+		    			        field: 'send_type',
+		    			        title: '发送方式'
+		    		        }, {
 		        		        field: 'link_name',
 		        		        title: '联系人'
 		        		    },{
 		    			        field: 'phone_no',
 		    			        title: '联系电话'
 		    		        },{
-		    			        field: 'description',
-		    			        title: '简介',
-		    			        events: operateEvents,
-		    			        formatter:F.introductionFormatter
-		    		        },{
-		    			        field: 'create_time',
-		    			        title: '创建时间'
-		    		        },{
 		    			        field: 'id',
 		    			        title: '菜单主键',
+		    			        visible:false
+		    		        },{
+		    			        field: 'charge_code',
+		    			        title: '计费代码报文',
+		    			        visible:false
+		    		        },{
+		    			        field: 'inf_type',
+		    			        title: '接口模式',
+		    			        visible:false
+		    		        },{
+		    			        field: 'back_msg_type',
+		    			        title: '反馈报文的格式JSON\XML',
+		    			        visible:false
+		    		        },{
+		    			        field: 'order_back',
+		    			        title: '订购回调',
+		    			        visible:false
+		    		        },{
+		    			        field: 'back_form',
+		    			        title: '反馈给客户端的报文格式',
+		    			        visible:false
+		    		        },{
+		    			        field: 'return_form',
+		    			        title: '反馈报文格式',
+		    			        visible:false
+		    		        },{
+		    			        field: 'ver_code_url',
+		    			        title: '反馈验证码的请求URL',
+		    			        visible:false
+		    		        },{
+		    			        field: 'date_limit',
+		    			        title: '日限量',
+		    			        visible:false
+		    		        },{
+		    			        field: 'month_limit',
+		    			        title: '月限量',
+		    			        visible:false
+		    		        },{
+		    			        field: 'channel_type',
+		    			        title: '通道类型(1视频、2动漫、3阅读、4音乐)',
+		    			        visible:false
+		    		        },{
+		    			        field: 'detail',
+		    			        title: '备注',
+		    			        visible:false
+		    		        },{
+		    			        field: 'create_time',
+		    			        title: '创建时间',
+		    			        visible:false
+		    		        },{
+		    			        field: 'create_people_name',
+		    			        title: '创建人名称',
+		    			        visible:false
+		    		        },{
+		    			        field: 'update_time',
+		    			        title: '更新时间',
+		    			        visible:false
+		    		        },{
+		    			        field: 'update_people_name',
+		    			        title: '更新人',
+		    			        visible:false
+		    		        },{
+		    			        field: 'date_count',
+		    			        title: '每天的订购数量',
+		    			        visible:false
+		    		        },{
+		    			        field: 'month_count',
+		    			        title: '每一个月的记录数',
+		    			        visible:false
+		    		        },{
+		    			        field: 'success_flag',
+		    			        title: '反馈报文的成功标示字段',
+		    			        visible:false
+		    		        },{
+		    			        field: 'order_id_code',
+		    			        title: '验证码的order_id字段',
 		    			        visible:false
 		    		        }];
 		        //是否需要操作列
@@ -132,13 +204,13 @@ define(function (require, exports, module) {
 				        formatter:F.operateFormatter
 				    });
 	        		
-	    		F.table.init(F.basepath+'/main/app/get-list-apps',cols);
+	    		F.table.init(F.basepath+'/main/charge_code/get-list-charge-codes',cols);
 	    		
 	    		/**
 				 * 打开模态框
 				 */
-				$('#addMenu').click(function(){
-					core.openModel('modal-Menu','新增菜单',function(){
+				$('#addChargeCode').click(function(){
+					core.openModel('modal-charge-code','新增计费代码',function(){
 						//F.radioTree.load();
 					});
 				});
@@ -172,7 +244,7 @@ define(function (require, exports, module) {
 				/**
 				 * 批量删除
 				 */
-				$('#delMenus').click(function(){
+				$('#delChargeCode').click(function(){
 					var ids = F.table.getIdSelections();
 					if(ids!=null&&ids.length>0){
 						base.bootConfirm("是否确定删除选定的"+ids.length+"个菜单？",function(){
@@ -263,10 +335,12 @@ define(function (require, exports, module) {
         		return "<i class='"+row.icon+"'/>";
         	else
         		return "-";
-        },introductionFormatter:function (value, row, index) {
-        	var _btnAction = "";
-        		_btnAction += "<a class='introduction btn btn-info btn-small' href='#' title='查看APP简介' style='margin-left:5px'>查看</a>";
-        	return _btnAction;
+        },urlFormate:function (value, row, index) {
+        	if(value){
+        		if(value.length>20){
+        			return value.substr(0,20) + '...';
+        		}
+        	}
         }
     };
 

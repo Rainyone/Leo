@@ -1,6 +1,8 @@
 package com.larva.service;
 
+import com.larva.model.LogOrder;
 import com.larva.vo.ResultVO;
+import com.mini.core.Record;
 
 public interface InfService {
 	/**
@@ -28,5 +30,41 @@ public interface InfService {
 	 * @param order_id
 	 * @return
 	 */
-	String getVerCodeUrlById(String code_id);
+	Record getVerCodeUrlById(String code_id);
+	/**
+	 * 入库日志记录
+	 * @param logOrder
+	 * @return
+	 */
+	Integer saveLogOrder(LogOrder logOrder);
+	/**
+	 * 更新日志记录状态
+	 * @param id
+	 * @param inState
+	 * @param oldState
+	 * @return
+	 */
+	Integer updateLogOrder(String id,int inState,int oldState);
+	/**
+	 * 根据imsi号获取区域id
+	 * @return
+	 */
+	String getAreaIdByImsi(String imsi);
+	/**
+	 * 更新每天、每月的限量统计数
+	 * @return
+	 */
+	Integer updateCount(String app_id,String charge_id,String area_id);
+	/**
+	 * 根据orderNo更新状态
+	 * @param orderNo
+	 * @param orderState
+	 */
+	Integer updateLogOrderByOrderNo(String orderNo, Integer orderState);
+	/**
+	 * 根据orderNo更新状态
+	 * @param orderNo
+	 * @param orderState
+	 */
+	Integer updateOrderNoById(String id, String orderNo);
 }

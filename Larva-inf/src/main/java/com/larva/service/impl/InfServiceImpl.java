@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.larva.dao.IInfDao;
+import com.larva.model.LogOrder;
 import com.larva.service.InfService;
 import com.larva.vo.ResultVO;
 import com.mini.core.Record;
@@ -31,12 +32,15 @@ public class InfServiceImpl implements InfService {
 			result.setMsg("appKey is not available!");
 			return result;
 		}
-		Integer appArea = iInfDao.getAppAreaCount(app_id,area_id);
-		logger.debug(appArea);
-		if(appArea<=0){//判断适用省份,判断日限量、月限量
-			result.setOk(false);
-			result.setMsg("area is not available!");
-			return result;
+		int is_have_area_check = r.getInt("is_have_area_check");
+		if(is_have_area_check==1){//区域判断
+			Integer appArea = iInfDao.getAppAreaCount(app_id,area_id);
+			logger.debug(appArea);
+			if(appArea<=0){//判断适用省份,判断日限量、月限量
+				result.setOk(false);
+				result.setMsg("app area is not available!");
+				return result;
+			}
 		}
 		Integer appIsp = iInfDao.getAppIspCount(app_id,isp);
 		logger.debug(appIsp);
@@ -62,17 +66,17 @@ public class InfServiceImpl implements InfService {
 				Integer chargeAreaCount = iInfDao.getChargeArea(id,area_id);
 				if(chargeAreaCount<=0){//获取可用区域，判断日月限量 ,没有通过校验
 //					list.remove(r);
-					logger.debug("area not avalible:"+id);
+					logger.debug("charge area not avalible:"+id);
 				}else{//继续其他判断
 					Integer chargeIspCount = iInfDao.getChargeIsps(id,isp);
 					if(chargeIspCount<=0){//运营商校验失败
 //						list.remove(r);
-						logger.debug("isp not avalible:"+id);
+						logger.debug("charge isp not avalible:"+id);
 					}else{
 						Integer chargeDisableTimeCount = iInfDao.getChargeDisableTimes(id);
 						if(chargeDisableTimeCount>0){//在不可用时间范围内则校验不通过
 //							list.remove(r);
-							logger.debug("disable time:"+id);
+							logger.debug("charge disable time:"+id);
 						}else{//通过考验的
 							returnList.add(r);
 							logger.debug("send msg to url" + r.getStr("IN_URL"));
@@ -86,12 +90,42 @@ public class InfServiceImpl implements InfService {
 			result.setOk(true);
 			result.setMsg("It's ok!");
 			result.setData(returnList);
+		}else{
+			result.setOk(false);
+			result.setMsg("charge false");
 		}
 		return result;
 	}
 	@Override
-	public String getVerCodeUrlById(String code_id) {
+	public Record getVerCodeUrlById(String code_id) {
 		return iInfDao.getVerCodeUrlById(code_id);
+	}
+	@Override
+	public Integer saveLogOrder(LogOrder logOrder) {
+		return iInfDao.saveLogOrder(logOrder);
+	}
+	@Override
+	public Integer updateLogOrder(String id, int inState, int oldState) {
+		return iInfDao.updateLogOrder(id, inState, oldState);
+	}
+	@Override
+	public String getAreaIdByImsi(String imsi) {
+		return iInfDao.getAreaIdByImsi(imsi);
+	}
+	@Override
+	public Integer updateCount(String app_id, String charge_id,String area_id) {
+		Integer result = -1;
+		result +=iInfDao.updateAppCount(app_id);
+		result +=iInfDao.updateChargeCodeCount(charge_id,area_id);
+		return result;
+	}
+	@Override
+	public Integer updateLogOrderByOrderNo(String orderNo, Integer orderState) {
+		return iInfDao.updateLogOrderByOrderNo(orderNo, orderState);
+	}
+	@Override
+	public Integer updateOrderNoById(String id, String orderNo) {
+		return iInfDao.updateOrderNoById(id,orderNo);
 	}
 	
 }

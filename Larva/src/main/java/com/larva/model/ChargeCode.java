@@ -23,7 +23,7 @@ public class ChargeCode extends WeakEntity implements Serializable {
 		public static final String url = "url";
 		public static final String chargeCode = "charge_code";
 		public static final String sendType = "send_type";
-		public static final String isNeedVerCode = "is_need_ver_code";
+		public static final String infType = "inf_type";
 		public static final String backMsgType = "back_msg_type";
 		public static final String orderBack = "order_back";
 		public static final String backForm = "back_form";
@@ -43,8 +43,16 @@ public class ChargeCode extends WeakEntity implements Serializable {
 		public static final String dateCount = "date_count";
 		public static final String monthCount = "month_count";
 		public static final String successFlag = "success_flag";
+		public static final String orderIdCode = "order_id_code";
 	}
-	
+	public String getOrderIdCode() {
+        return super.getStr(Columns.orderIdCode);
+    }
+
+    public ChargeCode setOrderIdCode(String orderIdCode) {
+        super.set(Columns.orderIdCode, orderIdCode);
+        return this;
+    }
 	public String getSuccessFlag() {
         return super.getStr(Columns.successFlag);
     }
@@ -114,7 +122,7 @@ public class ChargeCode extends WeakEntity implements Serializable {
         return super.getStr(Columns.phoneNo);
     }
 
-    public ChargeCode getPhoneNo(String phoneNo) {
+    public ChargeCode setPhoneNo(String phoneNo) {
         super.set(Columns.phoneNo, phoneNo);
         return this;
     }
@@ -186,17 +194,17 @@ public class ChargeCode extends WeakEntity implements Serializable {
         super.set(Columns.sendType, sendType);
         return this;
     }
-	public Integer getIsNeedVerCode() {
-		return super.getInt(Columns.isNeedVerCode); 
+	public Integer getInfType() {
+		return super.getInt(Columns.infType); 
 	}
-	public ChargeCode setIsNeedVerCode(Integer isNeedVerCode) {
-        super.set(Columns.isNeedVerCode, isNeedVerCode);
+	public ChargeCode setInfType(Integer infType) {
+        super.set(Columns.infType, infType);
         return this;
     }
-	public Date getBackMsgType() {
-		return super.getDate(Columns.backMsgType);
+	public String getBackMsgType() {
+		return super.getStr(Columns.backMsgType);
 	}
-	public ChargeCode setBackMsgType(Date backMsgType) {
+	public ChargeCode setBackMsgType(String backMsgType) {
         super.set(Columns.backMsgType, backMsgType);
         return this;
     }
@@ -207,24 +215,24 @@ public class ChargeCode extends WeakEntity implements Serializable {
         super.set(Columns.orderBack, orderBack);
         return this;
     }
-	public Date getBackForme() {
-		return super.getDate(Columns.backForm);
+	public String getBackForm() {
+		return super.getStr(Columns.backForm);
 	}
-	public ChargeCode setBackForme(Date backForm) {
+	public ChargeCode setBackForm(String backForm) {
         super.set(Columns.backForm, backForm);
         return this;
     }
 	public String getReturnForm() {
 		return super.getStr(Columns.returnForm); 
 	}
-	public ChargeCode setReturnForm(Date returnForm) {
+	public ChargeCode setReturnForm(String returnForm) {
         super.set(Columns.returnForm, returnForm);
         return this;
     }
 	public String getVerCodeUrl() {
 		return super.getStr(Columns.verCodeUrl); 
 	}
-	public ChargeCode setVerCodeUrl(Date verCodeUrl) {
+	public ChargeCode setVerCodeUrl(String verCodeUrl) {
         super.set(Columns.verCodeUrl, verCodeUrl);
         return this;
     }

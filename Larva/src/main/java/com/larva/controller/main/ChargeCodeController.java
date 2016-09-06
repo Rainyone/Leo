@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.larva.service.IAppManageService;
+import com.larva.service.IChargeCodeService;
 import com.larva.vo.AppManageCreateVO;
 import com.larva.vo.MenuCreateVO;
 import com.larva.vo.Pager;
@@ -26,10 +27,18 @@ import com.larva.vo.TreeNode;
 @RequestMapping("/main/charge_code")
 public class ChargeCodeController {
 	@Autowired
-	private IAppManageService appManageService;
+	private IChargeCodeService chargeCodeService;
 	//跳转到app管理
     @RequestMapping("/manage")
     public String departmentManage() {
         return "main/charge_code/manage";
+    }
+    //获取所有APP
+    @RequestMapping("/get-list-charge-codes")
+    public
+    @ResponseBody
+    Pager<Map<String,Object>> getListChargeCodes(PagerReqVO pagerReqVO) {
+    	Pager<Map<String,Object>> vo = chargeCodeService.getChargeCodes(pagerReqVO);
+        return vo;
     }
 }

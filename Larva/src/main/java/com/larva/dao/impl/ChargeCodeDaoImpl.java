@@ -18,10 +18,6 @@ import com.mini.core.PageResult;
 import com.mini.core.dao.IMiniDao;
 import com.mini.core.dao.MiniDao;
 
-/**
- * @author sxjun
- * @time 2015/8/27 16:23
- */
 
 @Repository("chargeCodeDao")
 public class ChargeCodeDaoImpl extends MiniDao implements IChargeCodeDao {
