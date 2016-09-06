@@ -13,14 +13,17 @@ import org.springframework.stereotype.Service;
 
 import com.larva.dao.IAppManageDao;
 import com.larva.model.AppManage;
-import com.larva.model.Menu;
+import com.larva.model.AreaManage;
+import com.larva.model.Department;
 import com.larva.service.IAppManageService;
+import com.larva.utils.Constants;
 import com.larva.utils.UUIDUtil;
 import com.larva.vo.AppManageCreateVO;
 import com.larva.vo.AppManageEditVO;
 import com.larva.vo.Pager;
 import com.larva.vo.PagerReqVO;
 import com.larva.vo.ResultVO;
+import com.larva.vo.TreeNode;
 import com.mini.core.PageResult;
 
 /**
@@ -53,7 +56,7 @@ public class AppManageServiceImpl implements IAppManageService {
 		appManage.setUpdateUserName(createVO.getUpdate_user_name());
 		appManageDao.save(appManage);
 		
-        resultVO.setMsg("操作成功!");
+        resultVO.setMsg("创建APP成功!");
         return resultVO;
 	}
 	
@@ -75,7 +78,7 @@ public class AppManageServiceImpl implements IAppManageService {
 		appManage.setUpdateUserName(createVO.getUpdate_user_name());
 		appManageDao.edit(appManage);
 
-        resultVO.setMsg("操作成功!");
+        resultVO.setMsg("编辑APP成功!");
         return resultVO;
 	}
 	
@@ -89,6 +92,7 @@ public class AppManageServiceImpl implements IAppManageService {
         }
         return new Pager(results, pagers.getResultCount());
 	}
+	
 	private Map<String,Object> getAppManageMap(AppManage appManage){
 		Map<String,Object> m = new HashMap<String,Object>();
 		m.put("id", appManage.getId());
@@ -109,6 +113,57 @@ public class AppManageServiceImpl implements IAppManageService {
 		return m;
 	}
 	
+	public ResultVO getAreaTree() {
+        List<TreeNode> trees = new ArrayList<TreeNode>();
+        Pager<Map<String,Object>> pager = this.getAllAreas();
+        List<Map<String,Object>> list = pager.getRows();
+        TreeNode superTree = new TreeNode();
+        superTree.setId(Constants.SUPER_TREE_NODE);
+        superTree.setName("所有区域");
+        superTree.setOpen(true);
+        trees.add(superTree);
+        for(Map<String,Object> depart:list){
+            TreeNode tree = new TreeNode();
+            tree.setId(depart.get("areid").toString());
+            tree.setName(depart.get("areaname").toString());
+            tree.setOpen(true);
+            if(depart.get("parentId")!=null)
+            	tree.setpId(depart.get("parentId").toString());
+            else{
+            	tree.setpId(Constants.SUPER_TREE_NODE);
+            }
+            trees.add(tree);
+        }
+        ResultVO resultVO = new ResultVO(true);
+        resultVO.setData(trees);
+		return resultVO;
+	}
+	
+	public Pager<Map<String,Object>> getAllAreas() {
+        List<Map<String,Object>> resultAreas = new ArrayList<Map<String,Object>>();
+        List<AreaManage> areas = appManageDao.selectAllAreas();
+        int size = 0;
+        for(AreaManage area : areas){
+        	resultAreas.add(getAreaMap(areas,area));
+    	}
+    	size = areas.size();
+    	return new Pager(resultAreas,size);
+	}
+	
+    private Map<String,Object> getAreaMap(List<AreaManage> areas,AreaManage area){
+    	Map<String,Object> m = new HashMap<String,Object>();
+		m.put("areid", area.getAreaId());
+		m.put("areaname", area.getAreaName());
+		m.put("parentid", area.getParentId());
+		m.put("arealevel", area.getAreaLevel());
+		m.put("status", area.getStatus());
+		if(area.getParentId()!=null&&!Constants.SUPER_TREE_NODE.equals(area.getParentId()))
+			{AreaManage d = appManageDao.get(areas,area.getParentId());
+			m.put("parentName",d!=null?d.getAreaName():"");}
+		return m;
+    }
+
+	
     /**
      * 删除APP
      *
@@ -123,7 +178,7 @@ public class AppManageServiceImpl implements IAppManageService {
         }
         ids = ids.substring(0,ids.length()-1);
     	appManageDao.deleteAPP(ids,czr);
-        resultVO.setMsg("操作成功");
+        resultVO.setMsg("删除APP成功");
         return resultVO;
     }
 }

@@ -185,8 +185,10 @@ define(function (require, exports, module) {
             }
         },delRole:function(ids){
         	base.ajaxRequest(F.basepath+'/main/role/del',{"roleIds":ids},function(data){
-        		base.ajaxSuccess(data);
-        		F.reload();
+        		base.bootAlert(data);
+        		if (data.ok) {
+                 	F.reload();
+                }
         	},function(){
         		base.bootAlert({"ok":false,"msg":"网络异常"});
         	});

@@ -40,10 +40,19 @@ public class AppController {
     @RequestMapping("/get-list-apps")
     public
     @ResponseBody
-    Pager<Map<String,Object>> getListMenus(PagerReqVO pagerReqVO,TreeNode tree) {
+    Pager<Map<String,Object>> getListApps(PagerReqVO pagerReqVO,TreeNode tree) {
     	Pager<Map<String,Object>> vo = appManageService.getAppManages(pagerReqVO);
         return vo;
     }
+    //获取所有区域信息
+    @RequestMapping("/get-all-areas")
+    public
+    @ResponseBody
+    ResultVO getListAreas() {
+    	ResultVO vo = appManageService.getAreaTree();
+        return vo;
+    }
+    
     //创建APP
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public

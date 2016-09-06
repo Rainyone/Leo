@@ -1,6 +1,10 @@
 package com.larva.dao;
 
+import java.util.List;
+
 import com.larva.model.AppManage;
+import com.larva.model.AreaManage;
+import com.larva.model.Permission;
 import com.mini.core.PageResult;
 
 /**
@@ -10,6 +14,10 @@ import com.mini.core.PageResult;
 public interface IAppManageDao  {
    
     PageResult<AppManage> selectAppManages(int pageNow, int pageSize);
+    
+    List<AreaManage> selectAllAreas();
+    
+    AreaManage get(List<AreaManage> areaManageList, String id);
     
     int save(AppManage appManage);
     

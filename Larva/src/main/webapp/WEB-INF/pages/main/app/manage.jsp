@@ -78,8 +78,29 @@
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>适用区域</label>
-	            <div class='controls'>
-	               
+	          	<div class='controls'>
+	                <div class='input-append'>
+	               		<input type='hidden' id='appId' name="appId"/>
+	                    <input class='span8' id='areaId' name="areaId" type='hidden' />
+	                </div>
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>适用运营商</label>
+	          	<div class='controls'>
+	                <div class='input-append'>
+	               		<input type='hidden' id='appId' name="appId"/>
+	                    <input class='span6' id='areaId' name="areaId" type='hidden' />
+	                </div>
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>适用计费代码</label>
+	          	<div class='controls'>
+	                <div class='input-append'>
+	               		<input type='hidden' id='appId' name="appId"/>
+	                    <input class='span6' id='areaId' name="areaId" type='hidden' />
+	                </div>
 	            </div>
 	        </div>
 	    </div>

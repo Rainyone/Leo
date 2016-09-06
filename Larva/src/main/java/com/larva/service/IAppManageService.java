@@ -21,4 +21,6 @@ public interface IAppManageService {
     ResultVO deleteAppManage(String[] appIds, String czr);
 
     Pager<Map<String, Object>> getAppManages(PagerReqVO pagerReqVO);
+    
+    ResultVO getAreaTree();
 }
