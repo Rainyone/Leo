@@ -1,10 +1,14 @@
 package com.larva.vo;
 
+import java.util.Date;
+
 import javax.validation.constraints.NotNull;
 
 /**
  */
-public class ChargeCodeCreateVO {
+public class ChargeCodeEditVO {
+	@NotNull(message = "id不能为空")
+	private String id;
     @NotNull(message = "计费代码名称不能为空")
     private String code_name = "code_name";
     @NotNull(message = "请求URL不能为空")
@@ -25,9 +29,51 @@ public class ChargeCodeCreateVO {
 	private String detail = "detail";
     private String success_flag = "判断成功字符串";
     private String order_id_code = "验证码的order_id字段";
+    private Date create_time;
+    private Date update_time;
 	private String create_people_name;
     private String update_people_name;
+    private Integer state;
+    private Integer dateCount;
+    private Integer monthCount;
+
     
+	public Integer getDateCount() {
+		return dateCount;
+	}
+	public void setDateCount(Integer dateCount) {
+		this.dateCount = dateCount;
+	}
+	public Integer getMonthCount() {
+		return monthCount;
+	}
+	public void setMonthCount(Integer monthCount) {
+		this.monthCount = monthCount;
+	}
+	public Date getCreate_time() {
+		return create_time;
+	}
+	public void setCreate_time(Date create_time) {
+		this.create_time = create_time;
+	}
+	public Date getUpdate_time() {
+		return update_time;
+	}
+	public void setUpdate_time(Date update_time) {
+		this.update_time = update_time;
+	}
+	public Integer getState() {
+		return state;
+	}
+	public void setState(Integer state) {
+		this.state = state;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
     public String getCreate_people_name() {
 		return create_people_name;
 	}

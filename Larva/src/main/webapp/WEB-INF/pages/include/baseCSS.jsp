@@ -15,8 +15,9 @@
 <link href='${ctxAssets}/stylesheets/plugins/bootstrap_switch/bootstrap-switch.css' media='all' rel='stylesheet' type='text/css' />
 <!-- / datetime picker -->
 <link href='${ctxAssets}/stylesheets/plugins/bootstrap_datetimepicker/bootstrap-datetimepicker.min.css' media='all' rel='stylesheet' type='text/css' />
-<!-- / daterange picker) -->
+<!-- / daterange picker)
 <link href='${ctxAssets}/stylesheets/plugins/bootstrap_daterangepicker/bootstrap-daterangepicker.css' media='all' rel='stylesheet' type='text/css' />
+ -->
 <!-- / datatables -->
 <%--<link href='${ctxAssets}/stylesheets/plugins/datatables/bootstrap-datatable.css' media='all' rel='stylesheet' type='text/css' />--%>
 <!-- / flatty theme -->

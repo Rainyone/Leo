@@ -5,14 +5,9 @@ define(function (require, exports, module) {
     // 通过 require 引入依赖
     var F = module.exports = {
         basepath: '',
-        tree:{},
-        checkPermissionTree:{},
-        distributePermissionTree:{},
-        radioTree:{},
         table:new core.Table('chargeCodeTable'),
         init:function(_basepath) {
             F.basepath = _basepath;
-            var picSelect =new core.PicSelect('icon')
             /**
              * 是否具有添加菜单权限
              */
@@ -25,107 +20,115 @@ define(function (require, exports, module) {
             if(base.perList.menu.del){
             	$("#charge-code-header .actions").append("<a href='#' id='delChargeCode' class='btn btn-danger btn-small' style='margin-left:5px'><i class='icon-remove'></i>删除</a>");
             }
-            
-            /**
-			 * 请求菜单数据
-	        F.treeLoad();
-			 */
-	        
 	        operateEvents = {
+	        		
 					/**
-					 *修改菜单
+					 *修改计费代码
 					 */
-			        'click .editMenu': function (e, value, row, index) {
-			        	core.openModel('modal-Menu','修改菜单',function(){
-			        		F.radioTree.load();
+			        'click .editChargeCode': function (e, value, row, index) {
+			        	core.openModel('modal-charge-code','修改计费代码',function(){
 			        		if(row!=null){
-			            		$('#id').val(row.id);
-			            		$('#name').val(row.name);
-			            		$('#icon').val(row.icon);
-			            		picSelect.set(picSelect.hid,picSelect.sid,row.icon);
-			            		$('#order').val(row.order);
-			            		$('#url').val(row.url);
-			            		$("#"+F.radioTree.showId).val(row.parentName!=null?row.parentName:'所有菜单');
-			    				$("#"+F.radioTree.hideId).val(row.parentId);
+			        			$('#submit-form')[0].reset();  
+			        			$('#id').val(row.id); 
+			        			$('#code_name').val(row.code_name); 
+			        			$('#url').val(row.url);  
+			        			$('#send_type').val(row.send_type);  
+			        			$('#inf_type').val(row.inf_type);  
+			        			$('#back_msg_type').val(row.back_msg_type);  
+			        			$('#back_form').val(row.back_form);  
+			        			$('#return_form').val(row.return_form);  
+			        			$('#charge_code').val(row.charge_code);  
+			        			$('#ver_code_url').val(row.ver_code_url);  
+			        			$('#date_limit').val(row.date_limit);  
+			        			$('#month_limit').val(row.month_limit);  
+			        			$('#channel_type').val(row.channel_type);  
+			        			$('#linke_name').val(row.linke_name);  
+			        			$('#phone_no').val(row.phone_no);  
+			        			$('#detail').val(row.detail);
+			        			$('#success_flag').val(row.success_flag);
+			        			$('#order_id_code').val(row.order_id_code);
+			        			F.setDelAttr('input','readonly');
+								F.setDelAttr('select','readonly');
+								F.setDelAttr('input','disabled');
+								F.setDelAttr('select','disabled');
+			        			$('#btnSubmit').show();
 			            	}
 			        	});
 						return false;
 			        },
 			        /**
-					 * 删除菜单
+					 * 删除计费代码
 					 */
-			        'click .delMenu': function (e, value, row, index) {
+			        'click .delChargeCode': function (e, value, row, index) {
 			        	base.bootConfirm("是否确定删除？",function(){
 			        		var ids = new Array();  
 			        		ids.push(row.id);   
-			    			F.delMenu(ids);
+			    			F.delChargeCode(ids);
 			    		});
 			        },
-			        
-			        /**
-    				 * 菜单授权
-    				 */
-    		        'click .distributePermission': function (e, value, row, index) {
-    		        	core.openModel('modal-DistributePermission','菜单授权',function(){
-    		            	if(row!=null){
-    		            		$("#menuId").val(row.id)
-    		            		F.distributePermissionTree.load({"menuId":row.id},"distributePermissionTreeHidden");
-    		            	}
-    		        	});
-    		        },
     		        /**
-    		         * 查看权限
+    		         * 查看计费代码
     		         */
-    		        'click .checkPermission': function (e, value, row, index) {
-    		        	core.openModel('modal-CheckPermission','查看权限',function(){
-    		        		if(row!=null){
-    		        			F.checkPermissionTree.load({"menuId":row.id});
-    		        		}
-    		        	});
+    		        'click .checkChargeCode': function (e, value, row, index) {
+    		        	core.openModel('modal-charge-code','查看计费代码',function(){
+						});
+	        			$('#submit-form')[0].reset();  
+	        			$('#code_name').val(row.code_name); 
+	        			$('#url').val(row.url);  
+	        			$('#send_type').val(row.send_type);  
+	        			$('#inf_type').val(row.inf_type);  
+	        			$('#back_msg_type').val(row.back_msg_type);  
+	        			$('#back_form').val(row.back_form);  
+	        			$('#return_form').val(row.return_form);  
+	        			$('#charge_code').val(row.charge_code);  
+	        			$('#ver_code_url').val(row.ver_code_url);  
+	        			$('#date_limit').val(row.date_limit);  
+	        			$('#month_limit').val(row.month_limit);  
+	        			$('#channel_type').val(row.channel_type);  
+	        			$('#linke_name').val(row.linke_name);  
+	        			$('#phone_no').val(row.phone_no);  
+	        			$('#detail').val(row.detail);
+	        			$('#success_flag').val(row.success_flag);
+	        			$('#order_id_code').val(row.order_id_code);
+	        			F.setAddAttr('input','readonly','readonly');
+	        			F.setAddAttr('select','readonly','readonly');
+	        			F.setAddAttr('input','disabled','disabled');
+	        			F.setAddAttr('select','disabled','disabled');
+	        			$('#btnSubmit').hide();
     		        },
-    		        /**
-    		         * 查看简介
-    		         */
-    		        'click .introduction': function (e, value, row, index) {
-    		        	core.openModel('modal-introduction','APP简介',function(){
-    		        		if(row!=null){
-    		        			$("#appIntroduction").val(row.description)
-    		        		}
-    		        	});
-    		        }
 			    };
 		        
 		        var cols = [
 		                    {
 		        		        checkbox:true
 		        		    },{
-		        		        field: 'code_name',
-		        		        title: '计费代码名称'
-		        		    }, {
-		        		        field: 'url',
-		        		        title: '请求url',
-		    			        formatter:F.urlFormate
-		        		    },{
-		    			        field: 'send_type',
-		    			        title: '发送方式'
-		    		        }, {
-		        		        field: 'link_name',
-		        		        title: '联系人'
-		        		    },{
-		    			        field: 'phone_no',
-		    			        title: '联系电话'
-		    		        },{
 		    			        field: 'id',
 		    			        title: '菜单主键',
 		    			        visible:false
 		    		        },{
+		        		        field: 'code_name',
+		        		        title: '计费代码名称'
+		        		    },{
+		        		        field: 'url',
+		        		        title: '请求url',
+		    			        formatter:F.urlFormate
+		        		    },{
 		    			        field: 'charge_code',
 		    			        title: '计费代码报文',
 		    			        visible:false
+		    		        }, {
+		    			        field: 'send_type',
+		    			        title: '发送方式'
 		    		        },{
 		    			        field: 'inf_type',
 		    			        title: '接口模式',
 		    			        visible:false
+		    		        }, {
+		        		        field: 'linke_name',
+		        		        title: '联系人'
+		        		    },{
+		    			        field: 'phone_no',
+		    			        title: '联系电话'
 		    		        },{
 		    			        field: 'back_msg_type',
 		    			        title: '反馈报文的格式JSON\XML',
@@ -161,6 +164,10 @@ define(function (require, exports, module) {
 		    		        },{
 		    			        field: 'detail',
 		    			        title: '备注',
+		    			        visible:false
+		    		        },{
+		    			        field: 'state',
+		    			        title: '状态',
 		    			        visible:false
 		    		        },{
 		    			        field: 'create_time',
@@ -207,27 +214,24 @@ define(function (require, exports, module) {
 	    		F.table.init(F.basepath+'/main/charge_code/get-list-charge-codes',cols);
 	    		
 	    		/**
-				 * 打开模态框
+				 * 新增计费代码
 				 */
 				$('#addChargeCode').click(function(){
 					core.openModel('modal-charge-code','新增计费代码',function(){
-						//F.radioTree.load();
+						$('#submit-form')[0].reset(); 
+						$('#id').val('');
+						F.setDelAttr('input','readonly');
+						F.setDelAttr('select','readonly');
+						F.setDelAttr('input','disabled');
+						F.setDelAttr('select','disabled');
+						$('#btnSubmit').show();
 					});
 				});
-				
 				/**
 				 * 关闭模态框
 				 */
 				$('#btnClose').click(function(){
-					core.closeModel('modal-Menu');
-				});
-				
-				$('#btnDistributePermissionClose').click(function(){
-					core.closeModel('modal-DistributePermission');
-				});
-				
-				$('#btnCheckPermissionClose').click(function(){
-					core.closeModel('modal-CheckPermission');
+					core.closeModel('modal-charge-code');
 				});
 				
 				/**
@@ -237,10 +241,6 @@ define(function (require, exports, module) {
 					F.submit();
 	            });
 				
-				$('#btnDistributePermissionSubmit').click(function(){
-					F.permissionSubmit();
-				});
-				
 				/**
 				 * 批量删除
 				 */
@@ -248,100 +248,73 @@ define(function (require, exports, module) {
 					var ids = F.table.getIdSelections();
 					if(ids!=null&&ids.length>0){
 						base.bootConfirm("是否确定删除选定的"+ids.length+"个菜单？",function(){
-							F.delMenu(ids);
+							F.delChargeCode(ids);
 						});
 					}else{
 						base.bootAlert({"ok":false,"msg":"请选择你要删除的菜单！"});
 					}
 				});
-        },permissionSubmit:function(){
-        	var perids = $("#distributePermissionTreeHidden").val();
-        	var peridArray = new Array();
-        	if(perids!=null && perids.length>0)
-        		peridArray = perids.split(',');
-        	var menuId = $("#menuId").val();
-        	var data = {"id":menuId,"peridArray":peridArray};
-        	var url = F.basepath+'/main/menu/grant';
-        	base.ajaxRequest(url,data,function(data, status){
-        		 base.bootAlert(data);
-                 if (data.ok) {
-                 	core.closeModel('modal-DistributePermission');
-                 	F.reload();
-                 }
-        	},function(){
-        		alert("异常");
-        	});
         },submit:function(){
-        	var url = F.basepath+'/main/app/create';
-        	if($("#id").val()!=null&&$("#id").val()!="")
-        		url =F.basepath+'/main/menu/edit';
+        	var url = F.basepath+'/main/charge_code/create';
+        	if($('#id').val()!=null&&$('#id').val()!='')
+        		url =F.basepath+'/main/charge_code/edit';
         	var options = {
                     success: F.showResponse,      //提交后的回调函数
                     url: url,       //默认是form的action， 如果申明，则会覆盖
                     type: 'post',               //默认是form的method（get or post），如果申明，则会覆盖
                     dataType: 'json',           //html(默认), xml, script, json...接受服务端返回的类型
-                    clearForm: true,          //成功提交后，清除所有表单元素的值
+                    clearForm: false,          //成功提交后，清除所有表单元素的值
                     timeout: 30000               //限制请求的时间，当请求大于3秒后，跳出请求
                 }
         	$('#submit-form').ajaxForm(options);
         },showResponse:function(data, status){
             base.bootAlert(data);
             if (data.ok) {
-            	core.closeModel('modal-Menu');
+            	core.closeModel('modal-charge-code');
             	F.reload();
             }
-        },delMenu:function(ids){
-        	base.ajaxRequest(F.basepath+'/main/menu/del',{"menuIds":ids},function(data){
+        },delChargeCode:function(ids){
+        	base.ajaxRequest(F.basepath+'/main/charge_code/del',{'chargeCodeIds':ids},function(data){
         		base.ajaxSuccess(data);
         		F.reload();
-        	},function(){
-        		base.bootAlert({"ok":false,"msg":"网络异常"});
+        	},function(data){
+        		base.bootAlert(data);
         	});
         },reload:function(){
-        	F.tree.load();
         	F.table.reload();
         },onClick:function(event, treeId, treeNode, clickFlag) {
 			F.table.query({query: {'id':treeNode.id}});
-		},treeLoad:function(){
-			F.tree = core.initTree("menuTree",F.basepath+'/main/menu/get-all-menus',F.onClick);
-        	F.tree.load();
-        	if (base.perList.menu.edit||base.perList.menu.create) {
-        		F.radioTree = core.initDropDownRadioTree("parentId",F.basepath+'/main/menu/get-all-menus');
-        	}
-        	if (base.perList.menu.grant) {
-        		F.distributePermissionTree = core.initRadioTree('distributePermissionTree',F.basepath+'/main/get-menu-check-permissions','distributePermissionTreeHidden')
-        	}
-        	if (base.perList.menu.checkPermission) {
-        		F.checkPermissionTree = core.initRadioTree('checkPermissionTree',F.basepath+'/main/get-menu-show-permissions');
-        	}
-        },
+		},
         operateFormatter:function (value, row, index) {
-        	var _btnAction = "";
-        	if (base.perList.menu.grant) {
-        		_btnAction += "<a class='distributePermission btn btn-primary btn-small' href='#' title='菜单授权' style='margin-left:5px'>授权</a>";
-        	}
+        	var _btnAction = '';
         	if (base.perList.menu.checkPermission) {
-        		_btnAction += "<a class='checkPermission btn btn-info btn-small' href='#' title='查看授权' style='margin-left:5px'>查看</a>";
+        		_btnAction += "<a class='checkChargeCode btn btn-info btn-small' href='#' title='查看计费代码' style='margin-left:5px'>查看</a>";
         	}
         	if (base.perList.menu.edit) {
-        		_btnAction += "<a data-toggle='modal' class='editMenu btn btn-success btn-small' href='#' title='编辑菜单' style='margin-left:5px'>编辑</a>";
+        		_btnAction += "<a data-toggle='modal' class='editChargeCode btn btn-success btn-small' href='#' title='编辑计费代码' style='margin-left:5px'>编辑</a>";
         	}
         	if (base.perList.menu.del) {
-        		_btnAction += "<a class='delMenu btn btn-danger btn-small' href='#' title='删除菜单' style='margin-left:5px'>删除</a>";
+        		_btnAction += "<a class='delChargeCode btn btn-danger btn-small' href='#' title='删除计费代码' style='margin-left:5px'>删除</a>";
         	}
         	return _btnAction;
-        },picFormatter:function (value, row, index) {
-        	if(row.icon!=null&&row.icon!="")
-        		return "<i class='"+row.icon+"'/>";
-        	else
-        		return "-";
         },urlFormate:function (value, row, index) {
         	if(value){
         		if(value.length>20){
         			return value.substr(0,20) + '...';
+        		}else{
+        			return value;
         		}
         	}
+        },setAddAttr:function (colom,attr,value) {
+			$(colom).attr(attr,value);
+        },setDelAttr:function (colom,attr) {
+    		$(colom).removeAttr(attr);
         }
     };
 
 });
+function delDisabledTime(o){
+	console.info(o);
+	o.parentElement.parentElement.remove();
+	
+}

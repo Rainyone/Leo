@@ -233,7 +233,7 @@ define(function (require, exports, module) {
         	var _showId = 'show_'+guid;
         	var _menuBtn = 'menuBtn_'+guid;
         	$('#'+_hiddenId).css({"display":"none"});
-        	$("#"+_hiddenId).after('<input class="span8" id="'+_showId+'" required placeholder="请选择" type="text" />'
+        	$("#"+_hiddenId).after('<input class="span8" id="'+_showId+'" required placeholder="请选择" type="text" readonly/>'
             +'<button id="'+_menuBtn+'" type="button">'
             	+'<i class="icon-building"></i>'
             +'</button>');

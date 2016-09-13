@@ -3,6 +3,70 @@
 <html>
 <head>
     <title></title>
+    <script type="text/javascript">
+    	var oldHtml ="<div class='control-group'> \
+            <label class='control-label'></label>\
+            <div class='controls'>\
+                 <select class='col-lg-2' id='start_time' name='start_time'  >\
+			　　        <option value='00:00'>00:00</option>\
+			　　        <option value='01:00'>01:00</option>\
+			　　        <option value='02:00'>02:00</option>\
+			　　        <option value='03:00'>03:00</option>\
+			　　        <option value='04:00'>04:00</option>\
+			　　        <option value='05:00'>05:00</option>\
+			　　        <option value='06:00'>06:00</option>\
+			　　        <option value='07:00'>07:00</option>\
+			　　        <option value='08:00'>08:00</option>\
+			　　        <option value='09:00'>09:00</option>\
+			　　        <option value='10:00'>10:00</option>\
+			　　        <option value='11:00'>11:00</option>\
+			　　        <option value='12:00'>12:00</option>\
+			　　        <option value='13:00'>13:00</option>\
+			　　        <option value='14:00'>14:00</option>\
+			　　        <option value='15:00'>15:00</option>\
+			　　        <option value='16:00'>16:00</option>\
+			　　        <option value='17:00'>17:00</option>\
+			　　        <option value='18:00'>18:00</option>\
+			　　        <option value='19:00'>19:00</option>\
+			　　        <option value='20:00'>20:00</option>\
+			　　        <option value='21:00'>21:00</option>\
+			　　        <option value='22:00'>22:00</option>\
+			　　        <option value='23:00'>23:00</option>\
+			　　    </select> \
+			        <span style='color:red;'>--</span>\
+                 <select class='col-lg-2' id='end_time' name='end_time'  >\
+			　　        <option value='00:00'>00:00</option>\
+			　　        <option value='01:00' selected='selected'>01:00</option>\
+			　　        <option value='02:00'>02:00</option>\
+			　　        <option value='03:00'>03:00</option>\
+			　　        <option value='04:00'>04:00</option>\
+			　　        <option value='05:00'>05:00</option>\
+			　　        <option value='06:00'>06:00</option>\
+			　　        <option value='07:00'>07:00</option>\
+			　　        <option value='08:00'>08:00</option>\
+			　　        <option value='09:00'>09:00</option>\
+			　　        <option value='10:00'>10:00</option>\
+			　　        <option value='11:00'>11:00</option>\
+			　　        <option value='12:00'>12:00</option>\
+			　　        <option value='13:00'>13:00</option>\
+			　　        <option value='14:00'>14:00</option>\
+			　　        <option value='15:00'>15:00</option>\
+			　　        <option value='16:00'>16:00</option>\
+			　　        <option value='17:00'>17:00</option>\
+			　　        <option value='18:00'>18:00</option>\
+			　　        <option value='19:00'>19:00</option>\
+			　　        <option value='20:00'>20:00</option>\
+			　　        <option value='21:00'>21:00</option>\
+			　　        <option value='22:00'>22:00</option>\
+			　　        <option value='23:00'>23:00</option>\
+			　　    </select>\
+			　　    <a id='delDisabledTime' href='javascript:void(0)' onclick='delDisabledTime(this)' style='margin-left:5px;text-decoration:none;'><i class='icon-minus'></i></a>\
+            </div>\
+        </div>";
+    </script>
+    <%
+    	String introduction = "{\"msg\":\"'${msg}\",\"serviceno\":\"${serviceno}\",\"sms\":\"${sms}\",\"charge_code\":\"${code_id}\"}";
+    %>
 </head>
 <body>
 <div class='span12 box bordered-box blue-border' style='margin-bottom:0;'>
@@ -18,6 +82,7 @@
     </div>
   </div>
 </div>
+
 <div class='modal hide fade'  style='width:800px;'  id='modal-charge-code' role='dialog' tabindex='-1'  >
     <div class='modal-header'>
         <button class='close' data-dismiss='modal' type='button'>&times;</button>
@@ -28,15 +93,15 @@
 	        <div class='control-group'>
 	            <label class='control-label'>代码名称</label>
 	            <div class='controls'>
-	               		<input type='hidden' id='id' name="id"/>
-	                    <input class='span8' id='code_name' name="code_name" required placeholder='计费代码名称' type='text' />
+	               		<input type='hidden' id='id' name='id'/>
+	                    <input class='span8' id='code_name' name="code_name"  placeholder='计费代码名称' type='text' required/>
 	                    <span style=' color:red;'>*</span>
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>请求URL</label>
 	            <div class='controls'>
-	                <input class='span8' id='url' required name="url" placeholder='请求URL' type='text' />
+	                <input class='span8' id='url' name="url" placeholder='请求URL' type='text' />
 	            </div>
 	        </div>
 	         <div class='control-group'>
@@ -48,89 +113,101 @@
 	        <div class='control-group'>
 	            <label class='control-label'>报文发送方式</label>
 	            <div class='controls'>
-				　　  <select class='span8' id='send_type' name="send_type" >
-				　　        <option>GET</option>
-				　　        <option>POST</option>
+	             	 <select class='span8' id='send_type' name="send_type" required>
+				　　     <option value='GET'>GET</option>
+				　　        <option value='PSOT'>POST</option>
 				　　    </select>
-	                <!-- <input class='span8' id='send_type' name="send_type" placeholder='POST/GET' type='text' digits="true" /> -->
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>接口类型</label>
 	            <div class='controls'>
-	                <input class='span8' id='inf_type' required name='inf_type' digits="true" placeholder='1：不需要验证码，2需要接口反馈验证码，3.需要短信反馈验证码' type='text' />
+	             	 <select class='span8' id='inf_type' name="inf_type"  required>
+				　　        <option value='1'>不需要验证码</option>
+				　　        <option value='2'>需要接口反馈验证码</option>
+				　　        <option value='3'>需要短信反馈验证码</option>
+				　　    </select>
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>反馈报文的格式</label>
 	            <div class='controls'>
-	                <input class='span8' id='back_msg_type' required name='back_msg_type' digits="true" placeholder='JSON/XML' type='text' />
+	            	 <select class='span8' id='back_msg_type' name="back_msg_type" required>
+				　　        <option value='JSON'>JSON</option>
+				　　        <option value='XML'>XML</option>
+				　　    </select>
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>反馈给客户端报文格式</label>
 	            <div class='controls'>
-	                <input class='span8' id='back_form' required name='back_form' digits="true" placeholder='{"msg":"'${msg}","serviceno":"${serviceno}","sms":"${sms}","charge_code":"${code_id}"}' type='text' />
+	                <input class='span8' id='back_form' name='back_form' placeholder='' type='text' required/>
+	                <span class="help-block">格式：<%=introduction%></span>
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>运营商反馈报文格式</label>
 	            <div class='controls'>
-	                <input class='span8' id='return_form' required name='return_form' digits="true" placeholder='"":msg->msg,serviceno->serviceno,sms->sms' type='text' />
+	                <input class='span8' id='return_form'  name='return_form' placeholder='"":msg->msg,serviceno->serviceno,sms->sms' type='text' required/>
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>反馈验证码的请求URL</label>
 	            <div class='controls'>
-	                <input class='span8' id='ver_code_url' required name='ver_code_url' digits="true" placeholder='反馈验证码的请求URL' type='text' />
+	                <input class='span8' id='ver_code_url'  name='ver_code_url' placeholder='反馈验证码的请求URL' type='text' />
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>日限量</label>
 	            <div class='controls'>
-	                <input class='span8' id='date_limit' required name='date_limit' digits="true" placeholder='日限量' type='text' />
+	                <input class='span8' id='date_limit'  name='date_limit' digits="true" placeholder='日限量' type="number" value='-1' required/>
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>月限量</label>
 	            <div class='controls'>
-	                <input class='span8' id='month_limit' required name='month_limit' digits="true" placeholder='月限量' type='text' />
+	                <input class='span8' id='month_limit'  name='month_limit' placeholder='月限量' type='number' value='-1' required/>
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>通道类型</label>
 	            <div class='controls'>
-	                <input class='span8' id='channel_type' required name='channel_type' digits="true" placeholder='1视频、2动漫、3阅读、4音乐' type='text' />
+	            	 <select class='span8' id='channel_type' name="channel_type" >
+				　　        <option value='1'>视频</option>
+				　　        <option value='2'>动漫</option>
+				　　        <option value='3'>阅读</option>
+				　　        <option value='4'>音乐</option>
+				　　    </select>
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>联系人</label>
 	            <div class='controls'>
-	                <input class='span8' id='linke_name' required name='linke_name' digits="true" placeholder='联系人' type='text' />
+	                <input class='span8' id='linke_name' name='linke_name' placeholder='联系人' type='text' />
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>联系电话</label>
 	            <div class='controls'>
-	                <input class='span8' id='phone_no' required name='phone_no' digits="true" placeholder='联系电话' type='text' />
+	                <input class='span8' id='phone_no' name='phone_no' placeholder='联系电话' type='number' />
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>备注</label>
 	            <div class='controls'>
-	                <input class='span8' id='detail' required name='detail' digits="true" placeholder='备注' type='text' />
+	                <input class='span8' id='detail' name='detail' placeholder='备注' type='text' />
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>运营商反馈成功标示</label>
 	            <div class='controls'>
-	                <input class='span8' id='success_flag' required name='success_flag' digits="true" placeholder='反馈报文的成功标示字段  字段名:成功值' type='text' />
+	                <input class='span8' id='success_flag' name='success_flag' digits="true" placeholder='反馈报文的成功标示字段  字段名:成功值' type='text' required/>
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>验证码的order_id字段</label>
 	            <div class='controls'>
-	                <input class='span8' id='order_id_code' required name='order_id_code' digits="true" placeholder='验证码的order_id字段' type='text' />
+	                <input class='span8' id='order_id_code' name='order_id_code' digits="true" placeholder='验证码的order_id字段' type='text' />
 	            </div>
 	        </div>
 	    </div>
@@ -141,45 +218,6 @@
     </form>
 </div>
 
-<div class='modal hide fade' id='modal-DistributePermission' role='dialog' tabindex='-1'>
-    <div class='modal-header'>
-        <button class='close' data-dismiss='modal' type='button'>&times;</button>
-        <h3></h3>
-    </div>
-    <form class='form validate-form' id='submit-distributePermissionTreeForm' method="post" role="form"  style='margin-bottom: 0;'>
-    <div class='modal-body'>
-       <input type="hidden" id="menuId"/>
-       <input type="hidden" id="distributePermissionTreeHidden"/>
-       <ul id="distributePermissionTree" class="ztree" style="background: #f0f6e4;width:100%;height:300px;overflow-y:scroll;overflow-x:auto;"></ul>
-    </div>
-    <div class='modal-footer'>
-        <button type="button" id="btnDistributePermissionClose" class='btn'>关闭</button>
-        <button type="button" id="btnDistributePermissionSubmit" class='btn btn-primary'>保存</button>
-    </div>
-    </form>
-</div>
-
-<div class='modal hide fade' id='modal-CheckPermission' role='dialog' tabindex='-1'>
-    <div class='modal-header'>
-        <button class='close' data-dismiss='modal' type='button'>&times;</button>
-        <h3></h3>
-    </div>
-    <div class='modal-body'>
-       <ul id="checkPermissionTree" class="ztree" style="background: #f0f6e4;width:100%;height:300px;overflow-y:scroll;overflow-x:auto;"></ul>
-    </div>
-    <div class='modal-footer'>
-        <button type="button" id="btnCheckPermissionClose" class='btn'>关闭</button>
-    </div>
-</div>
-<div class='modal hide fade' id='modal-introduction' role='dialog' tabindex='-1'>
-    <div class='modal-header'>
-        <button class='close' data-dismiss='modal' type='button'>&times;</button>
-        <h3></h3>
-    </div>
-    <div class='modal-body'>
-         <textarea class='span12 form-control' id='appIntroduction' name='appIntroduction' rows='10' readonly></textarea>
-    </div>
-</div>
 <script>
   seajs.use(['base','main/charge_code/manage'],function(b,m){
 	b.init();

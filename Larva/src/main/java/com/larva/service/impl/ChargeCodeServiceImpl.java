@@ -16,6 +16,7 @@ import com.larva.model.ChargeCode;
 import com.larva.service.IChargeCodeService;
 import com.larva.utils.UUIDUtil;
 import com.larva.vo.ChargeCodeCreateVO;
+import com.larva.vo.ChargeCodeEditVO;
 import com.larva.vo.Pager;
 import com.larva.vo.PagerReqVO;
 import com.larva.vo.ResultVO;
@@ -34,28 +35,26 @@ public class ChargeCodeServiceImpl implements IChargeCodeService {
 		chargeCode.setCodeName(createVO.getCode_name());
 		chargeCode.setUrl(createVO.getUrl());
 		chargeCode.setChargeCode(createVO.getCharge_code());
-		chargeCode.setSendType(createVO.getSend_type());
-		chargeCode.setInfType(createVO.getInf_type());
-		chargeCode.setBackMsgType(createVO.getBack_msg_type());
+		chargeCode.setSendType(createVO.getSend_type()[0]);
+		chargeCode.setInfType(Integer.valueOf(createVO.getInf_type()[0]));
+		chargeCode.setBackMsgType(createVO.getBack_msg_type()[0]);
 		chargeCode.setOrderBack(createVO.getOrder_back());
 		chargeCode.setBackForm(createVO.getBack_form());
 		chargeCode.setReturnForm(createVO.getReturn_form());
 		chargeCode.setVerCodeUrl(createVO.getVer_code_url());
 		chargeCode.setDateLimit(createVO.getDate_limit());
 		chargeCode.setMonthLimit(createVO.getMonth_limit());
-		chargeCode.setChannelType(createVO.getChannel_type());
+		chargeCode.setChannelType(Integer.valueOf(createVO.getChannel_type()[0]));
 		chargeCode.setLinkeName(createVO.getLinke_name());
 		chargeCode.setPhoneNo(createVO.getPhone_no());
 		chargeCode.setDetail(createVO.getDetail());
 		chargeCode.setState(1);
 		chargeCode.setCreateTime(new Date());
-		chargeCode.setCreatePeopleName("");
-		chargeCode.setUpdateTime(new Date());
-		chargeCode.setUpdatePeopleName("");
 		chargeCode.setDateCount(0);
 		chargeCode.setMonthCount(0);
 		chargeCode.setSuccessFlag(createVO.getSuccess_flag());
 		chargeCode.setOrderIdCode(createVO.getOrder_id_code());
+		chargeCode.setCreatePeopleName(createVO.getCreate_people_name());
 		chargeCodeDao.save(chargeCode);
         resultVO.setMsg("操作成功!");
         return resultVO;
@@ -104,5 +103,65 @@ public class ChargeCodeServiceImpl implements IChargeCodeService {
 		m.put("success_flag", chargeCode.getSuccessFlag());
 		m.put("order_id_code", chargeCode.getOrderIdCode());
 		return m;
+	}
+
+
+	@Override
+	public ResultVO deleteChargeCodes(String[] chargeCodeIds,String userId) {
+		int result = 0;
+		ResultVO rv = new ResultVO(false);
+		if(chargeCodeIds!=null&&chargeCodeIds.length>0){
+			for(String id:chargeCodeIds){
+				result += chargeCodeDao.deleteChargeCode(id,userId);
+			}
+		}
+		if(result >0){
+			rv.setOk(true);
+			rv.setMsg("删除成功");
+		}else{
+			rv.setMsg("删除失败");
+		}
+		return rv;
+	}
+
+
+	@Override
+	public ResultVO editChargeCode(ChargeCodeEditVO editVo) {
+		ChargeCode cc = new ChargeCode();
+		cc.setId(editVo.getId());
+		cc.setCodeName(editVo.getCode_name());
+		cc.setUrl(editVo.getUrl());
+		cc.setChargeCode(editVo.getCharge_code());
+		cc.setSendType(editVo.getSend_type()[0]);
+		cc.setInfType(Integer.valueOf(editVo.getInf_type()[0]));
+		cc.setBackMsgType(editVo.getBack_msg_type()[0]);
+		cc.setOrderBack(editVo.getOrder_back());
+		cc.setBackForm(editVo.getBack_form());
+		cc.setReturnForm(editVo.getReturn_form());
+		cc.setVerCodeUrl(editVo.getVer_code_url());
+		cc.setDateLimit(editVo.getDate_limit());
+		cc.setMonthLimit(editVo.getDate_limit());
+		cc.setChannelType(Integer.valueOf(editVo.getChannel_type()[0]));
+		cc.setLinkeName(editVo.getLinke_name());
+		cc.setPhoneNo(editVo.getPhone_no());
+		cc.setDetail(editVo.getDetail());
+		cc.setState(editVo.getState());
+		cc.setCreateTime(editVo.getCreate_time());
+		cc.setCreatePeopleName(editVo.getCreate_people_name());
+		cc.setUpdateTime(new Date());
+		cc.setUpdatePeopleName(editVo.getUpdate_people_name());
+		cc.setDateCount(editVo.getDateCount());
+		cc.setMonthCount(editVo.getMonthCount());
+		cc.setSuccessFlag(editVo.getSuccess_flag());
+		cc.setOrderIdCode(editVo.getOrder_id_code());
+		int result = chargeCodeDao.editChargeCode(cc);
+		ResultVO r = new ResultVO();
+		if(result>0){
+			r.setOk(true);
+			r.setMsg("更新成功");
+		}else{
+			r.setMsg("更新失败");
+		}
+		return r;
 	}
 }

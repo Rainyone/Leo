@@ -18,4 +18,16 @@ import java.util.Set;
 public interface IChargeCodeDao  {
     int save(ChargeCode chargeCode);
     PageResult<ChargeCode> selectChargeCodes(int pageNow, int pageSize);
+    /**
+     * 根据id删除计费代码
+     * @param id
+     * @return
+     */
+	int deleteChargeCode(String id,String userId);
+	/**
+	 * 修改计费代码
+	 * @param cc
+	 * @return
+	 */
+	int editChargeCode(ChargeCode cc);
 }
