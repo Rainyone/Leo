@@ -133,9 +133,15 @@
                 /main/role/edit=o,p[role:edit]
                 /main/role/show-roles=o,p[role:check]
                 /main/role/create=o,p[role:add]
-
+                
+                /main/menu/manage=o,p[app:manage]
+                /main/app/create=o,p[app:add]
+                /main/app/edit=o,p[app:edit]
+                /main/app/del=o,p[app:delete]
+              
+                
                 /main/department/manage=o
-               <!--  /main/department/get-show-departments=o
+               <!--  /main/departmeent/get-show-departments=o
                 /main/department/get-show-departments-except-children=o -->
                 /main/department/get-list-departments=o
                 /main/department/get-all-departments=o

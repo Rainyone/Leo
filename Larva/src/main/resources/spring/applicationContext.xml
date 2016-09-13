@@ -44,12 +44,18 @@
     </bean>
     
     <bean id="exceptionHandler" class="com.larva.utils.MyExceptionHandler"/>  
-    
-    <!--注解扫描的包-->
+     
+    <!--注解扫描的包
     <context:component-scan base-package="com.larva.*,com.mini.core.cfg"/>
+    -->
     <!-- 启动对@AspectJ注解的支持-->
     <aop:aspectj-autoproxy proxy-target-class="true" />
-
+    
+	<context:component-scan base-package="com.larva.*,com.mini.core.cfg" >
+        <!-- prevented Service injected twice -->
+        <context:exclude-filter type="annotation" expression="com.larva.service"/> 
+    </context:component-scan>
+    
     <import resource="db.xml"/>
     <import resource="shiro.xml"/>
     <!-- <import resource="mq.xml"/> -->
