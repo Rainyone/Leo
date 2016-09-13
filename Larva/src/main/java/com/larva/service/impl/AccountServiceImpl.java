@@ -350,7 +350,7 @@ public class AccountServiceImpl implements IAccountService {
             departmentAccountDao.deleteByAccountId(userId);
         }
         DepartmentAccount departmentAccount = new DepartmentAccount();
-        departmentAccount.setId(UUIDUtil.getUUID());
+       // departmentAccount.setId(UUIDUtil.getUUID());
         departmentAccount.setDepId(depId);
         departmentAccount.setAccountId(userId);
         departmentAccountDao.save(departmentAccount);
