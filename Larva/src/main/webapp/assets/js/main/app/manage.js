@@ -12,17 +12,17 @@ define(function (require, exports, module) {
         table:new core.Table('menuTable'),
         init:function(_basepath) {
             F.basepath = _basepath;
-            var picSelect =new core.PicSelect('icon')
+           // var picSelect =new core.PicSelect('icon')
             /**
-             * 是否具有添加菜单权限
+             * 是否具有添加App的权限
              */
-            if(base.perList.menu.create){
+            if(base.perList.app.create){
             	$("#menu-header .actions").append("<a href='#' id='addApp' data-toggle='modal' class='btn btn-success btn-small' style='margin-left:5px'><i class='icon-plus'></i>添加</a>");
             }
             /**
-             * 是否具有删除菜单权限
+             * 是否具有删除APP权限
              */
-            if(base.perList.menu.del){
+            if(base.perList.app.del){
             	$("#menu-header .actions").append("<a href='#' id='delApps' class='btn btn-danger btn-small' style='margin-left:5px'><i class='icon-remove'></i>删除</a>");
             }
             
@@ -33,7 +33,7 @@ define(function (require, exports, module) {
 	        
 	        operateEvents = {
 					/**
-					 *修改菜单
+					 *修改App
 					 */
 			        'click .editApp': function (e, value, row, index) {
 			        	core.openModel('modal-Menu','修改APP',function(){
@@ -53,7 +53,7 @@ define(function (require, exports, module) {
 						return false;
 			        },
 			        /**
-					 * 删除菜单
+					 * 删除App
 					 */
 			        'click .delApp': function (e, value, row, index) {
 			        	base.bootConfirm("是否确定删除？",function(){
@@ -240,30 +240,30 @@ define(function (require, exports, module) {
         },onClick:function(event, treeId, treeNode, clickFlag) {
 			F.table.query({query: {'id':treeNode.id}});
 		},treeLoad:function(){
-			F.tree = core.initTree("menuTree",F.basepath+'/main/menu/get-all-menus',F.onClick);
-        	F.tree.load();
-        	if (base.perList.menu.edit||base.perList.menu.create) {
-        		F.radioTree = core.initDropDownRadioTree("parentId",F.basepath+'/main/menu/get-all-menus');
-        	}
-        	if (base.perList.menu.grant) {
-        		F.distributePermissionTree = core.initRadioTree('distributePermissionTree',F.basepath+'/main/get-menu-check-permissions','distributePermissionTreeHidden')
-        	}
-        	if (base.perList.menu.checkPermission) {
-        		F.checkPermissionTree = core.initRadioTree('checkPermissionTree',F.basepath+'/main/get-menu-show-permissions');
-        	}
+//			F.tree = core.initTree("menuTree",F.basepath+'/main/menu/get-all-menus',F.onClick);
+//        	F.tree.load();
+//        	if (base.perList.app.edit||base.perList.app.create) {
+//        		F.radioTree = core.initDropDownRadioTree("parentId",F.basepath+'/main/menu/get-all-menus');
+//        	}
+//        	if (base.perList.menu.grant) {
+//        		F.distributePermissionTree = core.initRadioTree('distributePermissionTree',F.basepath+'/main/get-menu-check-permissions','distributePermissionTreeHidden')
+//        	}
+//        	if (base.perList.menu.checkPermission) {
+//        		F.checkPermissionTree = core.initRadioTree('checkPermissionTree',F.basepath+'/main/get-menu-show-permissions');
+//        	}
         },
         operateFormatter:function (value, row, index) {
         	var _btnAction = "";
-        	if (base.perList.menu.grant) {
-        		_btnAction += "<a class='distributePermission btn btn-primary btn-small' href='#' title='菜单授权' style='margin-left:5px'>授权</a>";
-        	}
-        	if (base.perList.menu.checkPermission) {
-        		_btnAction += "<a class='checkPermission btn btn-info btn-small' href='#' title='查看授权' style='margin-left:5px'>查看</a>";
-        	}
-        	if (base.perList.menu.edit) {
+//        	if (base.perList.menu.grant) {
+//        		_btnAction += "<a class='distributePermission btn btn-primary btn-small' href='#' title='菜单授权' style='margin-left:5px'>授权</a>";
+//        	}
+//        	if (base.perList.menu.checkPermission) {
+//        		_btnAction += "<a class='checkPermission btn btn-info btn-small' href='#' title='查看授权' style='margin-left:5px'>查看</a>";
+//        	}
+        	if (base.perList.app.edit) {
         		_btnAction += "<a data-toggle='modal' class='editApp btn btn-success btn-small' href='#' title='编辑APP' style='margin-left:5px'>编辑</a>";
         	}
-        	if (base.perList.menu.del) {
+        	if (base.perList.app.del) {
         		_btnAction += "<a class='delApp btn btn-danger btn-small' href='#' title='删除APP' style='margin-left:5px'>删除</a>";
         	}
         	return _btnAction;

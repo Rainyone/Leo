@@ -163,6 +163,11 @@ define(function (require, exports, module) {
                 check:false,
                 distribute_role:false,
                 edit_dep:false
+            },
+            app: {
+                del: false,
+                edit: false,
+                create: false
             }
         }
     };

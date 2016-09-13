@@ -6,6 +6,10 @@
 <head>
     <title>管理系统</title>
     <%@include file="/WEB-INF/pages/include/baseCSS.jsp" %>
+    <%@ page language="java" import="com.larva.utils.*" pageEncoding="utf-8"%>
+	<%
+		String userAccount = (String)session.getAttribute(Constants.DEFAULT_SESSION_USERNAME);
+	%>
 </head>
 <body class='contrast-blue'>
 <header>
@@ -169,7 +173,7 @@
                     <li class='dropdown dark user-menu'>
                         <a class='dropdown-toggle' data-toggle='dropdown' href='#'>
                             <img alt='Mila Kunis' height='23' src='${ctxAssets}/images/avatar.jpg' width='23' />
-                            <span class='user-name hidden-phone'>管理员</span>
+                            <span class='user-name hidden-phone'><%=userAccount %></span>
                             <b class='caret'></b>
                         </a>
                         <ul class='dropdown-menu'>
@@ -282,7 +286,16 @@
     <shiro:hasPermission name="edituser:dep">
         <span id="basejs_user_edit_dep" style="display:none;"/>
     </shiro:hasPermission>
-                
+    
+    <shiro:hasPermission name="app:add">
+    	<span id="basejs_app_create" style="display:none;"/>
+    </shiro:hasPermission>
+    <shiro:hasPermission name="app:edit">
+    	<span id="basejs_app_edit" style="display:none;"/>
+    </shiro:hasPermission>
+    <shiro:hasPermission name="app:delete">
+    	<span id="basejs_app_del" style="display:none;"/>
+    </shiro:hasPermission>    
             </div>
         </div>
     </div>
@@ -326,6 +339,7 @@
     </section>
 </div>
 <%@include file="/WEB-INF/pages/include/baseJS.jsp" %>
+
 <script type="text/javascript">
     seajs.config({
         base: "${ctxAssets}/js/",
@@ -411,6 +425,16 @@
         if ($('#basejs_user_edit_dep').length > 0) {
             base.perList.user.edit_dep = true;
         }
+        if ($('#basejs_app_create').length > 0) {
+            base.perList.app.create = true;
+        }
+        if ($('#basejs_app_edit').length > 0) {
+            base.perList.app.edit = true;
+        }
+        if ($('#basejs_app_del').length > 0) {
+            base.perList.app.del = true;
+        }
+      
     	index.init('${ctx}');
     });
 
