@@ -284,6 +284,7 @@ public class AccountServiceImpl implements IAccountService {
         accountDao.save(account);
 
         DepartmentAccount departmentAccount = new DepartmentAccount();
+        departmentAccount.setId(UUIDUtil.getUUID());
         departmentAccount.setAccountId(account.getId());
         departmentAccount.setDepId(createVO.getDep());
         departmentAccountDao.save(departmentAccount);
@@ -382,6 +383,7 @@ public class AccountServiceImpl implements IAccountService {
         if (!roleIdSet.isEmpty()) {
             for (String roleId : roleIdSet) {
                 AccountRole accountRole = new AccountRole();
+                accountRole.setId(UUIDUtil.getUUID());
                 accountRole.setAccountId(userId);
                 accountRole.setRoleId(roleId);
                 accountRoleDao.createAccountRole(accountRole);

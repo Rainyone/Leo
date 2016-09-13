@@ -250,6 +250,7 @@ public class RoleServiceImpl implements IRoleService {
         if (!perIdSet.isEmpty()) {
             for (String perId : perIdSet) {
                 RolePermission rolePermission = new RolePermission();
+                rolePermission.setId(UUIDUtil.getUUID());
                 rolePermission.setPermissionId(perId);
                 rolePermission.setRoleId(roleId);
                 rolePermissionDao.addRolePermission(rolePermission);
