@@ -7,7 +7,7 @@ define(function (require, exports, module) {
         basepath: '',
         codeName:'',
         charge_code_id:'',
-        table:new core.Table('areaChargeCodeTable'),
+        table:new core.Table('areaAPPTable'),
         init:function(_basepath) {
             F.basepath = _basepath;
            // $("#charge-code-area-header .actions").append("<a href='#' id='allCheck' data-toggle='modal' class='btn btn-small btn-success' style='margin-left:5px'><i class='icon-plus'></i>全部选中</a>");
@@ -18,23 +18,23 @@ define(function (require, exports, module) {
 			        /**
 					 * 
 					 */
-			        'click .setChargeArea': function (e, value, row, index) {
-			        	var code_id = row.id;
-			        	var code_name = row.code_name;
-			        	$('#code_name').text(code_name);
-			        	$('.chargeId').each(function(){
-							$(this).val(code_id);
+			        'click .setAppArea': function (e, value, row, index) {
+			        	var app_id = row.id;
+			        	var app_name = row.app_name;
+			        	$('#app_name').text(app_name);
+			        	$('.appId').each(function(){
+							$(this).val(app_id);
 	              	  	});
-			        	F.initAreaCharge(code_id,false);
+			        	F.initAreaCharge(app_id,false);
 			        },
 			        /**
-					 * 删除菜单
+					 * 查看菜单
 					 */
 			        'click .viewAreaLimit': function (e, value, row, index) {
-			        	var code_id = row.id;
-			        	var code_name = row.code_name;
-			        	$('#code_name').text(code_name);
-			        	F.initAreaCharge(code_id,true);
+			        	var app_id = row.id;
+			        	var app_name = row.app_name;
+			        	$('#app_name').text(app_name);
+			        	F.initAreaCharge(app_id,true);
 			        }
 			    };
 		        
@@ -44,8 +44,8 @@ define(function (require, exports, module) {
 		    			        title: '菜单主键',
 		    			        visible:false
 		    		        },{
-		        		        field: 'code_name',
-		        		        title: '计费代码名称'
+		        		        field: 'app_name',
+		        		        title: 'APP名称'
 		        		    }];
 		        cols.push({
 			    	align: 'center',
@@ -53,7 +53,7 @@ define(function (require, exports, module) {
 			        events: operateEvents,
 			        formatter:F.operateFormatter
 			    });
-	    		F.table.init(F.basepath+'/main/charge_code/get-list-charge-codes',cols);
+	    		F.table.init(F.basepath+'/main/app/get-list-apps',cols);
 	    		
 				/**
 				 * 提交表单
@@ -81,7 +81,7 @@ define(function (require, exports, module) {
 						var datas=[]; 
 						$('input[name=check]').each(function(){
 							var id = $(this).attr('id');
-							var charge_code_id = $('#charge_id_'+id).val(); 
+							var charge_code_id = $('#app_id_'+id).val(); 
 							var code_area_id =$('#hidden_'+id).val(); 
 							var checkBox = $('#'+id);
 							if(checkBox.attr("checked")){//已选择
@@ -105,8 +105,8 @@ define(function (require, exports, module) {
 				//单个提交
 				$("a[class='btn btn-success btn-small']").click(function(){
 					var id = $(this).attr('id').substr(3);
-					var charge_code_id = $('#charge_id_'+id).val(); 
-					if(charge_code_id){
+					var app_id = $('#app_id_'+id).val(); 
+					if(app_id){
 						var code_area_id =$('#hidden_'+id).val(); 
 						var checkBox = $('#'+id);
 						if(checkBox.attr("checked")){//已选择
@@ -118,13 +118,13 @@ define(function (require, exports, module) {
 							if(!yxl){
 								yxl=-1
 							}
-							var data = {id:code_area_id,area_id:id,charge_code_id:charge_code_id,checked:1,rxl:rxl,yxl:yxl};
+							var data = {id:code_area_id,area_id:id,app_id:app_id,checked:1,rxl:rxl,yxl:yxl};
 						}else{
-							var data = {id:code_area_id,area_id:id,charge_code_id:charge_code_id,checked:0,rxl:-1,yxl:-1};
+							var data = {id:code_area_id,area_id:id,app_id:app_id,checked:0,rxl:-1,yxl:-1};
 						}
-						var url = F.basepath+'/main/charge_code_rule/area/set-one-area';
+						var url = F.basepath+'/main/app/app_rule/area/set-one-area';
 						base.ajaxRequest(url,data,function(data, status){
-							F.initAreaCharge(charge_code_id,false);
+							F.initAreaCharge(app_id,false);
 						},function(){
 							//alert("异常");
 						});
@@ -162,13 +162,13 @@ define(function (require, exports, module) {
         operateFormatter:function (value, row, index) {
         	var _btnAction = "";
         	if (base.perList.menu.grant) {
-        		_btnAction += "<a class='setChargeArea btn btn-primary btn-small' href='#' title='设置适用区域' style='margin-left:5px'>设置适用区域</a>";
+        		_btnAction += "<a class='setAppArea btn btn-primary btn-small' href='#' title='设置适用区域' style='margin-left:5px'>设置适用区域</a>";
         		_btnAction += "<a class='viewAreaLimit btn btn-primary btn-small' href='#' title='查看适用区域' style='margin-left:5px'>查看</a>";
         	}
         	return _btnAction;
-        },initAreaCharge:function(code_id,isview){
-        	var data = {"code_id":code_id};
-        	var url = F.basepath+'/main/charge_code_rule/area/get-list-area';
+        },initAreaCharge:function(app_id,isview){
+        	var data = {"app_id":app_id};
+        	var url = F.basepath+'/main/app/app_rule/area/get-list-area';
         	//清除全部的内容
         	$('input[name=check]').each(function(){
 	       		 $(this).attr("checked",false);

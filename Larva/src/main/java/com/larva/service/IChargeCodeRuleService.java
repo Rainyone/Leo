@@ -21,4 +21,7 @@ public interface IChargeCodeRuleService {
 	ResultVO delChargeIsps(String code_id, String update_people_name);
 
 	ResultVO getListChargeArea(String chargeCodeId);
+
+	ResultVO createOneChargeArea(String id, String area_id,String charge_code_id, int checked,
+			int rxl, int yxl);
 }

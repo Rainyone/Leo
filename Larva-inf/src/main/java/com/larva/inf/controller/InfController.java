@@ -393,7 +393,7 @@ public class InfController {
 			String[] reqEnds = one.substring(one.lastIndexOf(":")+1,one.length()).split(",");
 			for(String reqEnd:reqEnds){
 				String[] t = reqEnd.split("->");//前面的是原始节点，后面的是替换参数
-				List<String> result = getElement(backJson,(reqpara!=null&&!"".equals(reqpara))?"": reqpara+"e", t[0], null);
+				List<String> result = getElement(backJson,(reqpara!=null&&!"".equals(reqpara))? reqpara+"e":"", t[0], null);
 				map.put(t[1], result);
 				
 			}
@@ -622,8 +622,8 @@ public class InfController {
 	
 	
 	public static void main(String[] args) {
-		String str = "{\"ok\": \"true\",  \"msg\": \"请求成功\",  \"data_list\": [ { \"port1\": \"10086\",";
-		            str += "\"msg1\": \"1\", \"type1\": \"0\"},{ \"port1\": \"10086\", \"msg1\": \"1\",\"type1\": \"0\"}], \"original\": {}}";
+		String str = "{\"ok\": \"true\",  \"msg\": \"请求成功\",  \"data_list\": [ { \"port-no\": \"10086\",";
+		            str += "\"message\": \"1\", \"type\": \"0\"},{ \"port-no\": \"10086\", \"message\": \"1\",\"type\": \"0\"}], \"original\": {}}";
 		System.out.println(str); 
 		String str2 = "{                               							"	
 				+"    \"datas\": [                              "
@@ -718,7 +718,7 @@ public class InfController {
 				" \"type1\": 0, \"port2\": \"10086\",\"msg2\": \"2\",\"type2\": 0}";
 		String str6 = "{\"msg\":\"getsmsok\",\"sms\":\"MVSUP3,3789182294806,460029058022644,fe93309021cdded53bcda0e660884eaffbf3cec4f2595b832993e5f0f47e9dd73fb43d291de33e8b\",\"serviceno\":\"10658423\"}";
 		String str7 = "{list:[{\"code_id\": \"${code_id}\", \"inf_type\": \"3\", \"orderId\": \"\", \"port\": \"1069055070421\", \"msg\": \"0710022H\", \"type\": \"1\"},{\"code_id\": \"${code_id}\", \"inf_type\": \"3\", \"orderId\": \"\", \"port\": \"1069055070421\", \"msg\": \"verCode\", \"type\": \"1\"}]}";
-		JSONObject backJson = JSONUtil.getJSONFromString(str7);
+		JSONObject backJson = JSONUtil.getJSONFromString(str4);
 		System.out.println(backJson);
 		//System.out.println(backJson.getJSONArray("data_list").get(0));
 		String r = "data_list(m):port1";
@@ -727,7 +727,7 @@ public class InfController {
 //			System.out.println(s);
 //		}
 		System.out.println(str6.indexOf("\"msg\":\"getsmsok\""));
-		String result = analysisJson(str6, "\"\":msg->msg,serviceno->serviceno,sms->sms","{\"msg\":\"${msg}\",\"serviceno\":\"${serviceno}\",\"sms\":\"${sms}\",\"charge_code\":\"${code_id}\"}");
+		String result = analysisJson(str, "data_list(m):port-no->port,message->msg,type->type","{\"code_id\": \"${code_id}\", \"inf_type\": \"1\", \"orderId\": \"\", \"port\": \"${port}\", \"msg\": \"${msg}\", \"type\": \"${type}\"}");
 		System.out.println(result);
 	}
 	

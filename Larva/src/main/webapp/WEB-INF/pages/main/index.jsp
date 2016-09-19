@@ -90,7 +90,7 @@
                             </li>
                         </ul>
                     </li>
-                    <li class='dropdown medium only-icon widget'>
+<!--                     <li class='dropdown medium only-icon widget'>
                         <a class='dropdown-toggle' data-toggle='dropdown' href='#'>
                             <i class='icon-rss'></i>
                             <div class='label'>5</div>
@@ -170,14 +170,14 @@
                             </li>
                         </ul>
                     </li>
-                    <li class='dropdown dark user-menu'>
+ -->                    <li class='dropdown dark user-menu'>
                         <a class='dropdown-toggle' data-toggle='dropdown' href='#'>
                             <img alt='Mila Kunis' height='23' src='${ctxAssets}/images/avatar.jpg' width='23' />
                             <span class='user-name hidden-phone'><%=userAccount %></span>
                             <b class='caret'></b>
                         </a>
                         <ul class='dropdown-menu'>
-                            <li>
+                          <!--   <li>
                                 <a href='user_profile.html'>
                                     <i class='icon-user'></i>
                                     	个人信息
@@ -188,7 +188,7 @@
                                     <i class='icon-cog'></i>
                                     	我的设置
                                 </a>
-                            </li>
+                            </li> -->
                             <li class='divider'></li>
                             <li>
                                 <a href='${ctx}/user/exit'>
@@ -199,10 +199,10 @@
                         </ul>
                     </li>
                 </ul>
-                <form accept-charset="UTF-8" action="search_results.html" class="navbar-search pull-right hidden-phone" method="get" /><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /></div>
+              <!--   <form accept-charset="UTF-8" action="search_results.html" class="navbar-search pull-right hidden-phone" method="get" /><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /></div>
                 <button class="btn btn-link icon-search" name="button" type="submit"></button>
                 <input autocomplete="off" class="search-query span2" id="q_header" name="q" placeholder="Search..." type="text" value="" />
-                </form>
+                </form> -->
                 
     <shiro:hasPermission name="permission:delete">
         <span id="basejs_permission_del" style="display: none;"/>

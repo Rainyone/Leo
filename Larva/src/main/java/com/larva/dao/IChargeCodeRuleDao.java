@@ -29,4 +29,8 @@ public interface IChargeCodeRuleDao {
 	int insertChargeCodeIsp(ChargeCodeIsp isp);
 
 	List<Record> getListChargeArea(String chargeCodeId);
+
+	Integer updateChargeAreaById(String id,int rxl, int yxl, int checked);
+
+	Integer setChargeArea(String id,String area_id,String charge_code_id, int rxl, int yxl, int checked);
 }

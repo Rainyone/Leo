@@ -23,4 +23,30 @@ public interface IAppManageService {
     Pager<Map<String, Object>> getAppManages(PagerReqVO pagerReqVO);
     
     ResultVO getAreaTree();
+
+	ResultVO updateNewKey(String app_key, String user,String id);
+
+	Pager<Map<String, Object>> getAreaIsps(PagerReqVO pagerReqVO);
+
+	ResultVO createAppIsps(String app_id, String isp_id, int isChecked,
+			String update_people_name);
+
+	ResultVO delAppIsps(String app_id, String update_people_name);
+
+	ResultVO getListAppArea(String app_id);
+
+	ResultVO createOneAppArea(String id, String area_id, String app_id,
+			int checked, int rxl, int yxl);
+
+	Pager<Map<String, Object>> getListAppCodes(PagerReqVO pagerReqVO,
+			String app_id);
+
+	Pager<Map<String, Object>> getListChargeCodes(PagerReqVO pagerReqVO,
+			String app_id);
+
+	ResultVO createAppCodes(String charge_id, String app_id, int isChecked,
+			String update_people_name);
+
+	ResultVO deleteappCodes(String[] appCodeRuleIds,
+			String updateUser);
 }

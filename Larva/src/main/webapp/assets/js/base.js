@@ -56,7 +56,7 @@ define(function (require, exports, module) {
             function S4() {
                 return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
              }
-             return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4());
+             return (S4()+S4()+S4()+S4()+S4()+S4()+S4()+S4());
         },random:function(min,max){
 	        return Math.floor(min+Math.random()*(max-min));
 	    },bootAlert:function(data){

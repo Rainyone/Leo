@@ -100,4 +100,99 @@ public class AppController {
         ResultVO resultVO = appManageService.deleteAppManage(appIds,(String)session.getAttribute(Constants.DEFAULT_SESSION_USERNAME));
         return resultVO;
     }
+    
+    //设置新的Key
+    @RequestMapping(value = "/setNewKey", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    ResultVO setNewKey( String app_key,String app_id, HttpSession session) {
+        ResultVO resultVO = appManageService.updateNewKey(app_key,(String)session.getAttribute(Constants.DEFAULT_SESSION_USERNAME),app_id);
+        return resultVO;
+    }
+    //跳转到isp设置
+    @RequestMapping("/app_rule/isp/manage")
+    public String appIspSet() {
+        return "main/app_rule/isp/manage";
+    }
+    //跳转到app区域设置
+    @RequestMapping("/app_rule/area/manage")
+    public String appAreaSet() {
+        return "main/app_rule/area/manage";
+    }
+  //跳转到app_code设置
+    @RequestMapping("/app_rule/app_code/manage")
+    public String appCodeSet() {
+        return "main/app_rule/app_code/manage";
+    }
+    //获取运营商限制信息
+    @RequestMapping("/app_rule/isp/get-list")
+    @ResponseBody
+    public Pager<Map<String,Object>> getListChargeIsps(PagerReqVO pagerReqVO) {
+    	Pager<Map<String,Object>> vo = appManageService.getAreaIsps(pagerReqVO);
+        return vo;
+    }
+  //新增运营商限制信息
+    @RequestMapping("/app_rule/isp/create")
+    @ResponseBody
+    public ResultVO createAppIsps(String app_id,String isp_id,int isChecked,HttpSession session) {
+    	String update_people_name = (String)session.getAttribute(Constants.DEFAULT_SESSION_USERNAME);
+    	ResultVO vo= appManageService.createAppIsps(app_id,isp_id,isChecked,update_people_name);
+        return vo;
+    }
+    @RequestMapping("/app_rule/isp/dels")
+    @ResponseBody
+    public ResultVO delAppIsps(String app_id,HttpSession session) {
+    	String update_people_name = (String)session.getAttribute(Constants.DEFAULT_SESSION_USERNAME);
+    	ResultVO vo= appManageService.delAppIsps(app_id,update_people_name);
+        return vo;
+    }
+  //获取适用区域
+    @RequestMapping("/app_rule/area/get-list-area")
+    @ResponseBody
+    public ResultVO getListAppArea(String app_id) {
+    	ResultVO vo = appManageService.getListAppArea(app_id); 
+        return vo;
+    }
+  //设置单个适用区域
+	  @RequestMapping("/app_rule/area/set-one-area")
+	  @ResponseBody
+	  public ResultVO setOneAppArea(String id,String app_id,String area_id,int checked,int rxl,int yxl) {
+	  	ResultVO vo = appManageService.createOneAppArea(id,area_id,app_id,checked,rxl,yxl); 
+	    return vo;
+	  }
+	//获取适用计费代码列表
+    @RequestMapping("/app_rule/app_code/get-list")
+    @ResponseBody
+    public Pager<Map<String,Object>> getListAppCodes(PagerReqVO pagerReqVO,String app_id) {
+    	Pager<Map<String,Object>> vo = appManageService.getListAppCodes(pagerReqVO,app_id);
+        return vo;
+    }
+  //获取适用计费代码列表
+    @RequestMapping("/app_rule/get-list-charge-codes")
+    @ResponseBody
+    public Pager<Map<String,Object>> getListChargeCodes(PagerReqVO pagerReqVO,String app_id) {
+    	Pager<Map<String,Object>> vo = appManageService.getListChargeCodes(pagerReqVO,app_id);
+        return vo;
+    }
+  //app新增计费代码限制信息
+    @RequestMapping("/app_rule/app_code/create")
+    @ResponseBody
+    public ResultVO createAppCodes(String charge_id,String app_id,int isChecked,HttpSession session) {
+    	String update_people_name = (String)session.getAttribute(Constants.DEFAULT_SESSION_USERNAME);
+    	ResultVO vo= appManageService.createAppCodes(charge_id,app_id,isChecked,update_people_name);
+        return vo;
+    }
+    //删除计费代
+    @RequestMapping(value = "/app_rule/app_code/del", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    ResultVO delAppCodes(@RequestParam("appCodeRuleIds[]") String[] appCodeRuleIds,HttpSession session, HttpServletRequest request) {
+        ResultVO resultVO = appManageService.deleteappCodes(appCodeRuleIds,(String)session.getAttribute(Constants.DEFAULT_SESSION_USERNAME));
+        return resultVO;
+    }
+    //跳转到app_test设置
+    @RequestMapping("/app_test/manage")
+    public String appTest() {
+        return "main/app/app_test/manage";
+    }
 }

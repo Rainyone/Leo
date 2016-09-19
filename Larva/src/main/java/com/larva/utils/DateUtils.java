@@ -75,9 +75,7 @@ public abstract class DateUtils {
 		result = DateTimeFormat.forPattern(format).parseDateTime(str).toDate();
 		return result;
 	}
-	public static void main(String[] args) {
-		DateUtils.string2Date("00:00","HH:mm");
-	}
+
 	/**
 	 * 将日期格式的字符串转换成日期对象 格式 yyyy-MM-dd HH:mm:ss
 	 * 

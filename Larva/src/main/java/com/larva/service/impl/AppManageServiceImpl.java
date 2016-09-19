@@ -12,11 +12,19 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import com.larva.dao.IAppManageDao;
+import com.larva.model.AppAndChargeCode;
+import com.larva.model.AppAndIsp;
+import com.larva.model.AppChargeCode;
+import com.larva.model.AppIsp;
 import com.larva.model.AppManage;
 import com.larva.model.AreaManage;
+import com.larva.model.ChargeCodeAndIsp;
+import com.larva.model.ChargeCodeIsp;
+import com.larva.model.ChargeDisableTime;
 import com.larva.model.Department;
 import com.larva.service.IAppManageService;
 import com.larva.utils.Constants;
+import com.larva.utils.StrKit;
 import com.larva.utils.UUIDUtil;
 import com.larva.vo.AppManageCreateVO;
 import com.larva.vo.AppManageEditVO;
@@ -25,11 +33,8 @@ import com.larva.vo.PagerReqVO;
 import com.larva.vo.ResultVO;
 import com.larva.vo.TreeNode;
 import com.mini.core.PageResult;
+import com.mini.core.Record;
 
-/**
- * @author sxjun
- * @time 2015/8/27 17:10
- */
 @Service("appManageService")
 public class AppManageServiceImpl implements IAppManageService {
     @Resource
@@ -39,8 +44,8 @@ public class AppManageServiceImpl implements IAppManageService {
 		ResultVO resultVO = new ResultVO(true);
         //保存
 		AppManage appManage = new AppManage();
-		appManage.setId(UUIDUtil.getUUID());
-		appManage.setAppKey(UUIDUtil.getUUID());
+		appManage.setId(createVO.getApp_id());
+		appManage.setAppKey(createVO.getApp_key());
 		appManage.setAppName(createVO.getApp_name());
 		appManage.setAppPackageName(createVO.getApp_package_name());
 		appManage.setChannel(createVO.getChannel());
@@ -107,9 +112,11 @@ public class AppManageServiceImpl implements IAppManageService {
 		m.put("description",appManage.getDescription());
 		m.put("create_user_name", appManage.getCreateUserName());
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		m.put("create_time", format.format(appManage.getCreateTime()));
+		Date createDate = appManage.getCreateTime();
+		m.put("create_time", createDate!=null?format.format(createDate):"");
 		m.put("update_user_name", appManage.getUpdateUserName());
-		m.put("update_time", format.format(appManage.getUpdateTime()));
+		Date updateDate = appManage.getUpdateTime();
+		m.put("update_time", updateDate!=null?format.format(updateDate):"");
 		return m;
 	}
 	
@@ -181,4 +188,234 @@ public class AppManageServiceImpl implements IAppManageService {
         resultVO.setMsg("删除APP成功");
         return resultVO;
     }
+
+	@Override
+	public ResultVO updateNewKey(String app_key, String user,String id) {
+		ResultVO resultVO = new ResultVO(false);
+		if(appManageDao.setNeaKey(app_key,user,id)==1){
+			resultVO.setOk(true);
+			resultVO.setMsg("更新成功");
+		}else{
+			resultVO.setMsg("更新失败");
+		}
+		return resultVO;
+	}
+
+	@Override
+	public Pager<Map<String, Object>> getAreaIsps(PagerReqVO pagerReqVO) {
+		List<Map<String,Object>> results = new ArrayList<Map<String,Object>>();
+		PageResult<AppAndIsp> pagers = appManageDao.getAreaIsps( pagerReqVO.getLimit(), pagerReqVO.getPageNo());
+        List<AppAndIsp> list = pagers.getResults();
+        for (AppAndIsp appAndIsp : list) {
+        	results.add(getAppAndIsp(appAndIsp));
+        }
+        return new Pager(results, pagers.getResultCount());
+	}
+
+	private Map<String, Object> getAppAndIsp(AppAndIsp appAndIsp) {
+		Map<String,Object> m = new HashMap<String,Object>();
+		m.put("app_id", appAndIsp.getAppId());
+		m.put("app_name", appAndIsp.getAppName());
+		m.put("dx", appAndIsp.getDx());
+		m.put("yd", appAndIsp.getYd());
+		m.put("lt", appAndIsp.getLt());
+		m.put("qt", appAndIsp.getQt());
+		return m;
+	}
+
+	@Override
+	public ResultVO createAppIsps(String app_id, String isp_id, int isChecked,
+			String update_people_name) {
+		ResultVO vo = new ResultVO(false);
+		int result = 0;
+		//先查询
+		Record ccis = appManageDao.getAppIsp(app_id,isp_id);
+		int count = ccis.getInt("count");
+		//如果有记录则更新状态
+		if(count>0){
+			result = appManageDao.updateState(app_id,isp_id,isChecked,update_people_name);
+		}else{//如果没有记录则判断是添加还是删除。如果是删除则不用处理，如果是添加则入库
+			if(isChecked==1){//添加
+				AppIsp isp = new AppIsp();
+				isp.setId(UUIDUtil.getUUID());
+				isp.setAppId(app_id);
+				isp.setIspId(isp_id);
+				isp.setCreateTime(new Date());
+				isp.setCreatePeopleName(update_people_name);
+				isp.setState(1);
+				result = appManageDao.insertAppIsp(isp);
+			}
+		}
+		if(result >0){
+			vo.setOk(true);
+			vo.setMsg("操作成功");
+		}else{
+			vo.setMsg("操作失败");
+		}
+		return vo;
+	}
+
+	@Override
+	public ResultVO delAppIsps(String app_id, String update_people_name) {
+		int result = 0;
+		ResultVO vo = new ResultVO(false);
+		result += appManageDao.updateState(app_id,"1001",0,update_people_name);
+		result += appManageDao.updateState(app_id,"1002",0,update_people_name);
+		result += appManageDao.updateState(app_id,"1003",0,update_people_name);
+		result += appManageDao.updateState(app_id,"1004",0,update_people_name);
+		if(result>0){
+			vo.setOk(true);
+			vo.setMsg("操作成功");
+		}else{
+			vo.setMsg("操作失败");
+		}
+		return vo;
+	}
+
+	@Override
+	public ResultVO getListAppArea(String app_id) {
+		ResultVO vo = new ResultVO(false);
+		List<Map<String,Object>> results = new ArrayList<Map<String,Object>>();
+		List<Record> list = appManageDao.getListChargeArea(app_id);
+		if(list!=null&&list.size()>0){
+			for(Record r : list){
+				results.add(getAreaAppeMap(r));
+			}
+			vo.setOk(true);
+			vo.setMsg("请求成功");
+			vo.setData(results);
+		}else{
+			vo.setMsg("请求失败");
+		}
+		return vo;
+	}
+
+	private Map<String, Object> getAreaAppeMap(Record r) {
+		Map<String,Object> m = new HashMap<String,Object>();
+		m.put("id", r.getStr("id"));
+		m.put("area_id", r.getStr("area_id"));
+		m.put("app_id", r.getStr("app_id"));
+		m.put("rxl", r.getStr("date_limit"));
+		m.put("yxl", r.getStr("month_limit"));
+		m.put("app_name", r.getStr("app_name"));
+		return m;
+	}
+
+	@Override
+	public ResultVO createOneAppArea(String id, String area_id, String app_id,
+			int checked, int rxl, int yxl) {
+		ResultVO vo = new ResultVO(false);
+		int result = 0;
+		if(StrKit.notBlank(id)){//不为空则更新
+			result+=appManageDao.updateAppAreaById(id,rxl,yxl,checked);
+		}else{//为空则入库
+			if(checked==1){
+				id = UUIDUtil.getUUID();
+				result+=appManageDao.setAppArea(id,area_id,app_id,rxl,yxl,checked);
+			}
+		}
+		if(result>0){
+			vo.setOk(true);
+			vo.setMsg("提交成功");
+		}else{
+			vo.setMsg("提交失败");
+		}
+		return vo;
+	}
+
+	@Override
+	public Pager<Map<String, Object>> getListAppCodes(PagerReqVO pagerReqVO,
+			String app_id) {
+		List<Map<String,Object>> results = new ArrayList<Map<String,Object>>();
+		PageResult<AppAndChargeCode> pagers = appManageDao.getAppAndChargeCodes( pagerReqVO.getLimit(), pagerReqVO.getPageNo(), app_id);
+        List<AppAndChargeCode> list = pagers.getResults();
+        for (AppAndChargeCode appAndChargeCode : list) {
+        	results.add(getAppAndChargeCodeMap(appAndChargeCode));
+        }
+        return new Pager(results, pagers.getResultCount());
+	}
+
+	private Map<String, Object> getAppAndChargeCodeMap(
+			AppAndChargeCode appAndChargeCode) {
+		 Map<String, Object> map = new HashMap<String, Object>();
+		 map.put("id", appAndChargeCode.getAppCodeId());
+		 map.put("app_id", appAndChargeCode.getAppId());
+		 map.put("app_name", appAndChargeCode.getAppName());
+		 map.put("charge_code_id", appAndChargeCode.getChargeCodeId());
+		 map.put("charge_code_name", appAndChargeCode.getChargeCodeName());
+		return map;
+	}
+
+	@Override
+	public Pager<Map<String, Object>> getListChargeCodes(PagerReqVO pagerReqVO,
+			String app_id) {
+		List<Map<String,Object>> results = new ArrayList<Map<String,Object>>();
+		PageResult<Record> pagers = appManageDao.getListChargeCodes( pagerReqVO.getLimit(), pagerReqVO.getPageNo(), app_id);
+        List<Record> list = pagers.getResults();
+        for (Record r : list) {
+        	results.add(getListChargeCodesMap(r));
+        }
+        return new Pager(results, pagers.getResultCount());
+	}
+
+	private Map<String, Object> getListChargeCodesMap(Record r) {
+		 Map<String, Object> map = new HashMap<String, Object>();
+		 map.put("code_id", r.getStr("id"));
+		 map.put("code_name", r.getStr("code_name"));
+		 map.put("is_have", r.getInt("is_have"));
+		return map;
+	}
+
+	@Override
+	public ResultVO createAppCodes(String charge_id, String app_id,
+			int isChecked, String update_people_name) {
+		ResultVO vo = new ResultVO(false);
+		int result = 0;
+		//先查询
+		Record ccis = appManageDao.getAppCodes(charge_id,app_id);
+		int count = ccis.getInt("count");
+		//如果有记录则更新状态
+		if(count>0){
+			result = appManageDao.updatetAppCodeState(charge_id,app_id,isChecked,update_people_name);
+		}else{//如果没有记录则判断是添加还是删除。如果是删除则不用处理，如果是添加则入库
+			if(isChecked==1){//添加
+				AppChargeCode a = new AppChargeCode();
+				a.setId(UUIDUtil.getUUID());
+				a.setChargeCodeId(charge_id);
+				a.setAppId(app_id);
+				a.setDescription("");
+				a.setState(1);
+				a.setCreatePeopleName(update_people_name);
+				a.setCreateTime(new Date());
+				result = appManageDao.insertAppCode(a);
+			}
+		}
+		if(result >0){
+			vo.setOk(true);
+			vo.setMsg("操作成功");
+		}else{
+			vo.setMsg("操作失败");
+		}
+		return vo;
+	}
+
+	@Override
+	public ResultVO deleteappCodes(String[] appCodeRuleIds,
+			String updateUser) {
+		int result = 0;
+		ResultVO rv = new ResultVO(false);
+		if(appCodeRuleIds!=null&&appCodeRuleIds.length>0){
+			for(String id:appCodeRuleIds){
+				result += appManageDao.deleteappCode(id,updateUser);
+			}
+		}
+		if(result >0){
+			rv.setOk(true);
+			rv.setMsg("删除成功");
+		}else{
+			rv.setMsg("删除失败");
+		}
+		return rv;
+	}
+	
 }

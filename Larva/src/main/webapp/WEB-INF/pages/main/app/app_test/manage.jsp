@@ -136,7 +136,7 @@
     </div>
 </div>
 <script>
-  seajs.use(['base','main/app/manage'],function(b,m){
+  seajs.use(['base','main/app/app_test/manage'],function(b,m){
 	b.init();
     m.init('${ctx}');
   });

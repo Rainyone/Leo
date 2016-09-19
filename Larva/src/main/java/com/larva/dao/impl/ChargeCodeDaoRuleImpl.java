@@ -63,8 +63,20 @@ public class ChargeCodeDaoRuleImpl extends MiniDao implements IChargeCodeRuleDao
 
 	@Override
 	public List<Record> getListChargeArea(String chargeCodeId) {
-		String str = "select * from ";
-		return null;
+		String str = "select t.id,t.area_id,t.charge_id,t.date_limit,t.month_limit,c.code_name from t_charge_code_area t,t_charge_code c where t.charge_id = c.id and t.state = 1 and c.state = 1 and c.id = ? ";
+		return this.findList(str, Record.class, chargeCodeId);
 	}
-	
+
+	@Override
+	public Integer updateChargeAreaById(String id, int rxl, int yxl, int checked) {
+		String str = "update t_charge_code_area set state=?,date_limit=?,month_limit=? where id = ? ";
+		return this.execute(str, checked,rxl,yxl,id);
+	}
+
+	@Override
+	public Integer setChargeArea(String id,String area_id,String charge_code_id, int rxl, int yxl, int checked) {
+		String str = "insert t_charge_code_area (id,charge_id,area_id,date_limit,month_limit,state,create_time)"
+				+ " values(?,?,?,?,?,1,now())";
+		return this.execute(str, id,charge_code_id,area_id,rxl,yxl);
+	}
 }

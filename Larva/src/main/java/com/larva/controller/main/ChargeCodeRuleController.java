@@ -1,5 +1,6 @@
 package com.larva.controller.main;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,8 @@ import com.larva.service.IChargeCodeRuleService;
 import com.larva.service.IChargeCodeService;
 import com.larva.utils.Constants;
 import com.larva.vo.AppManageCreateVO;
+import com.larva.vo.AreaChargeCodeListVO;
+import com.larva.vo.AreaChargeCodeVO;
 import com.larva.vo.ChargeCodeCreateVO;
 import com.larva.vo.ChargeCodeDisableTimeCreateVo;
 import com.larva.vo.ChargeCodeEditVO;
@@ -88,7 +91,7 @@ public class ChargeCodeRuleController {
     	Pager<Map<String,Object>> vo = chargeCodeRuleService.getChargeCodeIsps(pagerReqVO);
         return vo;
     }
-  //获取运营商限制信息
+  //新建运营商限制信息
     @RequestMapping("/isp/create")
     @ResponseBody
     public ResultVO createChargeIsps(String code_id,String isp_id,int isChecked,HttpSession session) {
@@ -96,7 +99,7 @@ public class ChargeCodeRuleController {
     	ResultVO vo= chargeCodeRuleService.createChargeIsps(code_id,isp_id,isChecked,update_people_name);
         return vo;
     }
-  //获取运营商限制信息
+  //删除运营商限制信息
     @RequestMapping("/isp/dels")
     @ResponseBody
     public ResultVO delChargeIsps(String code_id,HttpSession session) {
@@ -110,10 +113,27 @@ public class ChargeCodeRuleController {
         return "main/charge_code_rule/area/manage";
     }
   //获取适用区域
-    @RequestMapping("/disableTime/get-list-area")
+    @RequestMapping("/area/get-list-area")
     @ResponseBody
-    public ResultVO getListChargeArea(String chargeCodeId) {
-    	ResultVO vo = chargeCodeRuleService.getListChargeArea(chargeCodeId);
+    public ResultVO getListChargeArea(String code_id) {
+    	ResultVO vo = chargeCodeRuleService.getListChargeArea(code_id); 
         return vo;
     }
+    //设置单个适用区域
+	  @RequestMapping("/area/set-one-area")
+	  @ResponseBody
+	  public ResultVO setOneChargeArea(String id,String charge_code_id,String area_id,int checked,int rxl,int yxl) {
+	  	ResultVO vo = chargeCodeRuleService.createOneChargeArea(id,area_id,charge_code_id,checked,rxl,yxl); 
+	    return vo;
+	  }
+
+    //设置单个适用区域
+	  @RequestMapping("/area/set-all-area")
+	  @ResponseBody
+	  public ResultVO setAllChargeArea(AreaChargeCodeListVO list) {
+//	  	ResultVO vo = chargeCodeRuleService.createOneChargeArea(list); 
+		  System.out.println(list);
+	    return null;
+	  }
+	  
 }

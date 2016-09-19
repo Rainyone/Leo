@@ -187,7 +187,52 @@ public class ChargeCodeRuleServiceImpl implements IChargeCodeRuleService {
 	@Override
 	public ResultVO getListChargeArea(String chargeCodeId) {
 		ResultVO vo = new ResultVO(false);
+		List<Map<String,Object>> results = new ArrayList<Map<String,Object>>();
 		List<Record> list = chargeCodeRuleDao.getListChargeArea(chargeCodeId);
-		return null;
+		if(list!=null&&list.size()>0){
+			for(Record r : list){
+				results.add(getAreaChargeCodeMap(r));
+			}
+			vo.setOk(true);
+			vo.setMsg("请求成功");
+			vo.setData(results);
+		}else{
+			vo.setMsg("请求失败");
+		}
+		return vo;
 	}
+
+	private Map<String, Object> getAreaChargeCodeMap(Record r) {
+		Map<String,Object> m = new HashMap<String,Object>();
+		m.put("id", r.getStr("id"));
+		m.put("area_id", r.getStr("area_id"));
+		m.put("code_id", r.getStr("charge_id"));
+		m.put("rxl", r.getStr("date_limit"));
+		m.put("yxl", r.getStr("month_limit"));
+		m.put("code_name", r.getStr("code_name"));
+		return m;
+	}
+
+	@Override
+	public ResultVO createOneChargeArea(String id,String area_id, String charge_code_id,
+			int checked, int rxl, int yxl) {
+		ResultVO vo = new ResultVO(false);
+		int result = 0;
+		if(StrKit.notBlank(id)){//不为空则更新
+			result+=chargeCodeRuleDao.updateChargeAreaById(id,rxl,yxl,checked);
+		}else{//为空则入库
+			if(checked==1){
+				id = UUIDUtil.getUUID();
+				result+=chargeCodeRuleDao.setChargeArea(id,area_id,charge_code_id,rxl,yxl,checked);
+			}
+		}
+		if(result>0){
+			vo.setOk(true);
+			vo.setMsg("提交成功");
+		}else{
+			vo.setMsg("提交失败");
+		}
+		return vo;
+	}
+	
 }

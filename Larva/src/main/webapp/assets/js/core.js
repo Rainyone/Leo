@@ -345,10 +345,10 @@ define(function (require, exports, module) {
         	this.init = function(_url,_cols){
         		$('#'+_tableId).bootstrapTable({
         			locale:'zh-CN',
-        			height:320,
+        			height:300,
         			sidePagination:'server',
         			pagination:true,
-        			pageList:'[10, 20, 30]',
+        			pageList:'[5,10, 20, 30]',
         			url: _url,
         			method:'get',
         		    columns: _cols

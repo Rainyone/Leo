@@ -9,6 +9,8 @@ public class AppManageCreateVO {
     private String app_name = "app_name";
     @NotNull(message = "APP包名不能为空")
     private String app_package_name = "app_package_name";
+    private String app_id = "app_id";
+    private String app_key = "app_key";
     private String channel = "channel";
 	private Integer date_limit;
     private Integer month_limit;
@@ -21,7 +23,19 @@ public class AppManageCreateVO {
     private String create_user_name = "create_user_name";
     private String update_user_name = "update_user_name";
     
-    public String getCreate_user_name() {
+    public String getApp_id() {
+		return app_id;
+	}
+	public void setApp_id(String app_id) {
+		this.app_id = app_id;
+	}
+	public String getApp_key() {
+		return app_key;
+	}
+	public void setApp_key(String app_key) {
+		this.app_key = app_key;
+	}
+	public String getCreate_user_name() {
 		return create_user_name;
 	}
 	public void setCreate_user_name(String create_user_name) {
