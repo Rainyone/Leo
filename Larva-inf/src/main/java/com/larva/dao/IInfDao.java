@@ -106,4 +106,16 @@ public interface IInfDao  {
 	 * @return
 	 */
 	Integer updateOrderNoById(String id, String orderNo);
+	/**
+	 * 根据order_id查询是否存在需要处理的验证码请求
+	 * @param order_id
+	 * @return
+	 */
+	Record checkOrderId(String order_id);
+	/**
+	 * 根据charge_id查询运营商回调成功标示
+	 * @param charge_id
+	 * @return
+	 */
+	Record getCallBackSuccessById(String charge_id);
 }

@@ -105,29 +105,33 @@ public class IInfDaoImpl extends MiniDao implements IInfDao {
 		//月统计：只要更新时间是本月的则累计，不是则初始化为1
 		String selectSql = "select id,update_time from t_app_manage where state=1 and id = ? ";
 		AppManage appManage = this.find(selectSql, AppManage.class, app_id);
-		Date update_time = appManage.getUpdateTime();
-		String oldDate = null;
-		String oldMonth = null;
-		if(update_time!=null){
-			oldDate = DateUtils.date2String(update_time,"yyyy-MM-dd") ;
-			oldMonth = DateUtils.date2String(update_time,"yyyy-MM") ;
-		}
-		
-		String nowDate = DateUtils.date2String(new Date(),"yyyy-MM-dd");
-		String updateSql = "update t_app_manage set ";
-		if(!nowDate.equals(oldDate)){//如果不等，说明需要初始化单天记录为1
-			updateSql += " date_count = 1,";
+		if(appManage!=null){
+			Date update_time = appManage.getUpdateTime();
+			String oldDate = null;
+			String oldMonth = null;
+			if(update_time!=null){
+				oldDate = DateUtils.date2String(update_time,"yyyy-MM-dd") ;
+				oldMonth = DateUtils.date2String(update_time,"yyyy-MM") ;
+			}
+			
+			String nowDate = DateUtils.date2String(new Date(),"yyyy-MM-dd");
+			String updateSql = "update t_app_manage set ";
+			if(!nowDate.equals(oldDate)){//如果不等，说明需要初始化单天记录为1
+				updateSql += " date_count = 1,";
+			}else{
+				updateSql += " date_count = date_count+1,";
+			}
+			String nowMonth= DateUtils.date2String(new Date(),"yyyy-MM");
+			if(!nowMonth.equals(oldMonth)){//如果不等，说明需要初始化月份记录为1
+				updateSql +=" month_count = 1,";
+			}else{
+				updateSql +=" month_count = month_count + 1,";
+			}
+			updateSql +=" update_time=now() where state=1 and  id = ? ";
+			return this.execute(updateSql, app_id);
 		}else{
-			updateSql += " date_count = date_count+1,";
+			return 0;
 		}
-		String nowMonth= DateUtils.date2String(new Date(),"yyyy-MM");
-		if(!nowMonth.equals(oldMonth)){//如果不等，说明需要初始化月份记录为1
-			updateSql +=" month_count = 1,";
-		}else{
-			updateSql +=" month_count = month_count + 1,";
-		}
-		updateSql +=" update_time=now() where state=1 and  id = ? ";
-		return this.execute(updateSql, app_id);
 	}
 
 	@Override
@@ -136,56 +140,58 @@ public class IInfDaoImpl extends MiniDao implements IInfDao {
 		//更新区域限量
 		String selectSql = "select id,update_time from t_charge_code where state=1 and id = ? ";
 		ChargeCode chargeCode = this.find(selectSql, ChargeCode.class, charge_id);
-		Date update_time = chargeCode.getUpdateTime();
-		String oldDate = null;
-		String oldMonth = null;
-		if(update_time!=null){
-			oldDate = DateUtils.date2String(update_time,"yyyy-MM-dd") ;
-			oldMonth = DateUtils.date2String(update_time,"yyyy-MM") ;
-		}
-		String nowDate = DateUtils.date2String(new Date(),"yyyy-MM-dd");
-		String updateSql = "update t_charge_code set ";
-		if(!nowDate.equals(oldDate)){//如果不等，说明需要初始化单天记录为1
-			updateSql += " date_count = 1,";
-		}else{
-			updateSql += " date_count = date_count+1,";
-		}
-		
-		String nowMonth= DateUtils.date2String(new Date(),"yyyy-MM");
-		if(!nowMonth.equals(oldMonth)){//如果不等，说明需要初始化月份记录为1
-			updateSql +=" month_count = 1,";
-		}else{
-			updateSql +=" month_count = month_count + 1,";
-		}
+		if(chargeCode!=null){
+			Date update_time = chargeCode.getUpdateTime();
+			String oldDate = null;
+			String oldMonth = null;
+			if(update_time!=null){
+				oldDate = DateUtils.date2String(update_time,"yyyy-MM-dd") ;
+				oldMonth = DateUtils.date2String(update_time,"yyyy-MM") ;
+			}
+			String nowDate = DateUtils.date2String(new Date(),"yyyy-MM-dd");
+			String updateSql = "update t_charge_code set ";
+			if(!nowDate.equals(oldDate)){//如果不等，说明需要初始化单天记录为1
+				updateSql += " date_count = 1,";
+			}else{
+				updateSql += " date_count = date_count+1,";
+			}
+			
+			String nowMonth= DateUtils.date2String(new Date(),"yyyy-MM");
+			if(!nowMonth.equals(oldMonth)){//如果不等，说明需要初始化月份记录为1
+				updateSql +=" month_count = 1,";
+			}else{
+				updateSql +=" month_count = month_count + 1,";
+			}
 //		updateSql = updateSql.substring(0,updateSql.length()-1);
-		updateSql +=" update_time=now() where state=1 and id = ? ";
-		result += this.execute(updateSql, charge_id);
-		
-		//更新计费代码限量
-		String selectAreaSql = "select id,update_time from t_charge_code_area where state=1 and charge_id = ? and area_id = ?";
-		ChargeCodeArea chargeCodeArea = this.find(selectAreaSql, ChargeCodeArea.class, charge_id,area_id);
-		Date area_update_time =  chargeCodeArea.getUpdateTime();
-		String oldAreaDate = null;
-		String oldAreaMonth = null;
-		if(area_update_time!=null){
-			oldAreaDate = DateUtils.date2String(update_time,"yyyy-MM-dd") ;
-			oldAreaMonth = DateUtils.date2String(area_update_time,"yyyy-MM") ;
+			updateSql +=" update_time=now() where state=1 and id = ? ";
+			result += this.execute(updateSql, charge_id);
+			
+			//更新计费代码限量
+			String selectAreaSql = "select id,update_time from t_charge_code_area where state=1 and charge_id = ? and area_id = ?";
+			ChargeCodeArea chargeCodeArea = this.find(selectAreaSql, ChargeCodeArea.class, charge_id,area_id);
+			Date area_update_time =  chargeCodeArea.getUpdateTime();
+			String oldAreaDate = null;
+			String oldAreaMonth = null;
+			if(area_update_time!=null){
+				oldAreaDate = DateUtils.date2String(update_time,"yyyy-MM-dd") ;
+				oldAreaMonth = DateUtils.date2String(area_update_time,"yyyy-MM") ;
+			}
+			String nowAreaDate = DateUtils.date2String(new Date(),"yyyy-MM-dd");
+			String updateAreaSql = "update t_charge_code_area set ";
+			if(!nowAreaDate.equals(oldAreaDate)){//如果不等，说明需要初始化单天记录为1
+				updateAreaSql += " date_count = 1,";
+			}else{
+				updateAreaSql += " date_count = date_count+1,";
+			}
+			String nowAreaMonth= DateUtils.date2String(new Date(),"yyyy-MM");
+			if(!nowAreaMonth.equals(oldAreaMonth)){//如果不等，说明需要初始化月份记录为1
+				updateAreaSql +=" month_count = 1,";
+			}else{
+				updateAreaSql +=" month_count = month_count + 1,";
+			}
+			updateAreaSql +=" update_time=now() where state=1 and charge_id = ? and  area_id = ? ";
+			result += this.execute(updateAreaSql, charge_id,area_id);
 		}
-		String nowAreaDate = DateUtils.date2String(new Date(),"yyyy-MM-dd");
-		String updateAreaSql = "update t_charge_code_area set ";
-		if(!nowAreaDate.equals(oldAreaDate)){//如果不等，说明需要初始化单天记录为1
-			updateAreaSql += " date_count = 1,";
-		}else{
-			updateAreaSql += " date_count = date_count+1,";
-		}
-		String nowAreaMonth= DateUtils.date2String(new Date(),"yyyy-MM");
-		if(!nowAreaMonth.equals(oldAreaMonth)){//如果不等，说明需要初始化月份记录为1
-			updateAreaSql +=" month_count = 1,";
-		}else{
-			updateAreaSql +=" month_count = month_count + 1,";
-		}
-		updateAreaSql +=" update_time=now() where state=1 and charge_id = ? and  area_id = ? ";
-		result += this.execute(updateAreaSql, charge_id,area_id);
 		return result;
 	}
 
@@ -199,5 +205,17 @@ public class IInfDaoImpl extends MiniDao implements IInfDao {
 	public Integer updateOrderNoById(String id, String orderNo) {
 		String update = "update t_log_order set order_no= ? where id = ? ";
 		return this.execute(update, id,orderNo);
+	}
+
+	@Override
+	public Record checkOrderId(String order_id) {
+		String select = "select count(1) as count from t_log_order where order_no=? and state = 1 ";
+		return this.find(select, Record.class, order_id);
+	}
+
+	@Override
+	public Record getCallBackSuccessById(String charge_id) {
+		String get = "select callbacksuccess,callbackcolumn from t_charge_code where id=?";
+		return this.find(get, Record.class, charge_id);
 	}
 }

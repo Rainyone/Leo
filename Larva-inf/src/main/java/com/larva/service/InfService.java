@@ -62,9 +62,21 @@ public interface InfService {
 	 */
 	Integer updateLogOrderByOrderNo(String orderNo, Integer orderState);
 	/**
-	 * 根据orderNo更新状态
+	 * 入库order_id记录
 	 * @param orderNo
 	 * @param orderState
 	 */
 	Integer updateOrderNoById(String id, String orderNo);
+	/**
+	 * 根据order_id查询日志记录。判断是否有记录
+	 * @param order_id
+	 * @return
+	 */
+	ResultVO checkOrderId(String order_id);
+	/**
+	 * 根据计费代码id查询运营商回调成功标示
+	 * @param charge_id
+	 * @return
+	 */
+	Record getCallBackSuccessById(String charge_id);
 }

@@ -29,6 +29,7 @@ public class ChargeCodeEditVO {
 	private String detail = "detail";
     private String success_flag = "判断成功字符串";
     private String order_id_code = "验证码的order_id字段";
+    private String ver_code_success_flag ;
     private Date create_time;
     private Date update_time;
 	private String create_people_name;
@@ -36,8 +37,35 @@ public class ChargeCodeEditVO {
     private Integer state;
     private Integer dateCount;
     private Integer monthCount;
+    private String callbackurl ;
+	private String callbacksuccess;
+    private String callbackcolumn;
 
     
+	public String getCallbackurl() {
+		return callbackurl;
+	}
+	public void setCallbackurl(String callbackurl) {
+		this.callbackurl = callbackurl;
+	}
+	public String getCallbacksuccess() {
+		return callbacksuccess;
+	}
+	public void setCallbacksuccess(String callbacksuccess) {
+		this.callbacksuccess = callbacksuccess;
+	}
+	public String getCallbackcolumn() {
+		return callbackcolumn;
+	}
+	public void setCallbackcolumn(String callbackcolumn) {
+		this.callbackcolumn = callbackcolumn;
+	}
+	public String getVer_code_success_flag() {
+		return ver_code_success_flag;
+	}
+	public void setVer_code_success_flag(String ver_code_success_flag) {
+		this.ver_code_success_flag = ver_code_success_flag;
+	}
 	public Integer getDateCount() {
 		return dateCount;
 	}

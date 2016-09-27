@@ -1,5 +1,6 @@
-package com.larva.inf.filter;
+package com.larva.utils;
 
+import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -10,10 +11,11 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.httpclient.util.URIUtil;
 
 public class DESEncrypt {
-	private static String _KEY = "bec99deaaf19c593613ffbcc6250329d";
-	private static String shaKeyStr = "charge";
+	private static String KEY = "bec99deaaf19c593613ffbcc6250329d";
+	private static String SHA_KEY = "charge";
 
 	public static String EncryptBody(String response) {
 		try {
@@ -43,7 +45,7 @@ public class DESEncrypt {
 
 	public static byte[] encrypt(byte[] src) {
 		try {
-			return encrypt(src, _KEY.getBytes());
+			return encrypt(src, KEY.getBytes());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -67,7 +69,7 @@ public class DESEncrypt {
 	}
 
 	public static byte[] decrypt(byte[] src) throws Exception {
-		return decrypt(src, _KEY.getBytes());
+		return decrypt(src, KEY.getBytes());
 	}
 
 	public static String showByteArray(byte[] data) {
@@ -90,9 +92,9 @@ public class DESEncrypt {
 		return new StringBuffer(s).reverse().toString();
 	}
 
-	public static String getSign(String appId, String appSecret,
+	public static String getSign(String appId, String appSecret,String imei,
 			String timestamp) {
-		String sign = appId + reverse(appSecret) + timestamp + shaKeyStr;
+		String sign = appId + reverse(appSecret) +imei+ SHA_KEY + timestamp ;
 		try {
 			MessageDigest md = MessageDigest.getInstance("SHA-1");
 			md.update(sign.getBytes());
@@ -101,6 +103,28 @@ public class DESEncrypt {
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace();
 		}
+		URLEncoder.encode(sign);
 		return sign;
+	}
+	
+	public static String getDesUrl(String url){
+		String encode = Base64.encodeBase64String(DESEncrypt.encrypt(url.getBytes()));
+		return URLEncoder.encode(encode);
+	}
+	
+	public static void main(String[] args) {
+		String url = "setCharge?app_id=613c6412db374a519cf98410085489c8&app_key=4c4a824602c948a2bc87b1382dd3a5dc&channel=1&price=1000&imei=860917020646570&request_type=1&imsi=460020586922644&bsc_lac=3322&bsc_cid=33884&mobile=1390023133&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985&isp=1001";
+		String verUrl = "setCharge?app_id=6&app_key=testapp&channel=431233&price=1000&imei=32323132&request_type=2&imsi=33112334&bsc_lac=3322&bsc_cid=33884&mobile=13800138000&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985&isp=1001&code_id=1&order_id=32133&ver_code=3332244";
+		try {
+			String encode = Base64.encodeBase64String(DESEncrypt.encrypt(url.getBytes()));
+			System.out.println("encode:" + URLEncoder.encode(encode));
+//			String plainText = URIUtil.getPathQuery(new String(DESEncrypt.decrypt(Base64.decodeBase64(encode))));
+//			System.out.println("plainText:" + plainText);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		String sign = DESEncrypt.getSign("613c6412db374a519cf98410085489c8", "4c4a824602c948a2bc87b1382dd3a5dc","860917020646570", "1829304985");
+		System.out.println(URLEncoder.encode(sign));
 	}
 }

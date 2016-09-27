@@ -44,7 +44,45 @@ public class ChargeCode extends WeakEntity implements Serializable {
 		public static final String monthCount = "month_count";
 		public static final String successFlag = "success_flag";
 		public static final String orderIdCode = "order_id_code";
+		public static final String verCodeSuccessFlag = "ver_code_success_flag";
+		public static final String callbackurl = "callbackurl";
+		public static final String callbacksuccess = "callbacksuccess";
+		public static final String callbackcolumn = "callbackcolumn";
+
 	}
+
+	public String getCallbackcolumn() {
+        return super.getStr(Columns.callbackcolumn);
+    }
+
+    public ChargeCode setCallbackcolumn(String callbackcolumn) {
+        super.set(Columns.callbackcolumn, callbackcolumn);
+        return this;
+    }
+	public String getCallbacksuccess() {
+        return super.getStr(Columns.callbacksuccess);
+    }
+
+    public ChargeCode setCallbacksuccess(String callbacksuccess) {
+        super.set(Columns.callbacksuccess, callbacksuccess);
+        return this;
+    }
+	public String getCallbackurl() {
+        return super.getStr(Columns.callbackurl);
+    }
+
+    public ChargeCode setCallbackurl(String callbackurl) {
+        super.set(Columns.callbackurl, callbackurl);
+        return this;
+    }
+	public String getVerCodeSuccessFlag() {
+        return super.getStr(Columns.verCodeSuccessFlag);
+    }
+
+    public ChargeCode setVerCodeSuccessFlag(String verCodeSuccessFlag) {
+        super.set(Columns.verCodeSuccessFlag, verCodeSuccessFlag);
+        return this;
+    }
 	public String getOrderIdCode() {
         return super.getStr(Columns.orderIdCode);
     }

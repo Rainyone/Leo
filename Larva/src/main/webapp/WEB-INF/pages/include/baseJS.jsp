@@ -29,8 +29,12 @@
 <script src='${ctxAssets}/javascripts/plugins/bootstrap_maxlength/bootstrap-maxlength.min.js' type='text/javascript'></script>
 <!-- / datetime picker -->
 <script src='${ctxAssets}/javascripts/plugins/bootstrap_datetimepicker/bootstrap-datetimepicker.js' type='text/javascript'></script>
-<!-- / daterange picker
+<script src='${ctxAssets}/javascripts/plugins/bootstrap_datetimepicker/bootstrap-datetimepicker.zh-CN.js' type='text/javascript'></script> 
+<%-- <script src='${ctxAssets}/javascripts/test/bootstrap-datetimepicker.js' type='text/javascript'></script>
+<script src='${ctxAssets}/javascripts/test/bootstrap-datetimepicker.fr.js' type='text/javascript'></script> 
+<script src='${ctxAssets}/javascripts/test/bootstrap-datetimepicker.zh-CN.js' type='text/javascript'></script> --%>
 <script src='${ctxAssets}/javascripts/plugins/bootstrap_daterangepicker/moment.min.js' type='text/javascript'></script>
+<!-- / daterange picker
 <script src='${ctxAssets}/javascripts/plugins/bootstrap_daterangepicker/bootstrap-daterangepicker.js' type='text/javascript'></script>
  -->
 <!-- / inplace editing -->

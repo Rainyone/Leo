@@ -25,10 +25,39 @@ public class ChargeCodeCreateVO {
 	private String detail = "detail";
     private String success_flag = "判断成功字符串";
     private String order_id_code = "验证码的order_id字段";
+    private String ver_code_success_flag ;
 	private String create_people_name;
     private String update_people_name;
+    private String callbackurl ;
+	private String callbacksuccess;
+    private String callbackcolumn;
     
-    public String getCreate_people_name() {
+    
+    public String getCallbackurl() {
+		return callbackurl;
+	}
+	public void setCallbackurl(String callbackurl) {
+		this.callbackurl = callbackurl;
+	}
+	public String getCallbacksuccess() {
+		return callbacksuccess;
+	}
+	public void setCallbacksuccess(String callbacksuccess) {
+		this.callbacksuccess = callbacksuccess;
+	}
+	public String getCallbackcolumn() {
+		return callbackcolumn;
+	}
+	public void setCallbackcolumn(String callbackcolumn) {
+		this.callbackcolumn = callbackcolumn;
+	}
+	public String getVer_code_success_flag() {
+		return ver_code_success_flag;
+	}
+	public void setVer_code_success_flag(String ver_code_success_flag) {
+		this.ver_code_success_flag = ver_code_success_flag;
+	}
+	public String getCreate_people_name() {
 		return create_people_name;
 	}
 	public void setCreate_people_name(String create_people_name) {

@@ -6,134 +6,134 @@
 </head>
 <body>
 <div class='span12 box bordered-box blue-border' style='margin-bottom:0;'>
-  <div class='box-header' id="menu-header">
-    <div class='title'>APP管理</div>
-    <div class='actions'></div>
-  </div>
-  <div class='box-content box-no-padding'>
-    <div class='responsive-table'>
-      <div class='scrollable-area-x'>
-        <table id="menuTable"></table>
-      </div>
-    </div>
-  </div>
-</div>
-<div class='modal hide fade' id='modal-Menu' role='dialog' tabindex='-1' style='margin-bottom: 0;width:750px;height:600px;'>
-    <div class='modal-header'>
-        <button class='close' data-dismiss='modal' type='button'>&times;</button>
-        <h3></h3>
-    </div>
-    <form class='form-horizontal' id='submit-form' method="post" role="form"  >
+  <form class='form-horizontal' id='submit-form' method="post" role="form"  >
 	    <div class='modal-body' style="height:550px;">
 	    	 <div class='control-group'>
 	        	<label class='control-label'>APP_ID</label>
 	        	<div class='controls'>
-                    <input class='span8' id='app_id' name="app_id" required placeholder='APP_ID' type='text' readonly/>
+                    <input class='span8' id='app_id' name="app_id" required placeholder='APP_ID' type='text' />
            		 </div>
 	        </div>
 	         <div class='control-group'>
 	        	<label class='control-label'>APP_KEY</label>
 	        	<div class='controls'>
-                    <input class='span8' id='app_key' name="app_key" required placeholder='APP_KEY' type='text' readonly/>
-           			<a href='#' id='getAppKey' data-toggle='modal' class='btn btn-success btn-small' style='margin-left:5px'><i class='icon-plus'></i>获取新KEY</a>
+                    <input class='span8' id='app_key' name="app_key" required placeholder='APP_KEY' type='text' />
            		 </div>
 	        </div>
 	        <div class='control-group'>
-	        	<label class='control-label'>APP名称</label>
-	        	<div class='controls'>
-               		<input type='hidden' id='id' name="id"/>
-                    <input class='span8' id='app_name' name="app_name" required placeholder='APP名称' type='text' />
-           		 </div>
+	        	<label class='control-label'>REQUEST_TYPE</label>
+	        	 <div class='controls'>
+	             	 <select class='span8' id='request_type' name="request_type"  required>
+				　　        <option value='1'>计费</option>
+				　　        <option value='2'>验证码</option>
+				　　    </select>
+	            </div>
 	        </div>
 	        <div class='control-group'>
-	        	<label class='control-label'>APP包名</label>
+	        	<label class='control-label'>CHANNEL</label>
 	        	<div class='controls'>
-               		<input class='span8' id='app_package_name' required name="app_package_name" placeholder='App包名' type='text' />
+               		<input class='span8' id='channel' required name="channel" placeholder='渠道号（是否为客户端提供）' type='text' />
            		</div>
 	        </div>
 	        <div class='control-group'>
-	        	<label class='control-label'>渠道</label>
+	        	<label class='control-label'>PRICE</label>
 	        	<div class='controls'>
-               		<input class='span8' id='channel' required name="channel" placeholder='渠道' type='text' />
+               		<input class='span8' id='price' required name="price" placeholder='金额 分为单位 ' type='text' />
            		</div>
 	        </div>
 	        <div class='control-group'>
-	            <label class='control-label'>日限量</label>
+	            <label class='control-label'>IMEI</label>
 	            <div class='controls'>
-	                <input class='span8' id='date_limit' required name="date_limit" placeholder='日限量' type='number' />
+	                <input class='span8' id='imei' required name="imei" placeholder='手机IMEI信息' type='number' />
 	            </div>
 	            
 	        </div>
 	         <div class='control-group'>
-	         	 <label class='control-label'>月限量</label>
+	         	 <label class='control-label'>IMSI</label>
 	             <div class='controls'>
-	                <input class='span8' id='month_limit' required name="month_limit" placeholder='月限量' type='number' />
+	                <input class='span8' id='imsi' required name="imsi" placeholder='手机IMSI信息' type='number' />
 	             </div>
 	         </div>
 	         <div class='control-group'>
-	            <label class='control-label'>联系人</label>
+	            <label class='control-label'>BSC_LAC</label>
 	            <div class='controls'>
-	                <input class='span8' id='link_name' name="link_name" placeholder='联系人' type='text' />
+	                <input class='span8' id='bsc_lac' name="bsc_lac" placeholder='移动基站信息' type='text' />
 	            </div>
 	        </div>
 	        <div class='control-group'>
-	            <label class='control-label'>联系电话</label>
+	            <label class='control-label'>BSC_CID</label>
 	            <div class='controls'>
-	                <input class='span8' id='phone_no' name="phone_no" required placeholder='联系电话' type='number' digits="true" />
+	                <input class='span8' id='bsc_cid' name="bsc_cid" required placeholder='移动基站信息' type='number' digits="true" />
 	            </div>
 	        </div>
 	        <div class='control-group'>
-	            <label class='control-label'>简介</label>
+	            <label class='control-label'>MOBILE</label>
 	            <div class='controls'>
-	                 <textarea class="span8" rows="3" id="description" name="description" placeholder='简介' type='text'></textarea>
+	                 <input class="span8" id="mobile" name="mobile" placeholder='手机号码' type='text'/>
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>ICCID</label>
+	            <div class='controls'>
+	                 <input class="span8" id="iccid" name="iccid" placeholder='sim卡iccid号' type='text'/>
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>MAC</label>
+	            <div class='controls'>
+	                 <input class="span8" id="mac" name="mac" placeholder='mac地址' type='text'/>
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>CPPARM</label>
+	            <div class='controls'>
+	                 <textarea class="span8" id="cpparm" name="cpparm" placeholder='透传参数' type='text'></textarea>
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>FMT</label>
+	            <div class='controls'>
+	                 <input class="span8" id="fmt" name="fmt" placeholder='反馈报文格式 json' type='text'/>
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>ISP</label>
+	             <div class='controls'>
+	             	 <select class='span8' id='isp' name="isp"  required>
+				　　        <option value='1001'>中国电信</option>
+				　　        <option value='1002'>中国移动</option>
+				　　        <option value='1003'>中国联通</option>
+				　　        <option value='1004'>其他</option>
+				　　    </select>
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>CODE_ID</label>
+	            <div class='controls'>
+	                 <input class="span8" id="code_id" name="code_id" placeholder='计费代码编码，request_type=2时必填' type='text'/>
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>ORDER_ID</label>
+	            <div class='controls'>
+	                 <input class="span8" id="order_id" name="order_id" placeholder='验证码回传的订单号，当request_type=2时必填' type='text'/>
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>VER_CODE</label>
+	            <div class='controls'>
+	                 <input class="span8" id="ver_code" name="ver_code" placeholder='验证码，当request_type=2时必填' type='text'/>
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>结果</label>
+	            <div class='controls'>
+	                 <textarea class="span8" rows="5" id="result" name="result" placeholder='结果' type='text'></textarea>
+	                 <a href='#' id='getResult' data-toggle='modal' class='btn btn-success btn-small' style='margin-left:5px'> 获取URL</a>
 	            </div>
 	        </div>
 	    </div>
-	    <div class='modal-footer'>
-	        <button type="button" id="btnClose" class='btn'>关闭</button>
-	        <button type="submit" id="btnSubmit" class='btn btn-primary'>保存</button>
-	    </div>
     </form>
-</div>
-
-<div class='modal hide fade' id='modal-DistributePermission' role='dialog' tabindex='-1'>
-    <div class='modal-header'>
-        <button class='close' data-dismiss='modal' type='button'>&times;</button>
-        <h3></h3>
-    </div>
-    <form class='form validate-form' id='submit-distributePermissionTreeForm' method="post" role="form"  style='margin-bottom: 0;'>
-    <div class='modal-body'>
-       <input type="hidden" id="menuId"/>
-       <input type="hidden" id="distributePermissionTreeHidden"/>
-       <ul id="distributePermissionTree" class="ztree" style="background: #f0f6e4;width:100%;height:300px;overflow-y:scroll;overflow-x:auto;"></ul>
-    </div>
-    <div class='modal-footer'>
-        <button type="button" id="btnDistributePermissionClose" class='btn'>关闭</button>
-        <button type="button" id="btnDistributePermissionSubmit" class='btn btn-primary'>保存</button>
-    </div>
-    </form>
-</div>
-
-<div class='modal hide fade' id='modal-CheckPermission' role='dialog' tabindex='-1'>
-    <div class='modal-header'>
-        <button class='close' data-dismiss='modal' type='button'>&times;</button>
-        <h3></h3>
-    </div>
-    <div class='modal-body'>
-       <ul id="checkPermissionTree" class="ztree" style="background: #f0f6e4;width:100%;height:300px;overflow-y:scroll;overflow-x:auto;"></ul>
-    </div>
-    <div class='modal-footer'>
-        <button type="button" id="btnCheckPermissionClose" class='btn'>关闭</button>
-    </div>
-</div>
-<div class='modal hide fade' id='modal-introduction' role='dialog' tabindex='-1'>
-    <div class='modal-header'>
-        <button class='close' data-dismiss='modal' type='button'>&times;</button>
-        <h3></h3>
-    </div>
-    <div class='modal-body'>
-         <textarea class='span12 form-control' id='appIntroduction' name='appIntroduction' rows='10' readonly></textarea>
-    </div>
 </div>
 <script>
   seajs.use(['base','main/app/app_test/manage'],function(b,m){

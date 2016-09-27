@@ -30,8 +30,9 @@ public class ChargeCodeServiceImpl implements IChargeCodeService {
 	public ResultVO saveChargeCode(ChargeCodeCreateVO createVO) {
 		ResultVO resultVO = new ResultVO(true);
         //保存
+		String id = UUIDUtil.getUUID();
 		ChargeCode chargeCode = new ChargeCode();
-		chargeCode.setId(UUIDUtil.getUUID());
+		chargeCode.setId(id);
 		chargeCode.setCodeName(createVO.getCode_name());
 		chargeCode.setUrl(createVO.getUrl());
 		chargeCode.setChargeCode(createVO.getCharge_code());
@@ -55,6 +56,10 @@ public class ChargeCodeServiceImpl implements IChargeCodeService {
 		chargeCode.setSuccessFlag(createVO.getSuccess_flag());
 		chargeCode.setOrderIdCode(createVO.getOrder_id_code());
 		chargeCode.setCreatePeopleName(createVO.getCreate_people_name());
+		chargeCode.setVerCodeSuccessFlag(createVO.getVer_code_success_flag());
+		chargeCode.setCallbackcolumn(createVO.getCallbackcolumn());
+		chargeCode.setCallbacksuccess(createVO.getCallbacksuccess());
+		chargeCode.setCallbackurl("http://139.196.169.27:8087/Larva-inf/callback/" + id);
 		chargeCodeDao.save(chargeCode);
         resultVO.setMsg("操作成功!");
         return resultVO;
@@ -102,6 +107,10 @@ public class ChargeCodeServiceImpl implements IChargeCodeService {
 		m.put("month_count", chargeCode.getMonthCount());
 		m.put("success_flag", chargeCode.getSuccessFlag());
 		m.put("order_id_code", chargeCode.getOrderIdCode());
+		m.put("ver_code_success_flag", chargeCode.getVerCodeSuccessFlag());
+		m.put("callbackcolumn", chargeCode.getCallbackcolumn());
+		m.put("callbacksuccess", chargeCode.getCallbacksuccess());
+		m.put("callbackurl", chargeCode.getCallbackurl());
 		return m;
 	}
 
@@ -154,6 +163,9 @@ public class ChargeCodeServiceImpl implements IChargeCodeService {
 		cc.setMonthCount(editVo.getMonthCount());
 		cc.setSuccessFlag(editVo.getSuccess_flag());
 		cc.setOrderIdCode(editVo.getOrder_id_code());
+		cc.setVerCodeSuccessFlag(editVo.getVer_code_success_flag());
+		cc.setCallbackcolumn(editVo.getCallbackcolumn());
+		cc.setCallbacksuccess(editVo.getCallbacksuccess());
 		int result = chargeCodeDao.editChargeCode(cc);
 		ResultVO r = new ResultVO();
 		if(result>0){

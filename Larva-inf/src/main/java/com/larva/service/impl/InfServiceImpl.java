@@ -127,5 +127,20 @@ public class InfServiceImpl implements InfService {
 	public Integer updateOrderNoById(String id, String orderNo) {
 		return iInfDao.updateOrderNoById(id,orderNo);
 	}
+	@Override
+	public ResultVO checkOrderId(String order_id) {
+		ResultVO vo = new ResultVO(false);
+		Record r = iInfDao.checkOrderId(order_id);
+		int count = r.getInt("count");
+		if(count>=1){//有记录
+			vo.setOk(true);
+			vo.setData(count);
+		}
+		return vo;
+	}
+	@Override
+	public Record getCallBackSuccessById(String charge_id) {
+		return iInfDao.getCallBackSuccessById(charge_id);
+	}
 	
 }

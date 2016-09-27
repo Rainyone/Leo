@@ -1,5 +1,6 @@
 package com.larva.controller.main;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -19,8 +21,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.larva.service.IAppManageService;
 import com.larva.utils.Constants;
+import com.larva.utils.DESEncrypt;
 import com.larva.vo.AppManageCreateVO;
 import com.larva.vo.AppManageEditVO;
+import com.larva.vo.GetURLVO;
 import com.larva.vo.Pager;
 import com.larva.vo.PagerReqVO;
 import com.larva.vo.ResultVO;
@@ -29,6 +33,7 @@ import com.larva.vo.TreeNode;
 @Controller
 @RequestMapping("/main/app")
 public class AppController {
+	Logger logger = Logger.getLogger(AppController.class);
 	@Autowired
 	private IAppManageService appManageService;
 	//跳转到app管理
@@ -194,5 +199,40 @@ public class AppController {
     @RequestMapping("/app_test/manage")
     public String appTest() {
         return "main/app/app_test/manage";
+    }
+    
+    @RequestMapping(value = "/app_test/get-url", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    ResultVO delAppCodes(GetURLVO v) {
+    	Long timestamp = new Date().getTime();
+    	String url = "setCharge?app_id=" + v.getApp_id();
+    	url += "&app_key=" + v.getApp_key();
+    	url += "&request_type=" + v.getRequest_type();
+    	url += "&channel=" + v.getChannel();
+    	url += "&price=" + v.getPrice();
+    	url += "&imei=" + v.getImei();
+    	url += "&imsi=" + v.getImsi();
+    	url += "&bsc_lac=" + v.getBsc_lac();
+    	url += "&bsc_cid=" + v.getBsc_cid();
+    	url += "&mobile=" + v.getMobile();
+    	url += "&iccid=" + v.getIccid();
+    	url += "&mac=" + v.getMac();
+    	url += "&cpparm=" + v.getCpparm();
+    	url += "&fmt=" + v.getFmt();
+    	url += "&timestamp=" + timestamp;
+    	url += "&isp=" + v.getIsp();
+    	url += "&code_id=" + v.getCode_id();
+    	url += "&order_id=" + v.getOrder_id();
+    	url += "&ver_code=" + v.getVer_code();
+    	logger.info("oldUrl = " + url);
+    	String newUrl = DESEncrypt.getDesUrl(url);
+    	String sign = DESEncrypt.getSign(v.getApp_id(), v.getApp_key(), v.getImei(), String.valueOf(timestamp));
+    	logger.info("newUrl = " + newUrl);
+    	logger.info("sign = " + sign);
+    	ResultVO vo = new ResultVO(true);
+    	String result = "http://ip:port/Larva-inf/charge?body=" + newUrl +"&sign=" + sign ; 
+    	vo.setData(result);
+        return vo;
     }
 }

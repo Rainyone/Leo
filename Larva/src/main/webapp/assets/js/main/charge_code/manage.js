@@ -47,10 +47,15 @@ define(function (require, exports, module) {
 			        			$('#detail').val(row.detail);
 			        			$('#success_flag').val(row.success_flag);
 			        			$('#order_id_code').val(row.order_id_code);
+			        			$('#ver_code_success_flag').val(row.ver_code_success_flag);
+			        			$('#callbackurl').val(row.callbackurl);
+			        			$('#callbacksuccess').val(row.callbacksuccess);
+			        			$('#callbackcolumn').val(row.callbackcolumn);
 			        			F.setDelAttr('input','readonly');
 								F.setDelAttr('select','readonly');
 								F.setDelAttr('input','disabled');
 								F.setDelAttr('select','disabled');
+								$('#callbackurl').attr('readonly','readonly')
 			        			$('#btnSubmit').show();
 			            	}
 			        	});
@@ -90,6 +95,10 @@ define(function (require, exports, module) {
 	        			$('#detail').val(row.detail);
 	        			$('#success_flag').val(row.success_flag);
 	        			$('#order_id_code').val(row.order_id_code);
+	        			$('#ver_code_success_flag').val(row.ver_code_success_flag);
+	        			$('#callbackurl').val(row.callbackurl);
+	        			$('#callbacksuccess').val(row.callbacksuccess);
+	        			$('#callbackcolumn').val(row.callbackcolumn);
 	        			F.setAddAttr('input','readonly','readonly');
 	        			F.setAddAttr('select','readonly','readonly');
 	        			F.setAddAttr('input','disabled','disabled');
@@ -201,6 +210,10 @@ define(function (require, exports, module) {
 		    			        field: 'order_id_code',
 		    			        title: '验证码的order_id字段',
 		    			        visible:false
+		    		        },{
+		    			        field: 'ver_code_success_flag',
+		    			        title: '验证码请求成功标示',
+		    			        visible:false
 		    		        }];
 		        //是否需要操作列
 		        if(base.perList.menu.edit||base.perList.menu.del||base.perList.menu.grant||base.perList.menu.checkPermission)
@@ -224,6 +237,7 @@ define(function (require, exports, module) {
 						F.setDelAttr('select','readonly');
 						F.setDelAttr('input','disabled');
 						F.setDelAttr('select','disabled');
+						$('#callbackurl').attr('readonly','readonly')
 						$('#btnSubmit').show();
 					});
 				});

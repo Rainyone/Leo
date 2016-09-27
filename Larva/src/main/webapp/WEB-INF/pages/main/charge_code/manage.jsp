@@ -201,13 +201,37 @@
 	        <div class='control-group'>
 	            <label class='control-label'>运营商反馈成功标示</label>
 	            <div class='controls'>
-	                <input class='span8' id='success_flag' name='success_flag' digits="true" placeholder='反馈报文的成功标示字段  字段名:成功值' type='text' required/>
+	                <input class='span8' id='success_flag' name='success_flag' digits="true" placeholder='反馈报文的成功标示字段  字段名:成功值当借口类型为“需要短信反馈验证码”是填写："msg":"success"' value='"msg":"success"' type='text' required/>
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>验证码的order_id字段</label>
 	            <div class='controls'>
 	                <input class='span8' id='order_id_code' name='order_id_code' digits="true" placeholder='验证码的order_id字段' type='text' />
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>验证码请求成功标示</label>
+	            <div class='controls'>
+	                <input class='span8' id='ver_code_success_flag' name='ver_code_success_flag' digits="true" placeholder='验证码请求时运营商反馈的成功标示 字段名:成功值' type='text' />
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>运营商回调接口地址</label>
+	            <div class='controls'>
+	                <input class='span8' id='callbackurl' name='callbackurl' digits="true" placeholder='运营商回调接口地址' type='text' readonly/>
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>运营商回调计费成功标示</label>
+	            <div class='controls'>
+	                <input class='span8' id='callbacksuccess' name='callbacksuccess' digits="true" placeholder='运营商回调计费成功标示，如：result=1' type='text' />
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>运营商回调透传参数字段</label>
+	            <div class='controls'>
+	                <input class='span8' id='callbackcolumn' name='callbackcolumn' digits="true" placeholder='字段名称，正常情况记录的是计费记录id' type='text' />
 	            </div>
 	        </div>
 	    </div>

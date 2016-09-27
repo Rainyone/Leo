@@ -35,8 +35,13 @@ public class UrlRewriteFilter implements Filter {
 			return;
 		}
 		
-		if (uri.indexOf("/flushConfig") > 0) {
-			request.getRequestDispatcher("/flushConfig").forward(request, response);
+		if (uri.indexOf("/callback") > 0) {
+			StringBuffer url = request.getRequestURL() ;
+			String servletPath=request.getServletPath();  
+			String queryStr = request.getQueryString();
+			String charge_id = servletPath.substring(servletPath.indexOf("callback/")+9,servletPath.length());
+			request.setAttribute("charge_id", charge_id);
+			request.getRequestDispatcher("/callback?charge_id="+charge_id+"&"+queryStr).forward(request, response);
 			return;
 		}
 		

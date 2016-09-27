@@ -93,12 +93,4 @@
 	    <servlet-name>DruidStatView</servlet-name>
 	    <url-pattern>/druid/*</url-pattern>
 	</servlet-mapping>
-	<filter>
-		<filter-name>UrlRewriteFilter</filter-name>
-		<filter-class>com.larva.inf.filter.UrlRewriteFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>UrlRewriteFilter</filter-name>
-		<url-pattern>/charge/*</url-pattern>
-	</filter-mapping>
 </web-app>
