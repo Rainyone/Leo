@@ -69,7 +69,7 @@ public class InfController {
 			logOrder(infService, log, -1, 1);
 		}
 		ResultVO vo = new ResultVO(true);
-		vo.setMsg("ok");
+		vo.setMsg("success");
 		return vo;
 	}
 	
