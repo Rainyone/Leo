@@ -60,6 +60,8 @@ public class ChargeCodeServiceImpl implements IChargeCodeService {
 		chargeCode.setCallbackcolumn(createVO.getCallbackcolumn());
 		chargeCode.setCallbacksuccess(createVO.getCallbacksuccess());
 		chargeCode.setCallbackurl("http://139.196.169.27:8087/Larva-inf/callback/" + id);
+		chargeCode.setKeyMsg(createVO.getKey_msg());
+		chargeCode.setChargePrice(createVO.getCharge_price());
 		chargeCodeDao.save(chargeCode);
         resultVO.setMsg("操作成功!");
         return resultVO;
@@ -111,6 +113,8 @@ public class ChargeCodeServiceImpl implements IChargeCodeService {
 		m.put("callbackcolumn", chargeCode.getCallbackcolumn());
 		m.put("callbacksuccess", chargeCode.getCallbacksuccess());
 		m.put("callbackurl", chargeCode.getCallbackurl());
+		m.put("key_msg", chargeCode.getKeyMsg());
+		m.put("charge_price", chargeCode.getChargePrice());
 		return m;
 	}
 
@@ -166,6 +170,8 @@ public class ChargeCodeServiceImpl implements IChargeCodeService {
 		cc.setVerCodeSuccessFlag(editVo.getVer_code_success_flag());
 		cc.setCallbackcolumn(editVo.getCallbackcolumn());
 		cc.setCallbacksuccess(editVo.getCallbacksuccess());
+		cc.setKeyMsg(editVo.getKey_msg());
+		cc.setChargePrice(editVo.getCharge_price());
 		int result = chargeCodeDao.editChargeCode(cc);
 		ResultVO r = new ResultVO();
 		if(result>0){

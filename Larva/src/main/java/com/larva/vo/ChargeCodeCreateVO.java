@@ -31,9 +31,23 @@ public class ChargeCodeCreateVO {
     private String callbackurl ;
 	private String callbacksuccess;
     private String callbackcolumn;
+    private String key_msg;
+    private Long charge_price;
     
     
-    public String getCallbackurl() {
+	public Long getCharge_price() {
+		return charge_price;
+	}
+	public void setCharge_price(Long charge_price) {
+		this.charge_price = charge_price;
+	}
+	public String getKey_msg() {
+		return key_msg;
+	}
+	public void setKey_msg(String key_msg) {
+		this.key_msg = key_msg;
+	}
+	public String getCallbackurl() {
 		return callbackurl;
 	}
 	public void setCallbackurl(String callbackurl) {

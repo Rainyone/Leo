@@ -51,6 +51,9 @@ define(function (require, exports, module) {
 			        			$('#callbackurl').val(row.callbackurl);
 			        			$('#callbacksuccess').val(row.callbacksuccess);
 			        			$('#callbackcolumn').val(row.callbackcolumn);
+			        			$('#key_msg').val(row.key_msg);
+			        			$('#charge_price').val(row.charge_price);
+			        			
 			        			F.setDelAttr('input','readonly');
 								F.setDelAttr('select','readonly');
 								F.setDelAttr('input','disabled');
@@ -99,6 +102,8 @@ define(function (require, exports, module) {
 	        			$('#callbackurl').val(row.callbackurl);
 	        			$('#callbacksuccess').val(row.callbacksuccess);
 	        			$('#callbackcolumn').val(row.callbackcolumn);
+	        			$('#key_msg').val(row.key_msg);
+	        			$('#charge_price').val(row.charge_price);
 	        			F.setAddAttr('input','readonly','readonly');
 	        			F.setAddAttr('select','readonly','readonly');
 	        			F.setAddAttr('input','disabled','disabled');
@@ -213,6 +218,14 @@ define(function (require, exports, module) {
 		    		        },{
 		    			        field: 'ver_code_success_flag',
 		    			        title: '验证码请求成功标示',
+		    			        visible:false
+		    		        },{
+		    			        field: 'key_msg',
+		    			        title: '短信校验',
+		    			        visible:false
+		    		        },{
+		    			        field: 'charge_price',
+		    			        title: '计费代码单价',
 		    			        visible:false
 		    		        }];
 		        //是否需要操作列

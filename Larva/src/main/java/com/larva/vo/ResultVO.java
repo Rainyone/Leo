@@ -1,9 +1,5 @@
 package com.larva.vo;
 
-/**
- * @author sxjun
- * @time 2015/8/27 13:32
- */
 public class ResultVO {
 
     public ResultVO(boolean ok) {

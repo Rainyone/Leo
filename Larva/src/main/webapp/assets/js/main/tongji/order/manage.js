@@ -92,6 +92,9 @@ define(function (require, exports, module) {
 		    			        field: 'price',
 		    			        title: 'price'
 		    		        },{
+		    			        field: 'charge_price',
+		    			        title: '计费代码单价'
+		    		        },{
 		    			        field: 'create_time',
 		    			        title: '创建时间'
 		    		        }];

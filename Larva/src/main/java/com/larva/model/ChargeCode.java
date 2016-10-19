@@ -48,9 +48,27 @@ public class ChargeCode extends WeakEntity implements Serializable {
 		public static final String callbackurl = "callbackurl";
 		public static final String callbacksuccess = "callbacksuccess";
 		public static final String callbackcolumn = "callbackcolumn";
+		public static final String key_msg = "key_msg";
+		public static final String charge_price = "charge_price";
 
 	}
 
+	public Long getChargePrice() {
+        return super.getLong(Columns.charge_price);
+    }
+
+    public ChargeCode setChargePrice(Long charge_price) {
+        super.set(Columns.charge_price, charge_price);
+        return this;
+    }
+	public String getKeyMsg() {
+        return super.getStr(Columns.key_msg);
+    }
+
+    public ChargeCode setKeyMsg(String key_msg) {
+        super.set(Columns.key_msg, key_msg);
+        return this;
+    }
 	public String getCallbackcolumn() {
         return super.getStr(Columns.callbackcolumn);
     }

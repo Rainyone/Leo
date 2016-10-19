@@ -101,13 +101,19 @@
 	        <div class='control-group'>
 	            <label class='control-label'>请求URL</label>
 	            <div class='controls'>
-	                <input class='span8' id='url' name="url" placeholder='请求URL' type='text' />
+	                <input class='span8' id='url' name="url" placeholder='请求URL' type='text' required/>
 	            </div>
 	        </div>
 	         <div class='control-group'>
 	            <label class='control-label'>请求内容</label>
 	            <div class='controls'>
 	                <input class='span8' id='charge_code' name="charge_code" placeholder='报文内容' type='text' />
+	            </div>
+	        </div>
+	         <div class='control-group'>
+	            <label class='control-label'>单价(分)</label>
+	            <div class='controls'>
+	                <input class='span8' id='charge_price' name="charge_price" placeholder='单价' type="number" required/>
 	            </div>
 	        </div>
 	        <div class='control-group'>
@@ -141,7 +147,7 @@
 	        <div class='control-group'>
 	            <label class='control-label'>反馈给客户端报文格式</label>
 	            <div class='controls'>
-	                <input class='span8' id='back_form' name='back_form' placeholder='' type='text' required/>
+	                <input class='span8' id='back_form' name='back_form' placeholder='当不需要反馈时可以填写{}' type='text' required/>
 	                <span class="help-block">格式：<%=introduction%></span>
 	            </div>
 	        </div>
@@ -232,6 +238,12 @@
 	            <label class='control-label'>运营商回调透传参数字段</label>
 	            <div class='controls'>
 	                <input class='span8' id='callbackcolumn' name='callbackcolumn' digits="true" placeholder='字段名称，正常情况记录的是计费记录id' type='text' />
+	            </div>
+	        </div>
+	        <div class='control-group'>
+	            <label class='control-label'>短信屏蔽关键字key_msg</label>
+	            <div class='controls'>
+	                <input class='span8' id='key_msg' name='key_msg' placeholder='短信屏蔽关键字key_msg' type='text' />
 	            </div>
 	        </div>
 	    </div>
