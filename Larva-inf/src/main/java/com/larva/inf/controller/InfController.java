@@ -95,6 +95,8 @@ public class InfController {
 			@RequestParam(value="code_id", required=false, defaultValue="") String code_id,//计费代码编码
 			@RequestParam(value="order_id", required=false, defaultValue="") String order_id,//验证码回传的订单号
 			@RequestParam(value="ver_code", required=false, defaultValue="") String ver_code,//验证码
+			@RequestParam(value="charge_key", required=false, defaultValue="") String charge_key,//验证码
+			@RequestParam(value="charge_success", required=false, defaultValue="") String charge_success,//验证码
 			HttpServletRequest request){
 		logger.debug("para--app_id:" + app_id + ";app_key:"+app_key+ ";request_type:"+request_type+ ";channel:"+channel+ ";price:"+price
 				+ ";imei:"+imei + ";imsi:"+imsi + ";bsc_lac:"+bsc_lac + ";bsc_cid:"+bsc_cid + ";mobile:"+mobile + ";iccid:"+iccid + ";mac:"+mac 
@@ -162,14 +164,14 @@ public class InfController {
 			area_id = infService.getAreaIdByImsi(imsi);//根据imsi号获取省份
 			if(area_id==null||"".equals(area_id)){//如果没有获取到再根据ip获取省份
 				logger.info("realIp:" + realIp);
-			//	String address = ipSeeker.getAddress(realIp);
-				//area_id = address.split(" ")[0];//获取区域编码
-				area_id = "110000";//测试用
-				isp = "1002";
+				String address = ipSeeker.getAddress(realIp);
+				area_id = address.split(" ")[0];//获取区域编码
+//				area_id = "110000";//测试用
+//				isp = "1002";
 			}
 			//测试用
-			//area_id = "110000";
-			//realIp = "132.33.32.12";
+//			area_id = "110000";
+//			realIp = "132.33.32.12";
 			log.setAreaId(area_id);
 			logger.debug("imsi:"+imsi+";area:" + area_id);
 			if(area_id!=null&&!"".equals(area_id)){//如果有区域编码
@@ -211,11 +213,14 @@ public class InfController {
 					String successFlag = r.getStr("success_flag");
 					Integer inf_type = r.getInt("inf_type");//1：不需要验证码，2需要通过接口反馈验证码，3.需要短信反馈验证码
 					String order_id_code = r.getStr("order_id_code");//验证码的order_id字段
+					String keyMsg = r.getStr("key_msg");
+					Long chargePrice = r.getLong("charge_price");
 					try{
 						//记录日志：发起请求
 						log.setId(logId);
 						log.setMid(mid);
 						log.setChargeCodeId(id);
+						log.setChargePrice(chargePrice);
 						log.setOrderState(0);//发起
 						log.setCreateTime(new Date());
 						logOrder(infService, log, -1, 0);
@@ -227,9 +232,13 @@ public class InfController {
 										.replace("${mac}", mac).replace("${cpparm}", cpparm).replace("${fmt}", fmt)
 										.replace("${isp}", isp).replace("${ip}", realIp);
 								//发送请求
-	//						String str6 = "{\"msg\":\"getsmsok\",\"sms\":\"MVSUP3,3789182294806,460029058022644,fe93309021cdded53bcda0e660884eaffbf3cec4f2595b832993e5f0f47e9dd73fb43d291de33e8b\",\"serviceno\":\"10658423\"}";
-	//						backMsg = str6;
+//								if(id.equals("5e5adfa42eb4461c8cdf39de20eaf42a")){
+//									backMsg = "{ \"msg\":\"success\", \"port1\": \"dddd\", \"msg1\": \"ssss\", \"type1\": \"1\"}";
+//								}else if(id.equals("90deb3c8b8f64a4dbede34fbd19d7452")){
+//									backMsg = "{ \"ok\": \"true\", \"msg\": \"请求成功\", \"data_list\": [ { \"port-no\": \"10086\", \"message\": \"6\", \"type\": \"0\" }, { \"port-no\": \"10087\", \"message\": \"7\", \"type\": \"0\" }, { \"port-no\": \"10088\", \"message\": \"8\", \"type\": \"0\" } ]}";
+//								}
 								backMsg = this.sendGet(url);
+								logger.info("backmsg:" + backMsg);
 								//记录下反馈报文
 							}else if(InfStatic.SEND_TYPE_POST.equals(sendType)){	//post方式
 								chargeCode = chargeCode.replace("${imei}", imei).replace("${imsi}", imsi).replace("${bsc_lac}", bsc_lac)
@@ -246,18 +255,25 @@ public class InfController {
 						}else{//后期扩展
 							// TODO 扩展
 						}
+						Map<String, Object> charge = new TreeMap<String, Object>();
+						charge.put("code_id", id);
+						charge.put("charge_key", logId);
+						charge.put("inf_type", String.valueOf(inf_type));
+						
 						if(backMsg.indexOf(successFlag)<0){//判断成功标示(不包含则反馈的是失败信息)
 							logger.debug("charge_id:" + id +";运营商反馈失败信息");
 							log.setOrderState(2);//失败
 						}else{
 							if(inf_type==1||inf_type==2){//1：不需要验证码，直接请求运营商2需要通过接口反馈验证码
-								if(backMsg!=null&&!"".equals(backMsg)){
-									if(InfStatic.BACK_MSG_JSON.equals(backMsgType)){//json方式
-										analysisBackMsg = this.analysisJson(backMsg, returnForm,backForm);
-									}else if(InfStatic.BACK_MSG_XML.equals(backMsgType)){
-										analysisBackMsg = this.analysisXml(backMsg, returnForm);
-									}else{
-										errorBackList.add("id:" + id + ",code_name:"+codeName+";反馈报文格式不对JSON/XML");
+								if(!"{}".equals(backForm)){//不需要反馈给客户端
+									if(backMsg!=null&&!"".equals(backMsg)){
+										if(InfStatic.BACK_MSG_JSON.equals(backMsgType)){//json方式
+											analysisBackMsg = this.analysisJson(backMsg, returnForm,backForm);
+										}else if(InfStatic.BACK_MSG_XML.equals(backMsgType)){
+											analysisBackMsg = this.analysisXml(backMsg, returnForm);
+										}else{
+											errorBackList.add("id:" + id + ",code_name:"+codeName+";反馈报文格式不对JSON/XML");
+										}
 									}
 								}
 							}else if(inf_type==3){//不调用运营商接口
@@ -266,19 +282,20 @@ public class InfController {
 								// TODO 扩展
 							}
 							
-							analysisBackMsg = analysisBackMsg.replace("${code_id}", id);
+							//analysisBackMsg = analysisBackMsg.replace("${code_id}", id);
+							List<Object> msg_list = new ArrayList<Object>();
 							Object o = null;
 							String o_type = "o";
 							try{
-								o = (analysisBackMsg!=null&&!"".equals(analysisBackMsg))?JSONUtil.getJSONFromString(analysisBackMsg):"";
-								backList.add(o);
+								o = (analysisBackMsg!=null&&!"".equals(analysisBackMsg))?JSONUtil.getJSONFromString(analysisBackMsg):null;
+								msg_list.add(o);
 							}catch(Exception e1){
 								o = (analysisBackMsg!=null&&!"".equals(analysisBackMsg))?JSONUtil.getJSONFromString("{list:["+analysisBackMsg+"]}"):"";
 								if(o!=null&&!"".equals(o.toString())){
 									JSONArray js = (JSONArray) ((JSONObject)o).get("list");
 									for(int i=0;i<js.size();i++){
 										JSONObject jo = (JSONObject) js.get(i);
-										backList.add(jo);
+										msg_list.add(jo);
 									}
 								}
 								o_type = "list";
@@ -298,7 +315,11 @@ public class InfController {
 								if(back_order_id!=null&&!"".equals(back_order_id)){//记录验证码订单
 									log.setOrderNo(back_order_id);
 									infService.updateOrderNoById(logId, order_id_code);
+									charge.put("orderId", back_order_id);
+								}else{
+									charge.put("orderId", "");
 								}
+								charge.put("msg_list", msg_list);
 							}catch(Exception e){
 								e.printStackTrace();
 								logger.error("charge_id:" + id +";验证码字段获取失败");
@@ -311,6 +332,15 @@ public class InfController {
 							
 							log.setOrderState(1);//成功
 						}
+						if(charge.get("msg_list")!=null){
+//							keyMsg = "\"keyMsg\": [ { \"keyport\": \"10086123\", \"keyword\": \"游戏点数\" }, { \"keyport\": \"10086122\", \"keyword\": \"\" }, { \"keyport\": \"\", \"keyword\": \"法制文萃\" },{ \"keyport\": \"10086\", \"keyword\": \"计费成功\" }]";
+							if(StrKit.notBlank(keyMsg)){
+								JSONObject keyMsgList = JSONUtil.getJSONFromString("{"+keyMsg+"}");
+								JSONArray js = (JSONArray) ((JSONObject)keyMsgList).get("keyMsg");
+								charge.put("keyMsg", js);
+							}
+							backList.add(charge);
+						}
 					}catch(Exception e){
 						e.printStackTrace();
 						logger.error(e);
@@ -318,13 +348,13 @@ public class InfController {
 						log.setOrderState(2);//失败
 					}
 					log.setUpdateTime(new Date());
-					logOrder(infService, log, log.getOrderState(),1);//修改
+					logOrder(infService, log, 0,1);//修改
 				}
 				Map<String, List<Object>> backMap = new HashMap<String,List<Object>>();
-				backMap.put("data_list", backList);
-				vo.setOk(true);
-				vo.setMsg("请求成功");
+				backMap.put("charge_list", backList);
 				vo.setData(backMap);//只反馈请求成功的计费代码
+				vo.setMsg("请求成功");
+				vo.setOk(true);
 //				System.out.println(JSONUtil.toJson(vo));
 			}else{
 				vo.setOk(false);
@@ -384,7 +414,7 @@ public class InfController {
 						vo.setOk(false);
 						vo.setMsg("charge false");
 					}
-					logOrder(infService, log, log.getOrderState(),2);//修改
+					logOrder(infService, log, 0,2);//修改
 					Map<String, String> backMap = new HashMap<String,String>();
 					backMap.put("order_id", order_id);
 					vo.setData(backMap);
@@ -399,6 +429,27 @@ public class InfController {
 				vo.setMsg("Have already been asked or There is no data on this platform");
 				return vo;
 			}
+		}else if("3".equals(request_type)){
+			if(StringUtils.isBlank(charge_key)) {
+				vo.setOk(false);
+				vo.setMsg("charge_key is null");
+				return vo;
+			}
+			if(StringUtils.isBlank(charge_success)) {
+				vo.setOk(false);
+				vo.setMsg("charge_success is null");
+				return vo;
+			}
+			log.setId(charge_key);
+			if("1".equals(charge_success)){
+				log.setOrderState(5);
+			}else{
+				log.setOrderState(6);
+			}
+			logOrder(infService, log, 0,1);//修改
+			vo.setOk(true);
+			vo.setMsg("请求成功");
+			return vo;
 		}else{//请求类型不对
 			vo.setOk(false);
 			vo.setMsg("request_type is error");
@@ -496,6 +547,7 @@ public class InfController {
 				for(Entry<String,String> sm:endMap.entrySet()){
 					backForm = backForm.replace("${"+sm.getKey()+"}", sm.getValue());
 				}
+				backForm = backForm.replace("${orderby}", String.valueOf(maxPara));
 				if(maxPara<list.size()){
 					backForm+=oldbackForm;
 					maxPara++;
@@ -775,7 +827,7 @@ public class InfController {
 		String str7 = "{list:[{\"code_id\": \"${code_id}\", \"inf_type\": \"3\", \"orderId\": \"\", \"port\": \"1069055070421\", \"msg\": \"0710022H\", \"type\": \"1\"},{\"code_id\": \"${code_id}\", \"inf_type\": \"3\", \"orderId\": \"\", \"port\": \"1069055070421\", \"msg\": \"verCode\", \"type\": \"1\"}]}";
 		String str8 = "{ \"code\": 0, \"message\": \"success\", \"orderId\": \"201609270113947725\", \"port0\": \"10658423\", \"port1\": \"1065842232\", \"sms0\": \"mvwlan,3acc7350d8db75ce508975e1c42034f6,RXQS\", \"sms1\": \"AE2000394k7z634*+z275f4U24\\\"60b2+x19l5r8a7x1Z]FWp+JzBliR1PnxeY+!i=gsg4M{\\2RevfV)-8201A092ZE 540X\\k{-0bs000?0MI0TWpWLSKz[Co7c&aHdVLnw6%V9x=\"}";
 		JSONObject backJson = JSONUtil.getJSONFromString(str4);
-		System.out.println(backJson);
+		System.out.println(str2);
 		//System.out.println(backJson.getJSONArray("data_list").get(0));
 		String r = "data_list(m):port1";
 //		List<String > list = getElement(backJson,"resultCode(s)e","resultCode",null);
