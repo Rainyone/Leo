@@ -59,14 +59,17 @@ public class InfController {
 		String callbackcolumn = r.getStr("callbackcolumn");
 		String charge_key = request.getParameter(callbackcolumn);//回调函数中包含的透传参数为记录id
 		String queryStr = request.getQueryString();
+		logger.info("queryStr:" + queryStr);
 		LogOrder log = new LogOrder();
 		if(StrKit.notBlank(queryStr)){
-			if(queryStr.indexOf(callbacksuccess)>=0){//成功
-				log.setOrderState(3);
-			}else{//失败
-				log.setOrderState(4);
+			if(StrKit.notBlank(charge_key)){//有值id
+				if(queryStr.indexOf(callbacksuccess)>=0){//成功
+					log.setOrderState(3);
+				}else{//失败
+					log.setOrderState(4);
+				}
+				logOrder(infService, log, -1, 1);
 			}
-			logOrder(infService, log, -1, 1);
 		}
 		ResultVO vo = new ResultVO(true);
 		vo.setMsg("success");
@@ -230,7 +233,7 @@ public class InfController {
 								url = url.replace("${imei}", imei).replace("${imsi}", imsi).replace("${bsc_lac}", bsc_lac)
 										.replace("${bsc_cid}", bsc_cid).replace("${mobile}", mobile).replace("${iccid}", iccid)
 										.replace("${mac}", mac).replace("${cpparm}", cpparm).replace("${fmt}", fmt)
-										.replace("${isp}", isp).replace("${ip}", realIp);
+										.replace("${isp}", isp).replace("${ip}", realIp).replace("${logid}",logId);
 								//发送请求
 //								if(id.equals("5e5adfa42eb4461c8cdf39de20eaf42a")){
 //									backMsg = "{ \"msg\":\"success\", \"port1\": \"dddd\", \"msg1\": \"ssss\", \"type1\": \"1\"}";
@@ -252,6 +255,7 @@ public class InfController {
 							}
 						}else if(inf_type==3){//不调用运营商接口
 							backMsg="\"msg\":\"success\"";
+							logger.info("inf_type=3,默认backMsg=" + backMsg);
 						}else{//后期扩展
 							// TODO 扩展
 						}
