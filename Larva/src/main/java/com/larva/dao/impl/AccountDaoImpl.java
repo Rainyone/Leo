@@ -131,7 +131,7 @@ public class AccountDaoImpl extends MiniDao implements IAccountDao {
     }
 
 	@Override
-	public int update(Account account) {
+	public int updateAcount(Account account) {
 		return this.update(account);
 	}
 }

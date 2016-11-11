@@ -11,8 +11,8 @@ public class LoginVO {
     private String account;
     @NotNull(message = "密码格式错误")
     private String password;
-    /*@NotNull(message = "验证码格式错误")
-    private String verifycode;*/
+//    @NotNull(message = "验证码格式错误")
+//    private String verifycode;
     private boolean rememberMe;
 
     public boolean isRememberMe() {
@@ -39,11 +39,12 @@ public class LoginVO {
         this.password = password;
     }
 
-   /* public String getVerifycode() {
-        return verifycode;
-    }
-
-    public void setVerifycode(String verifycode) {
-        this.verifycode = verifycode;
-    }*/
+//    public String getVerifycode() {
+//        return verifycode;
+//    }
+//
+//    public void setVerifycode(String verifycode) {
+//        this.verifycode = verifycode;
+//    }
 }
+

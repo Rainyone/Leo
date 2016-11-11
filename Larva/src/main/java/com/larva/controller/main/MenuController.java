@@ -19,9 +19,6 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by sxjun on 15-8-31.
- */
 @RequestMapping("/main/menu")
 @Controller
 public class MenuController {

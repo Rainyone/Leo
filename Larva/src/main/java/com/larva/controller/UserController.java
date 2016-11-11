@@ -3,6 +3,7 @@ package com.larva.controller;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,16 +34,20 @@ import com.larva.enums.SessionEnum;
 import com.larva.ip2region.DataBlock;
 import com.larva.ip2region.DbConfig;
 import com.larva.ip2region.DbSearcher;
+import com.larva.model.LoginLog;
 import com.larva.service.IAccountService;
+import com.larva.service.ILogService;
 import com.larva.utils.Constants;
 import com.larva.utils.DataUtil;
 import com.larva.utils.FileKit;
 import com.larva.utils.PathKit;
+import com.larva.utils.UUIDUtil;
 import com.larva.vo.LoginVO;
 import com.larva.vo.Pager;
 import com.larva.vo.PagerReqVO;
 import com.larva.vo.ResultVO;
 import com.larva.vo.TreeNode;
+import com.larva.vo.UserChangePasswordVO;
 import com.larva.vo.UserCreateVO;
 import com.larva.vo.UserEditDepVO;
 import com.larva.vo.UserEditVO;
@@ -56,6 +61,11 @@ import com.larva.vo.UserEditVO;
 public class UserController{
     @Resource
     private IAccountService accountService;
+
+    @Resource
+    private ILogService logService;
+    
+    
     
     /* @Resource
        private JmsTemplate jmsTemplate;
@@ -63,8 +73,8 @@ public class UserController{
 	/* @Resource
 	    private RedisManager redisManager;
 	*/
-    @Resource
-    private Producer captchaProducer;
+//    @Resource
+//    private Producer captchaProducer;
 
     //跳转到用户管理页面
     @RequestMapping("/manage")
@@ -104,7 +114,7 @@ public class UserController{
         return "user/login";
     }
 
-    //验证码图片
+   /* //验证码图片
     @RequestMapping("/authCode")
     public void authCode(HttpServletResponse response, HttpSession session) throws IOException {
         String text = captchaProducer.createText();
@@ -114,7 +124,7 @@ public class UserController{
         session.setAttribute(SessionEnum.VERIFYCODE.toString(), text);
         outputStream.flush();
         outputStream.close();
-    }
+    }*/
 
     //验证登录
     @RequestMapping(value = "/check-login", method = RequestMethod.POST)
@@ -131,7 +141,7 @@ public class UserController{
             return resultVO;
         }
         //验证验证码
-        /*Object verifyCodeObj = session.getAttribute(SessionEnum.VERIFYCODE.toString());
+       /* Object verifyCodeObj = session.getAttribute(SessionEnum.VERIFYCODE.toString());
         if (verifyCodeObj == null) {
             resultVO.setOk(false);
             resultVO.setMsg("验证码已过期");
@@ -157,21 +167,33 @@ public class UserController{
             return resultVO;
         }
         //删除验证码
-       /* session.removeAttribute(SessionEnum.VERIFYCODE.toString());*/
+//        session.removeAttribute(SessionEnum.VERIFYCODE.toString());
         
-        //add by sxjun 2015-11-10 websocket
         session.setAttribute(Constants.DEFAULT_SESSION_USERNAME, loginVO.getAccount());
 
         final String ip = DataUtil.getIpAddr(request);
         
-        DataBlock fdata;
+        DataBlock fdata = null;
         try {
-        	DbSearcher _searcher = new DbSearcher(new DbConfig(), PathKit.getRootClassPath()+"ip2region"+File.separator+"ip2region.db");
+        	DbSearcher _searcher = new DbSearcher(new DbConfig(), PathKit.getRootClassPath()+File.separator+"ip2region"+File.separator+"ip2region.db");
         	fdata = _searcher.binarySearch(ip);
+        	System.out.println(fdata);
 		} catch (Exception e) {
-			//e.printStackTrace();
-			
+			e.printStackTrace();
 		}
+        LoginLog l = new LoginLog();
+        l.setAccount(loginVO.getAccount());
+//        l.setAddress(address);
+//        l.setCity(city);
+        l.setCityCode(fdata!=null?String.valueOf(fdata.getCityId()):"");
+        l.setDetailAddress(fdata!=null?String.valueOf(fdata.getRegion()):"");
+        l.setId(UUIDUtil.getUUID());
+        l.setLoginIp(ip);
+        l.setLoginTime(new Date());
+//        l.setPointX(pointX);
+//        l.setPointY(pointY);
+//        l.setProvince(province);
+        logService.insertLoginLog(l);
         //发送日志
      /*   jmsTemplate.send(new MessageCreator() {
             @Override
@@ -267,4 +289,22 @@ public class UserController{
         ResultVO resultVO = accountService.grantRoles(userId,roleArray);
         return resultVO;
     }
+  //修改密码
+    @RequestMapping(value = "/change-password", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    ResultVO changePassword(@Valid @ModelAttribute UserChangePasswordVO userChangePasswordVO, BindingResult bindingResult) {
+        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+        ResultVO resultVO = new ResultVO(true);
+
+        if (fieldErrors != null && !fieldErrors.isEmpty()) {
+            String defaultMessage = fieldErrors.get(0).getDefaultMessage();
+            resultVO.setOk(false);
+            resultVO.setMsg(defaultMessage);
+            return resultVO;
+        }
+        resultVO = accountService.changePassword(userChangePasswordVO);
+        return resultVO;
+    }
+    
 }

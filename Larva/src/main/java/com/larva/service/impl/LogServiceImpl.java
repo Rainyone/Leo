@@ -107,4 +107,9 @@ public class LogServiceImpl implements ILogService {
         return resultVO;
 
     }
+
+	@Override
+	public int insertLoginLog(LoginLog loginLog) {
+		return loginLogDao.insertLoginLog(loginLog);
+	}
 }

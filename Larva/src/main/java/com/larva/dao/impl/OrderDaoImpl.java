@@ -26,7 +26,7 @@ public class OrderDaoImpl extends MiniDao  implements IOrderDao {
 			stateStr = " = " + orderVo.getOrder_state();
 		}
 		String sql = "select l.id,l.order_no,l.app_id,a.app_name ,c.code_name as charge_code_name,l.order_state,area.areaName,isp.isp_name,"
-				+ " l.imei,l.imsi,l.ip,l.bsc_lac,l.bsc_cid,l.mobile,l.iccid,l.mac,l.cpparm,l.price,l.create_time"
+				+ " l.imei,l.imsi,l.ip,l.bsc_lac,l.bsc_cid,l.mobile,l.iccid,l.mac,l.cpparm,l.price,l.create_time,l.charge_price"
 				+ " from t_log_order l,t_app_manage a,t_charge_code c,t_area area,t_static_isp isp"
 				+ " where l.app_id = a.id and a.state = 1 and l.charge_code_id = c.id and c.state = 1 and l.area_id = area.areaId and l.isp_id = isp.id "
 				+ " and l.order_state " + stateStr;

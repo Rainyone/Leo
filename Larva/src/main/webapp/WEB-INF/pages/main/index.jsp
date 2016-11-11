@@ -10,9 +10,52 @@
 	<%
 		String userAccount = (String)session.getAttribute(Constants.DEFAULT_SESSION_USERNAME);
 	%>
+	<script type="text/javascript">
+		var userAccount = '<%=userAccount%>';
+	</script>
 </head>
 <body class='contrast-blue'>
 <header>
+
+<div class='modal hide fade' id='modal-change-password' role='dialog' tabindex='-1'>
+    <div class='modal-header'>
+        <button class='close' data-dismiss='modal' type='button'>&times;</button>
+        <h3></h3>
+    </div>
+    <form class='form validate-form' id='change-password-submit-form' method="post" role="form"  style='margin-bottom: 0;'>
+    <div class='modal-body'>
+        <div class='control-group'>
+            <label class='control-label'>账户</label>
+            <div class='controls'>
+                <input class='span8' id='account' required name="account" placeholder='账户名' type='text' disabled="disabled"/>
+            </div>
+        </div>
+        <div class='control-group'>
+            <label class='control-label'>原密码</label>
+            <div class='controls'>
+                <input class='span8' id='old_password' required rangelength="[5,20]" name='password' placeholder='密码' type='password' />
+            </div>
+        </div>
+        <div class='control-group'>
+            <label class='control-label'>新密码</label>
+            <div class='controls'>
+                <input class='span8' id='password' required rangelength="[5,20]" name='password' placeholder='密码' type='password' />
+            </div>
+        </div>
+        <div class='control-group'>
+            <label class='control-label'>重复密码</label>
+            <div class='controls'>
+                <input class='span8' id='repassword' required equalTo="#password" placeholder='重复密码' type='password' />
+            </div>
+        </div>
+    </div>
+    <div class='modal-footer'>
+        <button type="button" id="changePasswordbtnClose" class='btn'>关闭</button>
+        <button type="button" id="changePasswordbtnSubmit" class='btn btn-primary'>保存</button>
+    </div>
+    </form>
+</div>
+
     <div class='navbar'>
         <div class='navbar-inner'>
             <div class='container-fluid'>
@@ -182,13 +225,13 @@
                                     <i class='icon-user'></i>
                                     	个人信息
                                 </a>
-                            </li>
-                            <li>
-                                <a href='user_profile.html'>
-                                    <i class='icon-cog'></i>
-                                    	我的设置
-                                </a>
                             </li> -->
+                            <li>
+                                <a href='javascript:void(0)' id='changePassword'>
+                                    <i class='icon-cog'></i>
+                                    	修改密码
+                                </a>
+                            </li>
                             <li class='divider'></li>
                             <li>
                                 <a href='${ctx}/user/exit'>
@@ -341,6 +384,7 @@
 <%@include file="/WEB-INF/pages/include/baseJS.jsp" %>
 
 <script type="text/javascript">
+	
     seajs.config({
         base: "${ctxAssets}/js/",
        /*  alias: {

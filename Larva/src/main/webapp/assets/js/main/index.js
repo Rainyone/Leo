@@ -1,13 +1,34 @@
 // 所有模块都通过 define 来定义
 define(function (require, exports, module) {
     var base = require('base');
-    base.init()
+    var core = require('core');
+    base.init();
     // 通过 require 引入依赖
     var F = module.exports = {
         basepath: '',
         icons:base.icons,
         init: function (_basepath) {
             F.basepath = _basepath;
+            /**
+			 * 打开模态框
+			 */
+            $('#changePassword').click(function(){
+	            core.openModel('modal-change-password','密码修改',function(){
+            		$('#account').val(userAccount);
+	        	});
+            });
+            /**
+			 * 关闭模态框
+			 */
+			$('#changePasswordbtnClose').click(function(){
+				core.closeModel('modal-change-password');
+			});
+            /**
+			 * 提交表单
+			 */
+			$('#changePasswordbtnSubmit').click(function(){
+				F.changePasswordbtnSubmit();
+            });
             //菜单导航初始化
             $.ajax( {
                 url:F.basepath + '/main/menu/get-show-menus',// 跳转到 action
@@ -102,6 +123,26 @@ define(function (require, exports, module) {
                 menusTxt+='</li>';
             });
             return menusTxt;
+        },changePasswordbtnSubmit:function(){
+        	var oldPassword = $('#old_password').val();
+        	var password = $('#password').val();
+        	var repassword = $('#repassword').val();
+        	var account = $('#account').val();
+        	if(password==repassword){
+        		var url =F.basepath+'/user/change-password';
+        		var data = {account:account,old_password:oldPassword,password:password};
+        		base.ajaxRequest(url,data,function(data, status){
+        			base.bootAlert(data);
+                    if (data.ok) {
+                    	core.closeModel('modal-change-password');
+                    }
+	           	},function(){
+	           		alert("异常");
+	           	});
+        		
+        	}else{
+        		base.bootAlert({"ok":false,"msg":"新密码不一致"});
+        	}
         }
     };
 

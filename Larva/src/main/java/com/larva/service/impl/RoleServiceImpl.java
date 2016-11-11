@@ -221,42 +221,46 @@ public class RoleServiceImpl implements IRoleService {
      * @return
      */
     public ResultVO grantPermissions(String roleId, String[] perIdArray) {
-
-        ResultVO resultVO = new ResultVO(true);
-        //获取所有角色
-        List<Role> roles = roleDao.selectAll();
-        //获取角色
-        Role role = roleDao.get(roles, roleId);
-        if (role == null) {
-            resultVO.setOk(false);
-            resultVO.setMsg("角色不存在");
-            return resultVO;
-        }
-
-        //获取所有权限
-        List<Permission> permissions = permissionDao.selectAll();
-
-        Set<String> perIdSet = new HashSet<String>();
-
-        for (String id : perIdArray) {
-            perIdSet.add(id);
-   /*         List<Integer> childrenPermissionIds = PermissionServiceImpl.getChildrenPermissionIds(id, permissions);
+    	ResultVO resultVO = new ResultVO(true);
+    	if(perIdArray!=null&&perIdArray.length>0){
+    		//获取所有角色
+    		List<Role> roles = roleDao.selectAll();
+    		//获取角色
+    		Role role = roleDao.get(roles, roleId);
+    		if (role == null) {
+    			resultVO.setOk(false);
+    			resultVO.setMsg("角色不存在");
+    			return resultVO;
+    		}
+    		
+    		//获取所有权限
+    		List<Permission> permissions = permissionDao.selectAll();
+    		
+    		Set<String> perIdSet = new HashSet<String>();
+    		
+    		for (String id : perIdArray) {
+    			if("1".equals(id))continue;
+    			perIdSet.add(id);
+    			/*         List<Integer> childrenPermissionIds = PermissionServiceImpl.getChildrenPermissionIds(id, permissions);
             perIdSet.addAll(childrenPermissionIds);*/
-        }
-
-        //删除角色权限
-        rolePermissionDao.deleteByRoleId(roleId);
-        //授权
-        if (!perIdSet.isEmpty()) {
-            for (String perId : perIdSet) {
-                RolePermission rolePermission = new RolePermission();
-                rolePermission.setId(UUIDUtil.getUUID());
-                rolePermission.setPermissionId(perId);
-                rolePermission.setRoleId(roleId);
-                rolePermissionDao.addRolePermission(rolePermission);
-
-            }
-        }
+    		}
+    		
+    		//删除角色权限
+    		rolePermissionDao.deleteByRoleId(roleId);
+    		//授权
+    		if (!perIdSet.isEmpty()) {
+    			for (String perId : perIdSet) {
+    				RolePermission rolePermission = new RolePermission();
+    				rolePermission.setId(UUIDUtil.getUUID());
+    				rolePermission.setPermissionId(perId);
+    				rolePermission.setRoleId(roleId);
+    				rolePermissionDao.addRolePermission(rolePermission);
+    			}
+    		}
+    	}else{
+    		//删除角色权限
+    		rolePermissionDao.deleteByRoleId(roleId);
+    	}
         resultVO.setMsg("授权成功");
         return resultVO;
     }

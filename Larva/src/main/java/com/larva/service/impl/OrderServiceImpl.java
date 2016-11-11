@@ -60,7 +60,7 @@ public class OrderServiceImpl implements IOrderService {
 		m.put("charge_price", logOrder.getChargePrice());
 		m.put("ip", logOrder.getIp());
 		Date createDate = logOrder.getCreateTime();
-		m.put("create_time", createDate!=null?DateUtils.date2String(createDate,DateUtils.SIMPLE_DATE_FORMAT):"");
+		m.put("create_time", createDate!=null?DateUtils.date2String(createDate,DateUtils.FULL_DATE_FORMAT):"");
 		
 		return m;
 	}

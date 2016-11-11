@@ -33,5 +33,5 @@ public interface IAccountDao  {
 
     PageResult<Account> selectAccountManage(Set<String> depIdSet, Set<String> excludeAccountIdSet, int pageNow, int pageSize);
 
-	int update(Account account);
+	int updateAcount(Account account);
 }

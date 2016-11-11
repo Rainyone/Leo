@@ -9,6 +9,7 @@ import com.larva.vo.Pager;
 import com.larva.vo.PagerReqVO;
 import com.larva.vo.ResultVO;
 import com.larva.vo.TreeNode;
+import com.larva.vo.UserChangePasswordVO;
 import com.larva.vo.UserCreateVO;
 import com.larva.vo.UserEditVO;
 
@@ -35,4 +36,6 @@ public interface IAccountService {
     ResultVO updateUserDep(String userId,String depId);
 
 	ResultVO grantRoles(String userId, String[] roleArray);
+
+	ResultVO changePassword(UserChangePasswordVO userChangePasswordVO);
 }

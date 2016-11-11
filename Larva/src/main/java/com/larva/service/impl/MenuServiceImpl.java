@@ -30,9 +30,6 @@ import com.larva.vo.PagerReqVO;
 import com.larva.vo.ResultVO;
 import com.larva.vo.TreeNode;
 
-/**
- * Created by sxjun on 15-8-27.
- */
 @Service("menuService")
 public class MenuServiceImpl implements IMenuService {
     @Resource

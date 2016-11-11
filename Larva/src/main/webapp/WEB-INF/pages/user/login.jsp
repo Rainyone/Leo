@@ -42,7 +42,7 @@
                     	</div>
                     </div>
                 </div>
-                <%-- <div class='row-fluid'>
+                <%--  <div class='row-fluid'>
                 	<div class='control-group'>
 	                	<div class='controls'>
 		                    <div class='span12 icon-over-input'>
@@ -56,7 +56,7 @@
 	                <div class='span12 icon-over-input'>
 	                    <img id="verifyCodeImg" src="${ctx}/user/authCode"/><a href="javascript:void(0)">换一张</a>
 	                </div>
-	            </div> --%>
+	            </div>  --%>
                 <label class="checkbox" for="rememberMe"><input id="rememberMe" name="rememberMe" type="checkbox" value="1" />
                   	  记住我
                 </label>

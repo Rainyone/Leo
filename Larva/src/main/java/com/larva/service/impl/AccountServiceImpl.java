@@ -35,6 +35,7 @@ import com.larva.vo.Pager;
 import com.larva.vo.PagerReqVO;
 import com.larva.vo.ResultVO;
 import com.larva.vo.TreeNode;
+import com.larva.vo.UserChangePasswordVO;
 import com.larva.vo.UserCreateVO;
 import com.larva.vo.UserEditVO;
 import com.mini.core.PageResult;
@@ -305,7 +306,7 @@ public class AccountServiceImpl implements IAccountService {
         //修改
         account.setPassword(editVO.getPassword());
         account.setRegisterTime(new Date());
-        accountDao.update(account);
+        accountDao.updateAcount(account);
 
         DepartmentAccount departmentAccount = departmentAccountDao.getByAccountId(account.getId());
         departmentAccount.setDepId(editVO.getDep());
@@ -391,5 +392,20 @@ public class AccountServiceImpl implements IAccountService {
         }
         resultVO.setMsg("授权成功");
         return resultVO;
+	}
+
+	@Override
+	public ResultVO changePassword(UserChangePasswordVO userChangePasswordVO) {
+		ResultVO vo = new ResultVO(false);
+		Account account =  accountDao.getByAccount(userChangePasswordVO.getAccount());
+		if(account.getPassword().equals(userChangePasswordVO.getOld_password())){//原密码正确
+			account.setPassword(userChangePasswordVO.getPassword());
+			accountDao.updateAcount(account);
+			vo.setOk(true);
+			vo.setMsg("密码修改成功");
+		}else{//原密码不正确
+			vo.setMsg("原密码不正确");
+		}
+		return vo;
 	}
 }

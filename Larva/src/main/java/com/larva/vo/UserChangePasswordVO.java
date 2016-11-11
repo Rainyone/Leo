@@ -2,23 +2,23 @@ package com.larva.vo;
 
 import javax.validation.constraints.NotNull;
 
-public class UserEditVO {
+public class UserChangePasswordVO {
     @NotNull(message = "账号格式错误")
     private String account;
     @NotNull(message = "密码格式错误")
     private String  password;
-    @NotNull(message = "请选择部门")
-    private String dep;
+    @NotNull(message = "请输入原密码")
+    private String old_password;
+    
+    public String getOld_password() {
+		return old_password;
+	}
 
-    public String getDep() {
-        return dep;
-    }
+	public void setOld_password(String old_password) {
+		this.old_password = old_password;
+	}
 
-    public void setDep(String dep) {
-        this.dep = dep;
-    }
-
-    public String getAccount() {
+	public String getAccount() {
         return account;
     }
 
@@ -33,4 +33,10 @@ public class UserEditVO {
     public void setPassword(String password) {
         this.password = password;
     }
+
+	@Override
+	public String toString() {
+		return "UserChangePasswordVO [account=" + account + ", password="
+				+ password + ", old_password=" + old_password + "]";
+	}
 }
