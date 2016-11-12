@@ -29,14 +29,18 @@ public class UrlRewriteFilter implements Filter {
 	private void doFilterInternal(HttpServletRequest request,
 			HttpServletResponse response, FilterChain filterChain) 
 					throws ServletException, IOException {
+		String contextPath = request.getContextPath();
+		
 		String uri = request.getRequestURI();
 		if (StringUtils.isBlank(uri)) {
 			request.getRequestDispatcher("/fail").forward(request, response);
 			return;
 		}
-		
+		/**
+		 * 运营商回调反馈计费结果接口
+		 */
 		if (uri.indexOf("/callback") > 0) {
-			StringBuffer url = request.getRequestURL() ;
+//			StringBuffer url = request.getRequestURL() ;
 			String servletPath=request.getServletPath();  
 			String queryStr = request.getQueryString();
 			String charge_id = servletPath.substring(servletPath.indexOf("callback/")+9,servletPath.length());
@@ -44,13 +48,69 @@ public class UrlRewriteFilter implements Filter {
 			request.getRequestDispatcher("/callback?charge_id="+charge_id+"&"+queryStr).forward(request, response);
 			return;
 		}
-		
+		/**
+		 * 客户端日志记录接口
+		 */
+		if (uri.indexOf("/appInfLog") > 0) {
+			boolean isPass = false;
+			String decodeStr = "";
+			try {
+				if(validateParam(request, contextPath)){
+					decodeStr = decodeUrl(request, contextPath);
+					// 进行参数拆分
+					String paramStr = decodeStr.substring(decodeStr.indexOf("?") + 1);
+					String params[] = paramStr.split("&");
+					HashMap<String, String> paramsMaps = new HashMap<String, String>();
+					if (params == null || params.length < 3) {
+						log.info("参数太少，小于4个 ");
+					}else{
+						for (int i = 0; i < params.length; i++) {
+							String[] temp = params[i].split("=");
+							if (temp != null && temp.length > 1)
+								paramsMaps.put(temp[0], temp[1]);
+						}
+						
+						// 检查是否有必要的参数
+						if (paramsMaps == null || !paramsMaps.containsKey("charge_key")
+								|| !paramsMaps.containsKey("imsi")
+								|| !paramsMaps.containsKey("stepname")) {
+							log.info("没有关键参数  charge_key: " + paramsMaps.containsKey("charge_key") + 
+									" imsi: " + paramsMaps.containsKey("imsi") + 
+									" stepname: " + paramsMaps.containsKey("stepname"));
+						}else{
+							String sign = request.getParameter("sign");
+							String appId = paramsMaps.get("charge_key");
+							String appSecret = paramsMaps.get("imsi");
+							String imei = paramsMaps.get("stepname");
+							String timestamp = paramsMaps.get("timestamp");
+							String sign2 = DESEncrypt.getAppInfLogSign(appId, appSecret,imei, timestamp);
+							if (!sign.equals(sign2)) {
+								log.info("签名错误 sign:" + sign + " sign2: " + sign2);
+							}else{
+								isPass = true;
+							}
+						}
+					}
+					
+				}
+			} catch (Exception e) {
+				log.info("接口内部异常",e);
+			}
+			if(isPass){
+				request.getRequestDispatcher("/appInfLog?"+decodeStr).forward(request, response);
+			}else{
+				request.getRequestDispatcher("/fail").forward(request, response);
+			}
+			return;
+		}
+		/**
+		 * 计费及发送验证码接口
+		 */
 		if (uri.indexOf("/charge") == -1)	{
 			request.getRequestDispatcher("/fail").forward(request, response);
 			return;
 		}
 		
-		String contextPath = request.getContextPath();
 		if (!validateParam(request, contextPath)) {
 			request.getRequestDispatcher("/fail").forward(request, response);
 			return;

@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import com.larva.dao.IInfDao;
+import com.larva.model.AppInfLog;
 import com.larva.model.AppManage;
 import com.larva.model.ChargeCode;
 import com.larva.model.ChargeCodeArea;
@@ -209,7 +210,7 @@ public class IInfDaoImpl extends MiniDao implements IInfDao {
 
 	@Override
 	public Record checkOrderId(String order_id) {
-		String select = "select count(1) as count from t_log_order where order_no=? and state = 1 ";
+		String select = "select count(1) as count from t_log_order where order_no=? and order_state = 1 ";
 		return this.find(select, Record.class, order_id);
 	}
 
@@ -217,5 +218,21 @@ public class IInfDaoImpl extends MiniDao implements IInfDao {
 	public Record getCallBackSuccessById(String charge_id) {
 		String get = "select callbacksuccess,callbackcolumn from t_charge_code where id=?";
 		return this.find(get, Record.class, charge_id);
+	}
+
+	@Override
+	public int getCountChargeLog(String charge_key) {
+		String str = "select count(1) as count from t_log_order where order_state <> -1";
+		Record r = this.find(str, Record.class, charge_key);
+		int result = -1;
+		if(r!=null){
+			result = r.getInt("count");
+		}
+		return result;
+	}
+
+	@Override
+	public int insertAppInfLog(AppInfLog aif) {
+		return this.insert(aif);
 	}
 }

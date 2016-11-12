@@ -1,5 +1,6 @@
 package com.larva.dao;
 
+import com.larva.model.AppInfLog;
 import com.larva.model.LogOrder;
 import com.mini.core.Record;
 
@@ -118,4 +119,16 @@ public interface IInfDao  {
 	 * @return
 	 */
 	Record getCallBackSuccessById(String charge_id);
+	/**
+	 * 根据计费log id 查询是否有数据
+	 * @param charge_key
+	 * @return
+	 */
+	int getCountChargeLog(String charge_key);
+	/**
+	 * 记录客户端发送过来的日志
+	 * @param aif
+	 * @return
+	 */
+	int insertAppInfLog(AppInfLog aif);
 }

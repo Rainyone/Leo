@@ -105,7 +105,19 @@ public class DESEncrypt {
 		}
 		return sign;
 	}
-	
+	public static String getAppInfLogSign(String charge_key, String imsi,String stepname,
+			String timestamp) {
+		String sign = charge_key + reverse(imsi) +stepname+ SHA_KEY + timestamp ;
+		try {
+			MessageDigest md = MessageDigest.getInstance("SHA-1");
+			md.update(sign.getBytes());
+			String sha1 = Base64.encodeBase64String(md.digest());
+			return sha1;
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+		return sign;
+	}
 	public static String getDesUrl(String url){
 		String encode = Base64.encodeBase64String(DESEncrypt.encrypt(url.getBytes()));
 		return URLEncoder.encode(encode);

@@ -1,5 +1,6 @@
 package com.larva.service;
 
+import com.larva.model.AppInfLog;
 import com.larva.model.LogOrder;
 import com.larva.vo.ResultVO;
 import com.mini.core.Record;
@@ -79,4 +80,16 @@ public interface InfService {
 	 * @return
 	 */
 	Record getCallBackSuccessById(String charge_id);
+	/**
+	 * 根据计费log id查询是否有数据
+	 * @param charge_id
+	 * @return
+	 */
+	int getCountChargeLog(String charge_key);
+	/**
+	 * 记录客户端发送过来的日志
+	 * @param charge_id
+	 * @return
+	 */
+	int insertAppInfLog(AppInfLog aif);
 }

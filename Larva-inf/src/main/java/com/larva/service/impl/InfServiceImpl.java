@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.larva.dao.IInfDao;
+import com.larva.model.AppInfLog;
 import com.larva.model.LogOrder;
 import com.larva.service.InfService;
 import com.larva.vo.ResultVO;
@@ -141,6 +142,15 @@ public class InfServiceImpl implements InfService {
 	@Override
 	public Record getCallBackSuccessById(String charge_id) {
 		return iInfDao.getCallBackSuccessById(charge_id);
+	}
+	@Override
+	public int getCountChargeLog(String charge_key) {
+		int result = iInfDao.getCountChargeLog(charge_key);
+		return result;
+	}
+	@Override
+	public int insertAppInfLog(AppInfLog aif) {
+		return iInfDao.insertAppInfLog(aif);
 	}
 	
 }

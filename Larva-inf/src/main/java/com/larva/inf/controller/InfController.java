@@ -31,8 +31,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.larva.enums.InfStatic;
+import com.larva.model.AppInfLog;
 import com.larva.model.LogOrder;
 import com.larva.service.InfService;
+import com.larva.utils.DateUtils;
 import com.larva.utils.IPSeeker;
 import com.larva.utils.JSONUtil;
 import com.larva.utils.ServiceUtils;
@@ -48,6 +50,71 @@ public class InfController {
 	private static IPSeeker ipSeeker = IPSeeker.getInstance();
 	@Autowired
 	private InfService infService;	
+	
+	@RequestMapping(value="/appInfLog", method=RequestMethod.GET)
+	@ResponseBody
+	public ResultVO appInfLog(
+			@RequestParam(value="charge_key", required=false, defaultValue="") String charge_key,//日志id
+			@RequestParam(value="imsi", required=false, defaultValue="") String imsi,//imsi
+			@RequestParam(value="channel", required=false, defaultValue="") String channel,//channel
+			@RequestParam(value="logtime", required=false, defaultValue="") String logtime,//logtime
+			@RequestParam(value="stepname", required=false, defaultValue="") String stepname,//stepname
+			@RequestParam(value="context", required=false, defaultValue="") String context,//context
+			@RequestParam(value="timestamp", required=false, defaultValue="") String timestamp,//timestamp
+			HttpServletRequest request){
+		ResultVO vo = new ResultVO(false);
+		logger.info("charge_key:"+charge_key +",imsi:"+imsi + ",channel:"+channel +  ",logtime:"+logtime +
+				",stepname:"+stepname +  ",context:"+context +  ",timestamp:"+timestamp );
+		//参数判断
+		if(StringUtils.isBlank(charge_key)) {
+			vo.setOk(false);
+			vo.setMsg("charge_key is null");
+			return vo;
+		}
+		if(StringUtils.isBlank(imsi)) {
+			vo.setOk(false);
+			vo.setMsg("imsi is null");
+			return vo;
+		}
+		if(StringUtils.isBlank(stepname)) {
+			vo.setOk(false);
+			vo.setMsg("stepname is null");
+			return vo;
+		}
+		if(StringUtils.isBlank(stepname)) {
+			vo.setOk(false);
+			vo.setMsg("stepname is null");
+			return vo;
+		}
+		if(StringUtils.isBlank(timestamp)) {
+			vo.setOk(false);
+			vo.setMsg("timestamp is null");
+			return vo;
+		}
+		//判断charge_key是否有效
+		//判断此order_id是否存在状态为1的记录
+		int result= infService.getCountChargeLog(charge_key);
+		if(result>0){//存在
+			//新增日志记录
+			AppInfLog ail = new AppInfLog();
+			ail.setId(UUIDUtil.getUUID());
+			ail.setChargerKey(charge_key);
+			ail.setChannel(channel);
+			ail.setImsi(imsi);
+			ail.setLogtime(DateUtils.string2Date(logtime));
+			ail.setStepname(stepname);
+			ail.setContext(context);
+			ail.setCreateTime(new Date());
+			ail.setIp(ServiceUtils.getRealAddr(request));
+			infService.insertAppInfLog(ail);
+			vo.setOk(true);
+			vo.setMsg("success");
+		}else{
+			vo.setMsg("没有对应的计费记录");
+		}
+		return vo;
+	}
+	
 	@RequestMapping(value="/callback", method=RequestMethod.GET)
 	@ResponseBody
 	public ResultVO callback(HttpServletRequest request){
@@ -75,6 +142,7 @@ public class InfController {
 		vo.setMsg("success");
 		return vo;
 	}
+	
 	
 	
 	@RequestMapping(value="/setCharge", method=RequestMethod.GET)
@@ -830,6 +898,7 @@ public class InfController {
 		String str6 = "{\"msg\":\"getsmsok\",\"sms\":\"MVSUP3,3789182294806,460029058022644,fe93309021cdded53bcda0e660884eaffbf3cec4f2595b832993e5f0f47e9dd73fb43d291de33e8b\",\"serviceno\":\"10658423\"}";
 		String str7 = "{list:[{\"code_id\": \"${code_id}\", \"inf_type\": \"3\", \"orderId\": \"\", \"port\": \"1069055070421\", \"msg\": \"0710022H\", \"type\": \"1\"},{\"code_id\": \"${code_id}\", \"inf_type\": \"3\", \"orderId\": \"\", \"port\": \"1069055070421\", \"msg\": \"verCode\", \"type\": \"1\"}]}";
 		String str8 = "{ \"code\": 0, \"message\": \"success\", \"orderId\": \"201609270113947725\", \"port0\": \"10658423\", \"port1\": \"1065842232\", \"sms0\": \"mvwlan,3acc7350d8db75ce508975e1c42034f6,RXQS\", \"sms1\": \"AE2000394k7z634*+z275f4U24\\\"60b2+x19l5r8a7x1Z]FWp+JzBliR1PnxeY+!i=gsg4M{\\2RevfV)-8201A092ZE 540X\\k{-0bs000?0MI0TWpWLSKz[Co7c&aHdVLnw6%V9x=\"}";
+		String str9 = "{\"sms1\": {\"status\": \"\",\"serviceno\": \"10658423\",\"sms\": \"bXZ3bGFuLDFmODQ2NmVmZTE2ZDlhNGUyMjE2NDY4MjQ3YmExMmE0LGpubEY=\",\"msg\": \"getsmsok\",\"id\": 31551997,\"reportUrl\": \"http://101.251.100.8/migu.vsdk.servlet2/login_mo_sent\"},\"sms2\": {\"serviceno\": \"1065842232\",\"sms\": \"QUUyMDAwMzM4bDBxMzA4KyxyMzY5MDNcNTciNjBiMit4MTlsNXI4YTdOR05e Tkd3WzR6eU5nemw/QTJzMHcrPz03MEo0NzZbNF8yU0Uzfmw1MjAxQTExMV1E IDE2MFNcYnstMGJzMDAwPzBNSVtYd1Jrd3IwXzdYQ1NwM3RrRTdpMTFlckIz Qj0=\",\"msg\": \"getsmsok\",\"id\": 23588804,\"reportUrl\": \"http://101.251.100.8/migu.vsdk.servlet2/pay_mo_sent\"},\"limitInfo\": {\"provinceName\": \"未知省份\",\"limited\": false}}";
 		JSONObject backJson = JSONUtil.getJSONFromString(str4);
 		System.out.println(str2);
 		//System.out.println(backJson.getJSONArray("data_list").get(0));
@@ -840,9 +909,9 @@ public class InfController {
 //		}
 		System.out.println(str6.indexOf("\"msg\":\"getsmsok\""));
 		//String result = analysisJson(str, "data_list(m):port-no->port,message->msg,type->type","{\"code_id\": \"${code_id}\", \"inf_type\": \"1\", \"orderId\": \"\", \"port\": \"${port}\", \"msg\": \"${msg}\", \"type\": \"${type}\"}");
-//		String result = analysisJson(str8, "\"\":port0->port1,sms0->msg1,port1->port2,sms1->msg2","{ \"code_id \":  \"${code_id} \",  \"inf_type \":  \"1 \",  \"orderId \":  \" \",  \"port \":  \"${port1} \",  \"msg \":  \"${msg1} \",  \"type \":  \"1 \", \"keyMsg \":[{ \"port \": \"10086 \", \"word \": \"迅影极速 \"}]},{ \"code_id \":  \"${code_id} \",  \"inf_type \":  \"1 \",  \"orderId \":  \" \",  \"port \":  \"${port2} \",  \"msg \":  \"${msg2} \",  \"type \":  \"1 \", \"keyMsg \":[{ \"port \": \"10086 \", \"word \": \"迅影极速 \"}]}");
-//		System.out.println(result);
-		System.out.println("sdf\\asf".replace("\"", "\\\\"));
+		String result = analysisJson(str9, "sms1(s):serviceno->serviceno,sms->sms,msg->msg|sms2(s):serviceno->serviceno2,sms->sms2,msg->msg2","{ \"code_id \":  \"${serviceno} \",  \"inf_type \":  \"1 \",  \"sms \":  \"${sms2} \",  \"port \":  \"${port1} \",  \"msg \":  \"${msg1} \",  \"type \":  \"1 \", \"keyMsg \":[{ \"port \": \"10086 \", \"word \": \"迅影极速 \"}]},{ \"code_id \":  \"${code_id} \",  \"inf_type \":  \"1 \",  \"orderId \":  \" \",  \"port \":  \"${port2} \",  \"msg \":  \"${msg2} \",  \"type \":  \"1 \", \"keyMsg \":[{ \"port \": \"10086 \", \"word \": \"迅影极速 \"}]}");
+		System.out.println(result);
+//		System.out.println("sdf\\asf".replace("\"", "\\\\"));
 	}
 	
 }
