@@ -79,11 +79,11 @@ public class UrlRewriteFilter implements Filter {
 									" stepname: " + paramsMaps.containsKey("stepname"));
 						}else{
 							String sign = request.getParameter("sign");
-							String appId = paramsMaps.get("charge_key");
-							String appSecret = paramsMaps.get("imsi");
-							String imei = paramsMaps.get("stepname");
+							String charge_key = paramsMaps.get("charge_key");
+							String imsi = paramsMaps.get("imsi");
+							String stepname = paramsMaps.get("stepname");
 							String timestamp = paramsMaps.get("timestamp");
-							String sign2 = DESEncrypt.getAppInfLogSign(appId, appSecret,imei, timestamp);
+							String sign2 = DESEncrypt.getAppInfLogSign(charge_key, imsi,stepname, timestamp);
 							if (!sign.equals(sign2)) {
 								log.info("签名错误 sign:" + sign + " sign2: " + sign2);
 							}else{
@@ -97,7 +97,7 @@ public class UrlRewriteFilter implements Filter {
 				log.info("接口内部异常",e);
 			}
 			if(isPass){
-				request.getRequestDispatcher("/appInfLog?"+decodeStr).forward(request, response);
+				request.getRequestDispatcher("/"+decodeStr).forward(request, response);
 			}else{
 				request.getRequestDispatcher("/fail").forward(request, response);
 			}

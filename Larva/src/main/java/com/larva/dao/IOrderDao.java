@@ -2,6 +2,7 @@ package com.larva.dao;
 
 import java.util.List;
 
+import com.larva.model.AppInfLog;
 import com.larva.model.LogOrder;
 import com.larva.vo.OrderVo;
 import com.mini.core.PageResult;
@@ -32,5 +33,7 @@ public interface IOrderDao {
 			String charge_id);
 
 	List<Record> getPlatformCharts(String datetimeStart, String datetimeEnd);
+
+	PageResult<AppInfLog> getAppLog(int pageNo, int limit, String charge_key);
 
 }

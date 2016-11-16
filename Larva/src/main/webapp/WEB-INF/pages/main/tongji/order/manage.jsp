@@ -85,6 +85,18 @@
 		  </div>
 	</div>
 </div >
+<div class='modal hide fade' id='modal-app-log' role='dialog' tabindex='-1' style='margin-bottom: 0;width:1000px;height:500px;'>
+    <div class='modal-header'>
+        <button class='close' data-dismiss='modal' type='button'>&times;</button>
+        <h3></h3>
+    </div>
+    <div class='modal-body'>
+    	 <table id='appLogTable'></table>
+    </div>
+    <div class='modal-footer'>
+        <button type="button" id="btnAppLogClose" class='btn'>关闭</button>
+    </div>
+</div>
 <script>
   seajs.use(['base','main/tongji/order/manage'],function(b,m){
 	b.init();

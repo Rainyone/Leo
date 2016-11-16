@@ -110,7 +110,7 @@ public class InfController {
 			vo.setOk(true);
 			vo.setMsg("success");
 		}else{
-			vo.setMsg("没有对应的计费记录");
+			vo.setMsg("have no charge log!");
 		}
 		return vo;
 	}

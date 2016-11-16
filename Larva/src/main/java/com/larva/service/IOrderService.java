@@ -41,4 +41,6 @@ public interface IOrderService {
 	Map<String, Object> getPlatformCharts(String datetimeStart,
 			String datetimeEnd);
 
+	Pager<Map<String, Object>> getAppLog(PagerReqVO pagerReqVO, String charge_key);
+
 }

@@ -126,8 +126,9 @@ public class DESEncrypt {
 	public static void main(String[] args) {
 		String url = "setCharge?app_id=613c6412db374a519cf98410085489c8&app_key=4c4a824602c948a2bc87b1382dd3a5dc&channel=1&price=1000&imei=860917020646570&request_type=1&imsi=460020586922644&bsc_lac=3322&bsc_cid=33884&mobile=1390023133&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985&isp=1001";
 		String verUrl = "setCharge?app_id=6&app_key=testapp&channel=431233&price=1000&imei=32323132&request_type=2&imsi=33112334&bsc_lac=3322&bsc_cid=33884&mobile=13800138000&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985&isp=1001&code_id=1&order_id=32133&ver_code=3332244";
+		String appInfLog = "appInfLog?charge_key=00004c4d843b4aa493323dde1e1c3892&imsi=4444&channel=dsdfsd&logtime=2015-06-23 21:22:32&stepname=sims&context=dfalskjdfkl33&timestamp=241545225";
 		try {
-			String encode = Base64.encodeBase64String(DESEncrypt.encrypt(url.getBytes()));
+			String encode = Base64.encodeBase64String(DESEncrypt.encrypt(appInfLog.getBytes()));
 			System.out.println("encode:" + URLEncoder.encode(encode));
 //			String plainText = URIUtil.getPathQuery(new String(DESEncrypt.decrypt(Base64.decodeBase64(encode))));
 //			System.out.println("plainText:" + plainText);
@@ -137,5 +138,7 @@ public class DESEncrypt {
 		
 		String sign = DESEncrypt.getSign("613c6412db374a519cf98410085489c8", "4c4a824602c948a2bc87b1382dd3a5dc","860917020646570", "1829304985");
 		System.out.println(URLEncoder.encode(sign));
+		String sign2 = DESEncrypt.getAppInfLogSign("00004c4d843b4aa493323dde1e1c3892", "4444","sims", "241545225");
+		System.out.println(URLEncoder.encode(sign2));
 	}
 }

@@ -6,6 +6,7 @@ define(function (require, exports, module) {
     var F = module.exports = {
         basepath: '',
         table:new core.Table('orderTable'),
+        appLogTable:new core.Table('appLogTable'),
         init:function(_basepath) {
             F.basepath = _basepath;
             $('#datetimeStart').datetimepicker({
@@ -24,18 +25,49 @@ define(function (require, exports, module) {
     		        /**
     		         * 查看简介
     		         */
-    		        'click .introduction': function (e, value, row, index) {
-    		        	core.openModel('modal-introduction','APP简介',function(){
-    		        		if(row!=null){
-    		        			$("#appIntroduction").val(row.description)
-    		        		}
+    		        'click .app_log': function (e, value, row, index) {
+    		        	core.openModel('modal-app-log','APP日志',function(){
+    		        		var charge_key = row.id;
+    		        		//查询结果绑定到列表中
+    		        		$('#appLogTable').bootstrapTable('refresh',{url:F.basepath+'/main/tongji/order/appLog?charge_key=' +charge_key});
     		        	});
     		        }
 			    };
-		        
+            var appLogCols = [
+    		                  {
+			        		        field: 'id',
+			        		        title: 'app_log_id',
+			        		        visible:false
+			        		  }, {
+			        		        field: 'charge_key',
+			        		        title: '计费日志id'
+			        		  }, {
+			        		        field: 'imsi',
+			        		        title: 'imsi'
+			        		  }, {
+			        		        field: 'channel',
+			        		        title: 'channel'
+			        		  }, {
+			        		        field: 'logtime',
+			        		        title: 'logtime'
+			        		  }, {
+			        		        field: 'stepname',
+			        		        title: 'stepname'
+			        		  }, {
+			        		        field: 'context',
+			        		        title: '内容'
+			        		  }, {
+			        		        field: 'create_time',
+			        		        title: '创建时间'
+			        		  }, {
+			        		        field: 'ip',
+			        		        title: 'ip'
+			        		  }
+    		     ];
+    			F.appLogTable.init(null,appLogCols);
 		        var cols = [
 		                    {
-		        		        checkbox:true
+		        		        checkbox:false
 		        		    },{
 		        		        field: 'id',
 		        		        title: 'log_id',
@@ -97,6 +129,11 @@ define(function (require, exports, module) {
 		    		        },{
 		    			        field: 'create_time',
 		    			        title: '创建时间'
+		    		        },{
+		    		        	 field: 'app_log',
+			    			     title: 'APP日志',
+		    		        	 events: operateEvents,
+			    			     formatter:F.appLogFormatter
 		    		        }];
 	    		F.table.init(F.basepath+'/main/tongji/order/query',cols);
 	    		
@@ -124,6 +161,12 @@ define(function (require, exports, module) {
 				$('#fifteenDate').click(function(){
 					F.getDataByDate(-15);
 	            });
+				/**
+				 * 关闭模态框
+				 */
+				$('#btnAppLogClose').click(function(){
+					core.closeModel('modal-app-log');
+				});
         },submit:function(){
         	var url = F.basepath+'/main/tongji/order/query';
         	var order_id = $('#order_id').val();
@@ -153,6 +196,10 @@ define(function (require, exports, module) {
         	var data = "order_id=" + order_id +"&code_name=" + code_name +"&app_name="+app_name 
         	+ "&order_state=" + order_state +"&datetimeStart="+datetimeStart+"&datetimeEnd="+datetimeEnd;
         	$('#orderTable').bootstrapTable('refresh',{url:url+'?'+data});
+		},appLogFormatter:function(){
+			var _btnAction = "";
+    		_btnAction += "<a class='app_log btn btn-info btn-small' href='#' title='查看APP日志' style='margin-left:5px'>查看</a>";
+    		return _btnAction;
 		}
     };
 });

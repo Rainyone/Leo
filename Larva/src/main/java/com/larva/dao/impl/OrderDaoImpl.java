@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.larva.dao.IOrderDao;
+import com.larva.model.AppInfLog;
 import com.larva.model.LogOrder;
 import com.larva.utils.StrKit;
 import com.larva.vo.OrderVo;
@@ -350,6 +351,12 @@ public class OrderDaoImpl extends MiniDao  implements IOrderDao {
 		}else{
 			return this.findList(sql,Record.class);
 		}
+	}
+
+	@Override
+	public PageResult<AppInfLog> getAppLog(int pageNo, int limit, String charge_key) {
+		String sql = "select * from t_app_inf_log where charge_key = ? ";
+		return this.paginateResult(sql, pageNo, limit, AppInfLog.class, charge_key);
 	}
 	
 }

@@ -222,7 +222,7 @@ public class IInfDaoImpl extends MiniDao implements IInfDao {
 
 	@Override
 	public int getCountChargeLog(String charge_key) {
-		String str = "select count(1) as count from t_log_order where order_state <> -1";
+		String str = "select count(1) as count from t_log_order where id=? and order_state <> -1";
 		Record r = this.find(str, Record.class, charge_key);
 		int result = -1;
 		if(r!=null){

@@ -53,6 +53,13 @@ public class TongjiController {
     	Pager<Map<String,Object>> vo = orderService.getOrderList(pagerReqVO,orderVo);
         return vo;
     }
+    @RequestMapping("/order/appLog")
+    public
+    @ResponseBody
+    Pager<Map<String,Object>> getAppLog(PagerReqVO pagerReqVO,String charge_key,HttpSession session) {
+    	Pager<Map<String,Object>> vo = orderService.getAppLog(pagerReqVO,charge_key);
+        return vo;
+    }
     @RequestMapping("/platform/query")
     public
     @ResponseBody

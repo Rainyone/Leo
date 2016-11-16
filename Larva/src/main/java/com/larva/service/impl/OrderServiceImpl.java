@@ -12,6 +12,7 @@ import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import com.larva.dao.IOrderDao;
+import com.larva.model.AppInfLog;
 import com.larva.model.LogOrder;
 import com.larva.service.IOrderService;
 import com.larva.utils.DateUtils;
@@ -62,6 +63,31 @@ public class OrderServiceImpl implements IOrderService {
 		Date createDate = logOrder.getCreateTime();
 		m.put("create_time", createDate!=null?DateUtils.date2String(createDate,DateUtils.FULL_DATE_FORMAT):"");
 		
+		return m;
+	}
+	@Override
+	public Pager<Map<String, Object>> getAppLog(PagerReqVO pagerReqVO, String charge_key) {
+		List<Map<String,Object>> results = new ArrayList<Map<String,Object>>();
+		PageResult<AppInfLog> pagers = orderDao.getAppLog(pagerReqVO.getPageNo(),pagerReqVO.getLimit(),charge_key);
+		List<AppInfLog> list = pagers.getResults();
+		for (AppInfLog r : list) {
+        	results.add(getAppLogMap(r));
+        }
+		return new Pager(results, pagers.getResultCount());
+	}
+	private Map<String, Object> getAppLogMap (AppInfLog r){
+		Map<String,Object> m = new HashMap<String,Object>();
+		m.put("id", r.getId());
+		m.put("charge_key", r.getChargeKey());
+		m.put("imsi", r.getImsi());
+		m.put("channel", r.getChannel());
+		Date logtime = r.getLogtime();
+		m.put("logtime",logtime!=null?DateUtils.date2String(logtime):"" );
+		m.put("stepname", r.getStepname());
+		m.put("context", r.getContext());
+		Date create_time = r.getCreateTime();
+		m.put("create_time", create_time!=null?DateUtils.date2String(create_time):"");
+		m.put("ip", r.getIp());
 		return m;
 	}
 	@Override
@@ -335,5 +361,6 @@ public class OrderServiceImpl implements IOrderService {
 		m.put("ydata_request_success_count", ydata_request_success_count);
 		return m;
 	}
+	
 
 }
