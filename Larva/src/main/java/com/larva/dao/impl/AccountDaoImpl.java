@@ -28,7 +28,7 @@ public class AccountDaoImpl extends MiniDao implements IAccountDao {
      * @return
      */
     public List<Account>  selectPage(int limit,int pageNo) {
-    	return this.paginate("select * from Account",pageNo, limit, Account.class);
+    	return this.paginate("select * from account",pageNo, limit, Account.class);
     }
 
     @Override
