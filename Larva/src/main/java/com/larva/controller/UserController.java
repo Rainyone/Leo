@@ -54,7 +54,6 @@ import com.larva.vo.UserEditVO;
 
 /**
  * @author sxjun
- * @time 2015/8/12 13:49
  */
 @Controller
 @RequestMapping("/user")

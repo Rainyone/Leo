@@ -101,13 +101,13 @@
 	        <div class='control-group'>
 	            <label class='control-label'>请求URL</label>
 	            <div class='controls'>
-	                <input class='span8' id='url' name="url" placeholder='请求URL' type='text' required/>
+	                <textarea class="span8" rows="3" id="url" name="url" placeholder='请求URL' type='text' required></textarea>
 	            </div>
 	        </div>
 	         <div class='control-group'>
 	            <label class='control-label'>请求内容</label>
 	            <div class='controls'>
-	                <input class='span8' id='charge_code' name="charge_code" placeholder='报文内容' type='text' />
+	                <textarea class="span8" rows="3" id="charge_code" name="charge_code" placeholder='报文内容' type='text'></textarea>
 	            </div>
 	        </div>
 	         <div class='control-group'>
@@ -147,20 +147,20 @@
 	        <div class='control-group'>
 	            <label class='control-label'>反馈给客户端报文格式</label>
 	            <div class='controls'>
-	                <input class='span8' id='back_form' name='back_form' placeholder='当不需要反馈时可以填写{}' type='text' required/>
+	                <textarea class="span8" rows="4" id="back_form" name="back_form" placeholder='当不需要反馈时可以填写{}' type='text' required></textarea>
 	                <span class="help-block">格式：<%=introduction%></span>
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>运营商反馈报文格式</label>
 	            <div class='controls'>
-	                <input class='span8' id='return_form'  name='return_form' placeholder='"":msg->msg,serviceno->serviceno,sms->sms' type='text' required/>
+        	        <textarea class="span8" rows="4" id="return_form" name="return_form" placeholder='"":msg->msg,serviceno->serviceno,sms->sms' type='text' required></textarea>
 	            </div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>反馈验证码的请求URL</label>
 	            <div class='controls'>
-	                <input class='span8' id='ver_code_url'  name='ver_code_url' placeholder='反馈验证码的请求URL' type='text' />
+          	        <textarea class="span8" rows="3" id="ver_code_url" name="ver_code_url" placeholder='反馈验证码的请求URL' type='text' ></textarea>
 	            </div>
 	        </div>
 	        <div class='control-group'>
@@ -243,7 +243,7 @@
 	        <div class='control-group'>
 	            <label class='control-label'>短信屏蔽关键字key_msg</label>
 	            <div class='controls'>
-	                <input class='span8' id='key_msg' name='key_msg' placeholder='短信屏蔽关键字key_msg' type='text' />
+	                <textarea class="span8" rows="3" id="key_msg" name="key_msg" placeholder='短信屏蔽关键字key_msg' type='text' ></textarea>
 	            </div>
 	        </div>
 	    </div>

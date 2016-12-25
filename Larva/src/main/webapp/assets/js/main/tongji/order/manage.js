@@ -10,14 +10,16 @@ define(function (require, exports, module) {
         init:function(_basepath) {
             F.basepath = _basepath;
             $('#datetimeStart').datetimepicker({
-		        format: 'yyyy-mm-dd',
-		        minView:'month',
+		        format: 'yyyy-mm-dd hh:ii',
+		        minView:1,
+		        startView:2,
 		        language: 'zh-CN',
 		        autoclose:true
 		    })
 	    	$('#datetimeEnd').datetimepicker({
-			        format: 'yyyy-mm-dd',
-			        minView:'month',
+			        format: 'yyyy-mm-dd hh:ii',
+			        minView:1,
+			        startView:2,
 			        language: 'zh-CN',
 			        autoclose:true
 			    })
@@ -70,11 +72,11 @@ define(function (require, exports, module) {
 		        		        checkbox:false
 		        		    },{
 		        		        field: 'id',
-		        		        title: 'log_id',
-		        		        visible:false
+		        		        title: 'log_id'
 		        		    },{
 		        		        field: 'app_id',
-		        		        title: 'app_id'
+		        		        title: 'app_id',
+		        		        visible:false
 		        		    },{
 		        		        field: 'app_name',
 		        		        title: 'APP名称'

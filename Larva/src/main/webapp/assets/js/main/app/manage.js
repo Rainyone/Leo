@@ -249,6 +249,7 @@ define(function (require, exports, module) {
             }
         },delApp:function(ids){
         	base.ajaxRequest(F.basepath+'/main/app/del',{"appIds":ids},function(data){
+        	//base.ajaxRequest(F.basepath+'/test/test-update',{"appIds":ids},function(data){
         		//base.ajaxSuccess(data);
         		base.bootAlert(data);
         		if (data.ok) {
