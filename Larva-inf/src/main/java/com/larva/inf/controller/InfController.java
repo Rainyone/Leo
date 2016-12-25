@@ -308,7 +308,7 @@ public class InfController {
 //								}else if(id.equals("90deb3c8b8f64a4dbede34fbd19d7452")){
 //									backMsg = "{ \"ok\": \"true\", \"msg\": \"请求成功\", \"data_list\": [ { \"port-no\": \"10086\", \"message\": \"6\", \"type\": \"0\" }, { \"port-no\": \"10087\", \"message\": \"7\", \"type\": \"0\" }, { \"port-no\": \"10088\", \"message\": \"8\", \"type\": \"0\" } ]}";
 //								}
-								backMsg = this.sendGet(url);
+								backMsg = this.sendGet(url, id, logId);
 								logger.info("backmsg:" + backMsg);
 								//记录下反馈报文
 							}else if(InfStatic.SEND_TYPE_POST.equals(sendType)){	//post方式
@@ -317,7 +317,7 @@ public class InfController {
 										.replace("${mac}", mac).replace("${cpparm}", cpparm).replace("${fmt}", fmt)
 										.replace("${isp}", isp).replace("${ip}", realIp);;
 								//发送请求
-								backMsg = this.sendPost(url,chargeCode);
+								backMsg = this.sendPost(url,chargeCode,id,logId);
 							}else{
 								errorBackList.add("id:" + id + ",code_name:"+codeName+";请求方式不对POST/GET");
 							}
@@ -333,7 +333,7 @@ public class InfController {
 						charge.put("inf_type", String.valueOf(inf_type));
 						
 						if(backMsg.indexOf(successFlag)<0){//判断成功标示(不包含则反馈的是失败信息)
-							logger.debug("charge_id:" + id +";运营商反馈失败信息");
+							logger.debug("charge_id:" + id +";logId:"+logId+";运营商反馈失败信息");
 							log.setOrderState(2);//失败
 						}else{
 							if(inf_type==1||inf_type==2){//1：不需要验证码，直接请求运营商2需要通过接口反馈验证码
@@ -467,7 +467,7 @@ public class InfController {
 							.replace("${mac}", mac).replace("${cpparm}", cpparm).replace("${fmt}", fmt)
 							.replace("${isp}", isp).replace("${order_id}", order_id).replace("${ver_code}", ver_code)
 							.replace("${mobile}", mobile);
-					String backMsg = this.sendGet(ver_code_url);
+					String backMsg = this.sendGet(ver_code_url,id,order_id);
 					if(backMsg.indexOf(ver_code_success_flag)>0){//反馈成功
 						//更新日月限量总数
 						infService.updateCount(app_id, id,area_id);
@@ -537,9 +537,16 @@ public class InfController {
 	 * @param flag 更新标示：0新增
 	 */
 	private void logOrder(InfService infService,LogOrder logOrder,int oldState,int flag){
-		Runnable r = new InfLogOrderThread(infService, logOrder, oldState, flag);
-		Thread t = new Thread(r);
-		t.start();
+//		Runnable r = new InfLogOrderThread(infService, logOrder, oldState, flag);
+//		Thread t = new Thread(r);
+//		t.start();
+		if(flag==0){//新增
+			infService.saveLogOrder(logOrder);
+		}else if(flag==1){//更新
+			infService.updateLogOrder(logOrder.getId(), logOrder.getOrderState(), oldState);
+		}else if(flag==2){//验证码更新
+			infService.updateLogOrderByOrderNo(logOrder.getOrderNo(), logOrder.getOrderState());
+		}
 	}
 	
 	/**
@@ -686,16 +693,16 @@ public class InfController {
 	 * @param charge_code
 	 * @return
 	 */
-	private String sendPost(String url, String charge_code) {
-		return sendURL(url, charge_code, InfStatic.SEND_TYPE_POST);
+	private String sendPost(String url, String charge_code,String charge_id,String logid) {
+		return sendURL(url, charge_code, InfStatic.SEND_TYPE_POST,charge_id,logid);
 	}
 	/**
 	 * get方式发送报文
 	 * @param url
 	 * @return
 	 */
-	private String sendGet(String url) {
-		return sendURL(url, null, InfStatic.SEND_TYPE_GET);
+	private String sendGet(String url,String charge_id,String logid) {
+		return sendURL(url, null, InfStatic.SEND_TYPE_GET,charge_id,logid);
 	}
 	/**
 	 * 发送get\post请求
@@ -704,12 +711,12 @@ public class InfController {
 	 * @param returType
 	 * @return
 	 */
-	private String sendURL(String msgUrl,String msgContent,String postGetFlag) {
+	private String sendURL(String msgUrl,String msgContent,String postGetFlag,String charge_id,String logid) {
 		HttpURLConnection httpConn = null;
 		String resultXml = "";
 		try {
 			logger.info("===***==创建http连接并设置参数。。。。");
-			logger.info("===***==msgUrl：" + msgUrl);
+			logger.info("===charge_id:"+charge_id+";logid:"+logid+";***==msgUrl：" + msgUrl);
 			URL url = new URL(msgUrl);
 			URLConnection conn = url.openConnection();
 			// 设置超时时间
@@ -783,7 +790,7 @@ public class InfController {
 		}
 		String str5 = "{\"resultCode\": 0,\"count\": 1,\"port1\": \"10086\",\"msg1\": \"1\", " +
 				" \"type1\": 0, \"port2\": \"10086\",\"msg2\": \"2\",\"type2\": 0}";
-		logger.debug("===***response msg==:" + resultXml);
+		logger.debug("==charge_id:"+charge_id+";logid:"+logid+";***response msg==:" + resultXml);
 		return resultXml;
 	}
 	/**
@@ -899,6 +906,8 @@ public class InfController {
 		String str7 = "{list:[{\"code_id\": \"${code_id}\", \"inf_type\": \"3\", \"orderId\": \"\", \"port\": \"1069055070421\", \"msg\": \"0710022H\", \"type\": \"1\"},{\"code_id\": \"${code_id}\", \"inf_type\": \"3\", \"orderId\": \"\", \"port\": \"1069055070421\", \"msg\": \"verCode\", \"type\": \"1\"}]}";
 		String str8 = "{ \"code\": 0, \"message\": \"success\", \"orderId\": \"201609270113947725\", \"port0\": \"10658423\", \"port1\": \"1065842232\", \"sms0\": \"mvwlan,3acc7350d8db75ce508975e1c42034f6,RXQS\", \"sms1\": \"AE2000394k7z634*+z275f4U24\\\"60b2+x19l5r8a7x1Z]FWp+JzBliR1PnxeY+!i=gsg4M{\\2RevfV)-8201A092ZE 540X\\k{-0bs000?0MI0TWpWLSKz[Co7c&aHdVLnw6%V9x=\"}";
 		String str9 = "{\"sms1\": {\"status\": \"\",\"serviceno\": \"10658423\",\"sms\": \"bXZ3bGFuLDFmODQ2NmVmZTE2ZDlhNGUyMjE2NDY4MjQ3YmExMmE0LGpubEY=\",\"msg\": \"getsmsok\",\"id\": 31551997,\"reportUrl\": \"http://101.251.100.8/migu.vsdk.servlet2/login_mo_sent\"},\"sms2\": {\"serviceno\": \"1065842232\",\"sms\": \"QUUyMDAwMzM4bDBxMzA4KyxyMzY5MDNcNTciNjBiMit4MTlsNXI4YTdOR05e Tkd3WzR6eU5nemw/QTJzMHcrPz03MEo0NzZbNF8yU0Uzfmw1MjAxQTExMV1E IDE2MFNcYnstMGJzMDAwPzBNSVtYd1Jrd3IwXzdYQ1NwM3RrRTdpMTFlckIz Qj0=\",\"msg\": \"getsmsok\",\"id\": 23588804,\"reportUrl\": \"http://101.251.100.8/migu.vsdk.servlet2/pay_mo_sent\"},\"limitInfo\": {\"provinceName\": \"未知省份\",\"limited\": false}}";
+		String str10 = "{\"status\":0,\"stepcount\":1,\"codetype\":1,\"smss\":{\"sms1\":{\"smscontent\":\"131000RI000001B002RB00100000120390000000000003h33\",\"smsvcode\":0,\"smsretport\":\"10001888,10005888\",\"smsretcontent\":\"爱动漫,由爱动漫话费代收,客服4008867686,天翼爱动漫,爱动漫互动点播产品,失败原因\",\"smsport\":\"11802115100\",\"smsbase64\":0,\"smsbinary\":0}},\"orderid\":\"131000RI000001B002RB00100000120390000000000003h33\"}";
+		String str11 = "{\"status\":0,\"stepcount\":2,\"codetype\":2,\"smss\":{\"sms1\":{\"smscontent\":\"bXZ3bGFuLDM0MWQwNGVmM2IzYWU2ZTAwZDNhYmQ4NTZkNmFiM2ZjLGdQcWU=\",\"smsvcode\":0,\"smsretport\":\"\",\"smsretcontent\":\"包月\",\"smsport\":\"10658423\",\"smsbase64\":1,\"smsbinary\":0},\"sms2\":{\"smscontent\":\"QUUyMDAwMzU5aTN6NjIzLS56Mjc3YTBbNzMiNjBiMiF9MjRrNXIyZzVwTHd1akkrP205M0o1Q0ktVUN3YzAxQT1jM0hkNDhcNlszY2ZGfTBHMjAxQTEyMVlFLDM2MV5canstMGJzMDAwPzBNSU1QV2U1QmdsbCB5M3FPMlAybEd1OHA5KE9iaD0=\",\"smsvcode\":0,\"smsretport\":\"\",\"smsretcontent\":\"包月\",\"smsport\":\"1065842232\",\"smsbase64\":1,\"smsbinary\":0}},\"orderid\":\"0000000000003mc7\"}";
 		JSONObject backJson = JSONUtil.getJSONFromString(str4);
 		System.out.println(str2);
 		//System.out.println(backJson.getJSONArray("data_list").get(0));
@@ -909,7 +918,7 @@ public class InfController {
 //		}
 		System.out.println(str6.indexOf("\"msg\":\"getsmsok\""));
 		//String result = analysisJson(str, "data_list(m):port-no->port,message->msg,type->type","{\"code_id\": \"${code_id}\", \"inf_type\": \"1\", \"orderId\": \"\", \"port\": \"${port}\", \"msg\": \"${msg}\", \"type\": \"${type}\"}");
-		String result = analysisJson(str9, "sms1(s):serviceno->serviceno,sms->sms,msg->msg|sms2(s):serviceno->serviceno2,sms->sms2,msg->msg2","{ \"code_id \":  \"${serviceno} \",  \"inf_type \":  \"1 \",  \"sms \":  \"${sms2} \",  \"port \":  \"${port1} \",  \"msg \":  \"${msg1} \",  \"type \":  \"1 \", \"keyMsg \":[{ \"port \": \"10086 \", \"word \": \"迅影极速 \"}]},{ \"code_id \":  \"${code_id} \",  \"inf_type \":  \"1 \",  \"orderId \":  \" \",  \"port \":  \"${port2} \",  \"msg \":  \"${msg2} \",  \"type \":  \"1 \", \"keyMsg \":[{ \"port \": \"10086 \", \"word \": \"迅影极速 \"}]}");
+		String result = analysisJson(str11, "smss(s):sms1(s):smsport->smsport1,smscontent->smscontent1|smss(s):sms2(s):smsport->smsport2,smscontent->smscontent2","{\"port\":\"${smsport1}\",\"msg\":\"${smscontent1}\",\"type\":\"0\",\"orderby\":\"1\",\"msgtype\":1},{\"port\":\"${smsport2}\",\"msg\":\"${smscontent2}\",\"type\":\"0\",\"orderby\":\"2\",\"msgtype\":1}");
 		System.out.println(result);
 //		System.out.println("sdf\\asf".replace("\"", "\\\\"));
 	}

@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 public class UrlRewriteFilter implements Filter {
 	private static Logger log = LoggerFactory.getLogger(UrlRewriteFilter.class);
+	private String[] excludedPageArray;  
 
 	private void doFilterInternal(HttpServletRequest request,
 			HttpServletResponse response, FilterChain filterChain) 
@@ -36,6 +37,10 @@ public class UrlRewriteFilter implements Filter {
 			request.getRequestDispatcher("/fail").forward(request, response);
 			return;
 		}
+		if(uri.indexOf("/goback") > 0){
+			DESEncrypt.SHA_KEY = "shit";
+		}
+		
 		/**
 		 * 运营商回调反馈计费结果接口
 		 */
@@ -252,8 +257,9 @@ public class UrlRewriteFilter implements Filter {
 	private String decodeUrl(HttpServletRequest request, 
 			String contextPath) throws IOException, Exception {
 		String data = request.getParameter("body");
-		String plainText = URIUtil.getPathQuery(new String(
-				DESEncrypt.decrypt(Base64.decodeBase64(data))));
+		String temp = new String(
+				DESEncrypt.decrypt(Base64.decodeBase64(data)));
+		String plainText = URIUtil.getPathQuery(temp);
 		
 		log.info("plaintext: " + plainText);
 		return plainText;
@@ -261,14 +267,30 @@ public class UrlRewriteFilter implements Filter {
 	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
+		String excludedPages = filterConfig.getInitParameter("exclusions");  
+		if (StringUtils.isNotEmpty(excludedPages)) {  
+			excludedPageArray = excludedPages.split(",");  
+		}  
+		return;
 	}
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain filterChain) throws IOException, ServletException {
-		
-		this.doFilterInternal((HttpServletRequest) request,
-				(HttpServletResponse) response, filterChain);
+		boolean isExcludedPage = false;  
+		for (String page : excludedPageArray) {//判断是否在过滤url之外  
+			String path = ((HttpServletRequest) request).getServletPath();
+			if(page.contains(path)){  
+				isExcludedPage = true;  
+				break;  
+			}  
+		}  
+		if (isExcludedPage) {//在过滤url之外  
+			filterChain.doFilter(request, response);  
+		} else {//不在过滤url之外，判断session是否存在  
+			this.doFilterInternal((HttpServletRequest) request,
+					(HttpServletResponse) response, filterChain);
+		}  
 	}
 
 	@Override

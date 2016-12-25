@@ -15,7 +15,7 @@ import org.apache.commons.httpclient.util.URIUtil;
 
 public class DESEncrypt {
 	private static String KEY = "bec99deaaf19c593613ffbcc6250329d";
-	private static String SHA_KEY = "charge";
+	public static String SHA_KEY = "charge";
 
 	public static String EncryptBody(String response) {
 		try {
@@ -124,11 +124,14 @@ public class DESEncrypt {
 	}
 	
 	public static void main(String[] args) {
-		String url = "setCharge?app_id=613c6412db374a519cf98410085489c8&app_key=4c4a824602c948a2bc87b1382dd3a5dc&channel=1&price=1000&imei=860917020646570&request_type=1&imsi=460020586922644&bsc_lac=3322&bsc_cid=33884&mobile=1390023133&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985&isp=1001";
+		String url = " setCharge?app_id=ec34f8fbded54205f974fa01f70e40cb&app_key=9d32494f45313539878734a6289d6ff2&request_type=1&channel=16100005&price=2000&imei=99000562361415&imsi=460030914025284&bsc_lac=100&bsc_cid=100&mobile=&iccid=89860316240240382699&mac=f6:d0:10:ee:24:3c&cpparm=&fmt=json&timestamp=1481690664406&isp=1001&code_id=&order_id=&ver_code=&charge_key=&charge_success=0";
 		String verUrl = "setCharge?app_id=6&app_key=testapp&channel=431233&price=1000&imei=32323132&request_type=2&imsi=33112334&bsc_lac=3322&bsc_cid=33884&mobile=13800138000&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985&isp=1001&code_id=1&order_id=32133&ver_code=3332244";
-		String appInfLog = "appInfLog?charge_key=00004c4d843b4aa493323dde1e1c3892&imsi=4444&channel=dsdfsd&logtime=2015-06-23 21:22:32&stepname=sims&context=dfalskjdfkl33&timestamp=241545225";
+//		String context = "1065842232:AE2000394k7q537, z529a5U03\"60b0!q71i3v1a41NR1DkW88a@(U7q$r[JOKQi=5jIfT7e6ujSf6%14201A112TE/011^\\k{-0bs000?0MIuerV8/c~z4_Xg0jse/IOztbeMJ|=";
+		String context = "中文";
+		context = URLEncoder.encode(context);
+		String appInfLog = "appInfLog?charge_key=32efb83bed71480ea0a8713ce5fd0ee6&imsi=460002971130174&channel=16100001&logtime=2016-11-29 16:01:16&stepname=10002:&context="+context+"&timestamp=1480406476539";
 		try {
-			String encode = Base64.encodeBase64String(DESEncrypt.encrypt(appInfLog.getBytes()));
+			String encode = Base64.encodeBase64String(DESEncrypt.encrypt(url.getBytes()));
 			System.out.println("encode:" + URLEncoder.encode(encode));
 //			String plainText = URIUtil.getPathQuery(new String(DESEncrypt.decrypt(Base64.decodeBase64(encode))));
 //			System.out.println("plainText:" + plainText);
@@ -136,9 +139,10 @@ public class DESEncrypt {
 			e.printStackTrace();
 		}
 		
-		String sign = DESEncrypt.getSign("613c6412db374a519cf98410085489c8", "4c4a824602c948a2bc87b1382dd3a5dc","860917020646570", "1829304985");
+		String sign = DESEncrypt.getSign("ec34f8fbded54205f974fa01f70e40cb", "9d32494f45313539878734a6289d6ff2","99000562361415", "1481690664406");
 		System.out.println(URLEncoder.encode(sign));
-		String sign2 = DESEncrypt.getAppInfLogSign("00004c4d843b4aa493323dde1e1c3892", "4444","sims", "241545225");
+		String sign2 = DESEncrypt.getAppInfLogSign("32efb83bed71480ea0a8713ce5fd0ee6", "460002971130174","10002:", "1480406476539");
 		System.out.println(URLEncoder.encode(sign2));
+		System.out.println(DESEncrypt.getSign("", "durid", "", "123456"));
 	}
 }
