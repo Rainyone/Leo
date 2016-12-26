@@ -18,11 +18,12 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import net.spy.memcached.MemcachedClient;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,7 +51,8 @@ public class InfController {
 	private static IPSeeker ipSeeker = IPSeeker.getInstance();
 	@Autowired
 	private InfService infService;	
-	
+	@Autowired
+	private MemcachedClient memcachedClient;
 	@RequestMapping(value="/appInfLog", method=RequestMethod.GET)
 	@ResponseBody
 	public ResultVO appInfLog(
@@ -232,206 +234,213 @@ public class InfController {
 		log.setCreateTime(new Date());
 		//  逻辑判断，获取计费代码，请求计费代码，解析反馈数据，反馈客户端数据
 		if("1".equals(request_type)){//计费请求
-			area_id = infService.getAreaIdByImsi(imsi);//根据imsi号获取省份
-			if(area_id==null||"".equals(area_id)){//如果没有获取到再根据ip获取省份
-				logger.info("realIp:" + realIp);
-				String address = ipSeeker.getAddress(realIp);
-				area_id = address.split(" ")[0];//获取区域编码
+			//计费请求需要去重
+			if(isInvalidOrder(imsi,86400)){//无效（24小时重复3次）订单则直接反馈
+				vo.setOk(false);
+				vo.setMsg("24 hours can not be repeated more than 3 times");
+				return vo;
+			}else{
+				area_id = infService.getAreaIdByImsi(imsi);//根据imsi号获取省份
+				if(area_id==null||"".equals(area_id)){//如果没有获取到再根据ip获取省份
+					logger.info("realIp:" + realIp);
+					String address = ipSeeker.getAddress(realIp);
+					area_id = address.split(" ")[0];//获取区域编码
 //				area_id = "110000";//测试用
 //				isp = "1002";
-			}
-			//测试用
+				}
+				//测试用
 //			area_id = "110000";
 //			realIp = "132.33.32.12";
-			log.setAreaId(area_id);
-			logger.debug("imsi:"+imsi+";area:" + area_id);
-			if(area_id!=null&&!"".equals(area_id)){//如果有区域编码
-				//记录日志：接收到请求
-				//（一个请求可能有多个计费代码）
+				log.setAreaId(area_id);
+				logger.debug("imsi:"+imsi+";area:" + area_id);
 				logOrder(infService, log, -1, 0);
-				
-				//appid+appKey校验，查数据库看此appid和key 是否可用，APP日月限量额度
-				//判断是否在可用省份内，APP省内日月限量额度
-				vo = infService.checkApp(app_id,app_key,area_id,isp);
-				if(!vo.isOk()){//APP校验不通过
-					return vo;
-				}
-				Record app = (Record) vo.getData();//app数据
-	//			String charge_code = 
-				//获取可用计费代码（判断是否超过地区日限量、地区月限量、app日限量、app月限量）
-				vo = infService.checkAndGetChargeCode(app_id,area_id,isp);
-				if(!vo.isOk()){//校验不通过
-					return vo;
-				}
-				
-				List<Record>  list = (List<Record>) vo.getData();
-				logger.debug(list);
-				List<Object> backList = new ArrayList<Object>();
-				List<String> errorBackList = new ArrayList<String>();
-				for(Record r:list){
-					String logId = UUIDUtil.getUUID();//单个计费代码的日志id
+				if(area_id!=null&&!"".equals(area_id)){//如果有区域编码
+					//记录日志：接收到请求
+					//（一个请求可能有多个计费代码）
 					
-					String id = r.getStr("id");
-					String codeName = r.getStr("code_name");
-					String sendType = r.getStr("send_type");
-					String chargeCode = r.getStr("charge_code");
-					String url = r.getStr("url");
-					String backMsgType = r.getStr("back_msg_type");
-					String returnForm = r.getStr("return_form"); 
-					String backForm = r.getStr("back_form"); 
-					String backMsg = "";
-					String analysisBackMsg = "";
-					String successFlag = r.getStr("success_flag");
-					Integer inf_type = r.getInt("inf_type");//1：不需要验证码，2需要通过接口反馈验证码，3.需要短信反馈验证码
-					String order_id_code = r.getStr("order_id_code");//验证码的order_id字段
-					String keyMsg = r.getStr("key_msg");
-					Long chargePrice = r.getLong("charge_price");
-					try{
-						//记录日志：发起请求
-						log.setId(logId);
-						log.setMid(mid);
-						log.setChargeCodeId(id);
-						log.setChargePrice(chargePrice);
-						log.setOrderState(0);//发起
-						log.setCreateTime(new Date());
-						logOrder(infService, log, -1, 0);
-						if(inf_type==1||inf_type==2){//1：不需要验证码，直接请求运营商2需要通过接口反馈验证码
-							if(InfStatic.SEND_TYPE_GET.equals(sendType)){//get方式没有charge_code
-								//参数替换
-								url = url.replace("${imei}", imei).replace("${imsi}", imsi).replace("${bsc_lac}", bsc_lac)
-										.replace("${bsc_cid}", bsc_cid).replace("${mobile}", mobile).replace("${iccid}", iccid)
-										.replace("${mac}", mac).replace("${cpparm}", cpparm).replace("${fmt}", fmt)
-										.replace("${isp}", isp).replace("${ip}", realIp).replace("${logid}",logId);
-								//发送请求
+					//appid+appKey校验，查数据库看此appid和key 是否可用，APP日月限量额度
+					//判断是否在可用省份内，APP省内日月限量额度
+					vo = infService.checkApp(app_id,app_key,area_id,isp);
+					if(!vo.isOk()){//APP校验不通过
+						return vo;
+					}
+					Record app = (Record) vo.getData();//app数据
+					//			String charge_code = 
+					//获取可用计费代码（判断是否超过地区日限量、地区月限量、app日限量、app月限量）
+					vo = infService.checkAndGetChargeCode(app_id,area_id,isp);
+					if(!vo.isOk()){//校验不通过
+						return vo;
+					}
+					
+					List<Record>  list = (List<Record>) vo.getData();
+					logger.debug(list);
+					List<Object> backList = new ArrayList<Object>();
+					List<String> errorBackList = new ArrayList<String>();
+					for(Record r:list){
+						String logId = UUIDUtil.getUUID();//单个计费代码的日志id
+						
+						String id = r.getStr("id");
+						String codeName = r.getStr("code_name");
+						String sendType = r.getStr("send_type");
+						String chargeCode = r.getStr("charge_code");
+						String url = r.getStr("url");
+						String backMsgType = r.getStr("back_msg_type");
+						String returnForm = r.getStr("return_form"); 
+						String backForm = r.getStr("back_form"); 
+						String backMsg = "";
+						String analysisBackMsg = "";
+						String successFlag = r.getStr("success_flag");
+						Integer inf_type = r.getInt("inf_type");//1：不需要验证码，2需要通过接口反馈验证码，3.需要短信反馈验证码
+						String order_id_code = r.getStr("order_id_code");//验证码的order_id字段
+						String keyMsg = r.getStr("key_msg");
+						Long chargePrice = r.getLong("charge_price");
+						try{
+							//记录日志：发起请求
+							log.setId(logId);
+							log.setMid(mid);
+							log.setChargeCodeId(id);
+							log.setChargePrice(chargePrice);
+							log.setOrderState(0);//发起
+							log.setCreateTime(new Date());
+							logOrder(infService, log, -1, 0);
+							if(inf_type==1||inf_type==2){//1：不需要验证码，直接请求运营商2需要通过接口反馈验证码
+								if(InfStatic.SEND_TYPE_GET.equals(sendType)){//get方式没有charge_code
+									//参数替换
+									url = url.replace("${imei}", imei).replace("${imsi}", imsi).replace("${bsc_lac}", bsc_lac)
+											.replace("${bsc_cid}", bsc_cid).replace("${mobile}", mobile).replace("${iccid}", iccid)
+											.replace("${mac}", mac).replace("${cpparm}", cpparm).replace("${fmt}", fmt)
+											.replace("${isp}", isp).replace("${ip}", realIp).replace("${logid}",logId);
+									//发送请求
 //								if(id.equals("5e5adfa42eb4461c8cdf39de20eaf42a")){
 //									backMsg = "{ \"msg\":\"success\", \"port1\": \"dddd\", \"msg1\": \"ssss\", \"type1\": \"1\"}";
 //								}else if(id.equals("90deb3c8b8f64a4dbede34fbd19d7452")){
 //									backMsg = "{ \"ok\": \"true\", \"msg\": \"请求成功\", \"data_list\": [ { \"port-no\": \"10086\", \"message\": \"6\", \"type\": \"0\" }, { \"port-no\": \"10087\", \"message\": \"7\", \"type\": \"0\" }, { \"port-no\": \"10088\", \"message\": \"8\", \"type\": \"0\" } ]}";
 //								}
-								backMsg = this.sendGet(url, id, logId);
-								logger.info("backmsg:" + backMsg);
-								//记录下反馈报文
-							}else if(InfStatic.SEND_TYPE_POST.equals(sendType)){	//post方式
-								chargeCode = chargeCode.replace("${imei}", imei).replace("${imsi}", imsi).replace("${bsc_lac}", bsc_lac)
-										.replace("${bsc_cid}", bsc_cid).replace("${mobile}", mobile).replace("${iccid}", iccid)
-										.replace("${mac}", mac).replace("${cpparm}", cpparm).replace("${fmt}", fmt)
-										.replace("${isp}", isp).replace("${ip}", realIp);;
-								//发送请求
-								backMsg = this.sendPost(url,chargeCode,id,logId);
-							}else{
-								errorBackList.add("id:" + id + ",code_name:"+codeName+";请求方式不对POST/GET");
-							}
-						}else if(inf_type==3){//不调用运营商接口
-							backMsg="\"msg\":\"success\"";
-							logger.info("inf_type=3,默认backMsg=" + backMsg);
-						}else{//后期扩展
-							// TODO 扩展
-						}
-						Map<String, Object> charge = new TreeMap<String, Object>();
-						charge.put("code_id", id);
-						charge.put("charge_key", logId);
-						charge.put("inf_type", String.valueOf(inf_type));
-						
-						if(backMsg.indexOf(successFlag)<0){//判断成功标示(不包含则反馈的是失败信息)
-							logger.debug("charge_id:" + id +";logId:"+logId+";运营商反馈失败信息");
-							log.setOrderState(2);//失败
-						}else{
-							if(inf_type==1||inf_type==2){//1：不需要验证码，直接请求运营商2需要通过接口反馈验证码
-								if(!"{}".equals(backForm)){//不需要反馈给客户端
-									if(backMsg!=null&&!"".equals(backMsg)){
-										if(InfStatic.BACK_MSG_JSON.equals(backMsgType)){//json方式
-											analysisBackMsg = this.analysisJson(backMsg, returnForm,backForm);
-										}else if(InfStatic.BACK_MSG_XML.equals(backMsgType)){
-											analysisBackMsg = this.analysisXml(backMsg, returnForm);
-										}else{
-											errorBackList.add("id:" + id + ",code_name:"+codeName+";反馈报文格式不对JSON/XML");
-										}
-									}
+//									backMsg = this.sendGet(url, id, logId);
+									logger.info("backmsg:" + backMsg);
+									//记录下反馈报文
+								}else if(InfStatic.SEND_TYPE_POST.equals(sendType)){	//post方式
+									chargeCode = chargeCode.replace("${imei}", imei).replace("${imsi}", imsi).replace("${bsc_lac}", bsc_lac)
+											.replace("${bsc_cid}", bsc_cid).replace("${mobile}", mobile).replace("${iccid}", iccid)
+											.replace("${mac}", mac).replace("${cpparm}", cpparm).replace("${fmt}", fmt)
+											.replace("${isp}", isp).replace("${ip}", realIp);;
+											//发送请求
+											backMsg = this.sendPost(url,chargeCode,id,logId);
+								}else{
+									errorBackList.add("id:" + id + ",code_name:"+codeName+";请求方式不对POST/GET");
 								}
 							}else if(inf_type==3){//不调用运营商接口
-								analysisBackMsg = backForm;
+								backMsg="\"msg\":\"success\"";
+								logger.info("inf_type=3,默认backMsg=" + backMsg);
 							}else{//后期扩展
 								// TODO 扩展
 							}
+							Map<String, Object> charge = new TreeMap<String, Object>();
+							charge.put("code_id", id);
+							charge.put("charge_key", logId);
+							charge.put("inf_type", String.valueOf(inf_type));
 							
-							//analysisBackMsg = analysisBackMsg.replace("${code_id}", id);
-							List<Object> msg_list = new ArrayList<Object>();
-							Object o = null;
-							String o_type = "o";
-							try{
-								o = (analysisBackMsg!=null&&!"".equals(analysisBackMsg))?JSONUtil.getJSONFromString(analysisBackMsg):null;
-								msg_list.add(o);
-							}catch(Exception e1){
-								o = (analysisBackMsg!=null&&!"".equals(analysisBackMsg))?JSONUtil.getJSONFromString("{list:["+analysisBackMsg+"]}"):"";
-								if(o!=null&&!"".equals(o.toString())){
-									JSONArray js = (JSONArray) ((JSONObject)o).get("list");
-									for(int i=0;i<js.size();i++){
-										JSONObject jo = (JSONObject) js.get(i);
-										msg_list.add(jo);
-									}
-								}
-								o_type = "list";
-							}
-							try{
-								String back_order_id = "";
-								//获取order_id(验证码反馈的订单编码)
-								if(o!=null&&inf_type==2){
-									if("o".equals(o_type)){//json 对象
-										JSONArray dataList = ((JSONObject)o).getJSONArray("list");
-										JSONObject onelist = dataList.getJSONObject(0);
-										back_order_id = onelist.getString(order_id_code);
-									}
-								}else if("list".equals(o_type)&&inf_type==2){
-									back_order_id = ((JSONObject)o).getString(order_id_code);
-								}
-								if(back_order_id!=null&&!"".equals(back_order_id)){//记录验证码订单
-									log.setOrderNo(back_order_id);
-									infService.updateOrderNoById(logId, order_id_code);
-									charge.put("orderId", back_order_id);
-								}else{
-									charge.put("orderId", "");
-								}
-								charge.put("msg_list", msg_list);
-							}catch(Exception e){
-								e.printStackTrace();
-								logger.error("charge_id:" + id +";验证码字段获取失败");
+							if(backMsg.indexOf(successFlag)<0){//判断成功标示(不包含则反馈的是失败信息)
+								logger.debug("charge_id:" + id +";logId:"+logId+";运营商反馈失败信息");
 								log.setOrderState(2);//失败
+							}else{
+								if(inf_type==1||inf_type==2){//1：不需要验证码，直接请求运营商2需要通过接口反馈验证码
+									if(!"{}".equals(backForm)){//不需要反馈给客户端
+										if(backMsg!=null&&!"".equals(backMsg)){
+											if(InfStatic.BACK_MSG_JSON.equals(backMsgType)){//json方式
+												analysisBackMsg = this.analysisJson(backMsg, returnForm,backForm);
+											}else if(InfStatic.BACK_MSG_XML.equals(backMsgType)){
+												analysisBackMsg = this.analysisXml(backMsg, returnForm);
+											}else{
+												errorBackList.add("id:" + id + ",code_name:"+codeName+";反馈报文格式不对JSON/XML");
+											}
+										}
+									}
+								}else if(inf_type==3){//不调用运营商接口
+									analysisBackMsg = backForm;
+								}else{//后期扩展
+									// TODO 扩展
+								}
+								
+								//analysisBackMsg = analysisBackMsg.replace("${code_id}", id);
+								List<Object> msg_list = new ArrayList<Object>();
+								Object o = null;
+								String o_type = "o";
+								try{
+									o = (analysisBackMsg!=null&&!"".equals(analysisBackMsg))?JSONUtil.getJSONFromString(analysisBackMsg):null;
+									msg_list.add(o);
+								}catch(Exception e1){
+									o = (analysisBackMsg!=null&&!"".equals(analysisBackMsg))?JSONUtil.getJSONFromString("{list:["+analysisBackMsg+"]}"):"";
+									if(o!=null&&!"".equals(o.toString())){
+										JSONArray js = (JSONArray) ((JSONObject)o).get("list");
+										for(int i=0;i<js.size();i++){
+											JSONObject jo = (JSONObject) js.get(i);
+											msg_list.add(jo);
+										}
+									}
+									o_type = "list";
+								}
+								try{
+									String back_order_id = "";
+									//获取order_id(验证码反馈的订单编码)
+									if(o!=null&&inf_type==2){
+										if("o".equals(o_type)){//json 对象
+											JSONArray dataList = ((JSONObject)o).getJSONArray("list");
+											JSONObject onelist = dataList.getJSONObject(0);
+											back_order_id = onelist.getString(order_id_code);
+										}
+									}else if("list".equals(o_type)&&inf_type==2){
+										back_order_id = ((JSONObject)o).getString(order_id_code);
+									}
+									if(back_order_id!=null&&!"".equals(back_order_id)){//记录验证码订单
+										log.setOrderNo(back_order_id);
+										infService.updateOrderNoById(logId, order_id_code);
+										charge.put("orderId", back_order_id);
+									}else{
+										charge.put("orderId", "");
+									}
+									charge.put("msg_list", msg_list);
+								}catch(Exception e){
+									e.printStackTrace();
+									logger.error("charge_id:" + id +";验证码字段获取失败");
+									log.setOrderState(2);//失败
+								}
+								if(inf_type!=2){//除掉需要接口反馈验证码
+									//更新日月限量总数
+									infService.updateCount(app_id, id,area_id);
+								}
+								
+								log.setOrderState(1);//成功
 							}
-							if(inf_type!=2){//除掉需要接口反馈验证码
-								//更新日月限量总数
-								infService.updateCount(app_id, id,area_id);
-							}
-							
-							log.setOrderState(1);//成功
-						}
-						if(charge.get("msg_list")!=null){
+							if(charge.get("msg_list")!=null){
 //							keyMsg = "\"keyMsg\": [ { \"keyport\": \"10086123\", \"keyword\": \"游戏点数\" }, { \"keyport\": \"10086122\", \"keyword\": \"\" }, { \"keyport\": \"\", \"keyword\": \"法制文萃\" },{ \"keyport\": \"10086\", \"keyword\": \"计费成功\" }]";
-							if(StrKit.notBlank(keyMsg)){
-								JSONObject keyMsgList = JSONUtil.getJSONFromString("{"+keyMsg+"}");
-								JSONArray js = (JSONArray) ((JSONObject)keyMsgList).get("keyMsg");
-								charge.put("keyMsg", js);
+								if(StrKit.notBlank(keyMsg)){
+									JSONObject keyMsgList = JSONUtil.getJSONFromString("{"+keyMsg+"}");
+									JSONArray js = (JSONArray) ((JSONObject)keyMsgList).get("keyMsg");
+									charge.put("keyMsg", js);
+								}
+								backList.add(charge);
 							}
-							backList.add(charge);
+						}catch(Exception e){
+							e.printStackTrace();
+							logger.error(e);
+							logger.debug("charge_id:" + id+";请求运营商异常");
+							log.setOrderState(2);//失败
 						}
-					}catch(Exception e){
-						e.printStackTrace();
-						logger.error(e);
-						logger.debug("charge_id:" + id+";请求运营商异常");
-						log.setOrderState(2);//失败
+						log.setUpdateTime(new Date());
+						logOrder(infService, log, 0,1);//修改
 					}
-					log.setUpdateTime(new Date());
-					logOrder(infService, log, 0,1);//修改
-				}
-				Map<String, List<Object>> backMap = new HashMap<String,List<Object>>();
-				backMap.put("charge_list", backList);
-				vo.setData(backMap);//只反馈请求成功的计费代码
-				vo.setMsg("请求成功");
-				vo.setOk(true);
+					Map<String, List<Object>> backMap = new HashMap<String,List<Object>>();
+					backMap.put("charge_list", backList);
+					vo.setData(backMap);//只反馈请求成功的计费代码
+					vo.setMsg("请求成功");
+					vo.setOk(true);
 //				System.out.println(JSONUtil.toJson(vo));
-			}else{
-				vo.setOk(false);
-				vo.setMsg("can't get area");
-				return vo;
+				}else{
+					vo.setOk(false);
+					vo.setMsg("can't get area");
+					return vo;
+				}
 			}
 		}else if("2".equals(request_type)){//验证请求
 			if(StringUtils.isBlank(code_id)) {
@@ -529,6 +538,32 @@ public class InfController {
 		}
 		return vo;
 	}
+	/**
+	 * 判断24小时内是否已经有3次记录，如果没有3次则写入记录并加一
+	 * @param imsi
+	 * @param timeOut 秒为单位
+	 * @return
+	 */
+	public boolean isInvalidOrder(String imsi,int timeOut){
+		boolean result = false;
+		try {
+			String str = (String) memcachedClient.get(imsi);
+			logger.info("memcached_imsi:" + imsi + "_" +str);
+			if(!StringUtils.isBlank(str)){
+				int temp = Integer.parseInt(str);
+				if(temp>=3){
+					result = true;
+				}else{
+					memcachedClient.set(imsi,timeOut, String.valueOf(temp+1));
+				}
+			}else{
+				memcachedClient.set(imsi,timeOut, "1");
+			}
+		} catch (Exception e) {
+			logger.error("the memcached is failed ",e);
+		}
+		return result;
+	} 
 	/**
 	 * 
 	 * @param infService 
