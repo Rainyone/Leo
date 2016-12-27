@@ -10,14 +10,14 @@ define(function (require, exports, module) {
         init:function(_basepath) {
             F.basepath = _basepath;
             $('#datetimeStart').datetimepicker({
-		        format: 'yyyy-mm-dd hh:ii',
+		        format: 'yyyy-mm-dd hh',
 		        minView:1,
 		        startView:2,
 		        language: 'zh-CN',
 		        autoclose:true
 		    })
 	    	$('#datetimeEnd').datetimepicker({
-			        format: 'yyyy-mm-dd hh:ii',
+			        format: 'yyyy-mm-dd hh',
 			        minView:1,
 			        startView:2,
 			        language: 'zh-CN',
