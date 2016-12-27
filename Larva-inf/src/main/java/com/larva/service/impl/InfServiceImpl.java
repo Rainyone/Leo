@@ -30,7 +30,7 @@ public class InfServiceImpl implements InfService {
 		ResultVO result = new ResultVO(false);
 		if(r==null){//appKey验证不通过,判断日限量、月限量
 			result.setOk(false);
-			result.setMsg("appKey is not available!");
+			result.setMsg("appKey or limit is not available!");
 			return result;
 		}
 		int is_have_area_check = r.getInt("is_have_area_check");
@@ -39,7 +39,7 @@ public class InfServiceImpl implements InfService {
 			logger.debug(appArea);
 			if(appArea<=0){//判断适用省份,判断日限量、月限量
 				result.setOk(false);
-				result.setMsg("app area is not available!");
+				result.setMsg("apparea or limit is not available!");
 				return result;
 			}
 		}

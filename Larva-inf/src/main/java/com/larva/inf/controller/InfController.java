@@ -65,31 +65,36 @@ public class InfController {
 			@RequestParam(value="timestamp", required=false, defaultValue="") String timestamp,//timestamp
 			HttpServletRequest request){
 		ResultVO vo = new ResultVO(false);
-		logger.info("charge_key:"+charge_key +",imsi:"+imsi + ",channel:"+channel +  ",logtime:"+logtime +
+		logger.info("appInfLog--charge_key:"+charge_key +",imsi:"+imsi + ",channel:"+channel +  ",logtime:"+logtime +
 				",stepname:"+stepname +  ",context:"+context +  ",timestamp:"+timestamp );
 		//参数判断
 		if(StringUtils.isBlank(charge_key)) {
 			vo.setOk(false);
+			logger.info("appInfLog--imsi:"+imsi + ",charge_key is null");
 			vo.setMsg("charge_key is null");
 			return vo;
 		}
 		if(StringUtils.isBlank(imsi)) {
 			vo.setOk(false);
+			logger.info("appInfLog--imsi:"+imsi + ",imsi is null");
 			vo.setMsg("imsi is null");
 			return vo;
 		}
 		if(StringUtils.isBlank(stepname)) {
 			vo.setOk(false);
+			logger.info("appInfLog--imsi:"+imsi + ",stepname is null");
 			vo.setMsg("stepname is null");
 			return vo;
 		}
 		if(StringUtils.isBlank(stepname)) {
 			vo.setOk(false);
+			logger.info("appInfLog--imsi:"+imsi + ",stepname is null");
 			vo.setMsg("stepname is null");
 			return vo;
 		}
 		if(StringUtils.isBlank(timestamp)) {
 			vo.setOk(false);
+			logger.info("appInfLog--imsi:"+imsi + ",timestamp is null");
 			vo.setMsg("timestamp is null");
 			return vo;
 		}
@@ -99,7 +104,8 @@ public class InfController {
 		if(result>0){//存在
 			//新增日志记录
 			AppInfLog ail = new AppInfLog();
-			ail.setId(UUIDUtil.getUUID());
+			String id = UUIDUtil.getUUID();
+			ail.setId(id);
 			ail.setChargerKey(charge_key);
 			ail.setChannel(channel);
 			ail.setImsi(imsi);
@@ -109,9 +115,11 @@ public class InfController {
 			ail.setCreateTime(new Date());
 			ail.setIp(ServiceUtils.getRealAddr(request));
 			infService.insertAppInfLog(ail);
+			logger.info("appInfLog--appInfLogId:" +id + ";logsuccess");
 			vo.setOk(true);
 			vo.setMsg("success");
 		}else{
+			logger.info("appInfLog--imsi:" + "have no charge log!");
 			vo.setMsg("have no charge log!");
 		}
 		return vo;
@@ -121,21 +129,23 @@ public class InfController {
 	@ResponseBody
 	public ResultVO callback(HttpServletRequest request){
 		String charge_id = request.getParameter("charge_id");
-		logger.info(charge_id);
+		logger.info("callback--charge_id:" + charge_id);
 		//找计费代码
 		Record r = infService.getCallBackSuccessById(charge_id);
 		String callbacksuccess = r.getStr("callbackcolumn");
 		String callbackcolumn = r.getStr("callbackcolumn");
 		String charge_key = request.getParameter(callbackcolumn);//回调函数中包含的透传参数为记录id
 		String queryStr = request.getQueryString();
-		logger.info("queryStr:" + queryStr);
+		logger.info("callback--charge_id:" + charge_id + ",queryStr:" + queryStr);
 		LogOrder log = new LogOrder();
 		if(StrKit.notBlank(queryStr)){
 			if(StrKit.notBlank(charge_key)){//有值id
 				if(queryStr.indexOf(callbacksuccess)>=0){//成功
 					log.setOrderState(3);
+					logger.info("callback--charge_id:" + charge_id + ",callbacksuccess");
 				}else{//失败
 					log.setOrderState(4);
+					logger.info("callback--charge_id:" + charge_id + ",callfailed");
 				}
 				logOrder(infService, log, -1, 1);
 			}
@@ -171,50 +181,58 @@ public class InfController {
 			@RequestParam(value="charge_key", required=false, defaultValue="") String charge_key,//验证码
 			@RequestParam(value="charge_success", required=false, defaultValue="") String charge_success,//验证码
 			HttpServletRequest request){
-		logger.debug("para--app_id:" + app_id + ";app_key:"+app_key+ ";request_type:"+request_type+ ";channel:"+channel+ ";price:"+price
+		logger.info("setCharge--app_id:" + app_id + ";app_key:"+app_key+ ";request_type:"+request_type+ ";channel:"+channel+ ";price:"+price
 				+ ";imei:"+imei + ";imsi:"+imsi + ";bsc_lac:"+bsc_lac + ";bsc_cid:"+bsc_cid + ";mobile:"+mobile + ";iccid:"+iccid + ";mac:"+mac 
 				+ ";cpparm:"+cpparm + ";fmt:"+fmt + ";timestamp:"+timestamp + ";isp:"+isp + ";code_id:"+code_id + ";order_id:"+order_id + ";ver_code:"+ver_code );
 		ResultVO vo = new ResultVO(true);
 		String area_id = "";
 		//参数判断
+		if(StringUtils.isBlank(imsi)) {
+			vo.setOk(false);
+			logger.info("setCharge--imsi is null");
+			vo.setMsg("imsi is null");
+			return vo;
+		}
 		if(StringUtils.isBlank(app_id)) {
 			vo.setOk(false);
+			logger.info("setCharge--imsi:" + imsi + ",app_id is null");
 			vo.setMsg("app_id is null");
 			return vo;
 		}
 		if(StringUtils.isBlank(app_key)) {
 			vo.setOk(false);
+			logger.info("setCharge--imsi:" + imsi + ",app_key is null");
 			vo.setMsg("app_key is null");
 			return vo;
 		}
 		if(StringUtils.isBlank(request_type)) {
 			vo.setOk(false);
+			logger.info("setCharge--imsi:" + imsi + ",request_type is null");
 			vo.setMsg("request_type is null");
 			return vo;
 		}
 		if(StringUtils.isBlank(imei)) {
 			vo.setOk(false);
+			logger.info("setCharge--imsi:" + imsi + ",imei is null");
 			vo.setMsg("imei is null");
-			return vo;
-		}
-		if(StringUtils.isBlank(imsi)) {
-			vo.setOk(false);
-			vo.setMsg("imsi is null");
 			return vo;
 		}
 		if(StringUtils.isBlank(fmt)) {
 			vo.setOk(false);
+			logger.info("setCharge--imsi:" + imsi + ",fmt is null");
 			vo.setMsg("fmt is null");
 			return vo;
 		}
 		if(StringUtils.isBlank(timestamp)) {
 			vo.setOk(false);
+			logger.info("setCharge--imsi:" + imsi + ",timestamp is null");
 			vo.setMsg("timestamp is null");
 			return vo;
 			
 		}
 		String realIp = ServiceUtils.getRealAddr(request);//获取ip地址
 		String mid = UUIDUtil.getUUID();
+		logger.info("setCharge--imsi:" + imsi + ",mid:"+ mid +",realIp:" + realIp );
 		LogOrder log = new LogOrder();
 		log.setId(mid);
 		log.setAppId(app_id);
@@ -237,14 +255,16 @@ public class InfController {
 			//计费请求需要去重
 			if(isInvalidOrder(imsi,86400)){//无效（24小时重复3次）订单则直接反馈
 				vo.setOk(false);
+				logger.info("setCharge--imsi:" + imsi + ",mid:"+ mid +",24 hours can not be repeated more than 3 times");
 				vo.setMsg("24 hours can not be repeated more than 3 times");
 				return vo;
 			}else{
 				area_id = infService.getAreaIdByImsi(imsi);//根据imsi号获取省份
+				logger.info("setCharge--imsi:" + imsi + ",mid:"+ mid +",area_id:"+area_id);
 				if(area_id==null||"".equals(area_id)){//如果没有获取到再根据ip获取省份
-					logger.info("realIp:" + realIp);
 					String address = ipSeeker.getAddress(realIp);
 					area_id = address.split(" ")[0];//获取区域编码
+					logger.info("setCharge--imsi:" + imsi + ",mid:"+ mid +",area_id from realIp:"+area_id);
 //				area_id = "110000";//测试用
 //				isp = "1002";
 				}
@@ -252,33 +272,34 @@ public class InfController {
 //			area_id = "110000";
 //			realIp = "132.33.32.12";
 				log.setAreaId(area_id);
-				logger.debug("imsi:"+imsi+";area:" + area_id);
 				logOrder(infService, log, -1, 0);
 				if(area_id!=null&&!"".equals(area_id)){//如果有区域编码
-					//记录日志：接收到请求
-					//（一个请求可能有多个计费代码）
-					
-					//appid+appKey校验，查数据库看此appid和key 是否可用，APP日月限量额度
-					//判断是否在可用省份内，APP省内日月限量额度
+					/**记录日志：接收到请求
+					（一个请求可能有多个计费代码）
+					appid+appKey校验，查数据库看此appid和key 是否可用，APP日月限量额度
+					判断是否在可用省份内，APP省内日月限量额度*/
 					vo = infService.checkApp(app_id,app_key,area_id,isp);
 					if(!vo.isOk()){//APP校验不通过
+						logger.info("setCharge--imsi:" + imsi + ",mid:"+ mid +",app 校验失败");
 						return vo;
 					}
 					Record app = (Record) vo.getData();//app数据
+					logger.info("setCharge--imsi:" + imsi + ",mid:"+ mid + ";" + app);
 					//			String charge_code = 
 					//获取可用计费代码（判断是否超过地区日限量、地区月限量、app日限量、app月限量）
 					vo = infService.checkAndGetChargeCode(app_id,area_id,isp);
 					if(!vo.isOk()){//校验不通过
+						logger.info("setCharge--imsi:" + imsi + ",mid:"+ mid +",计费代码校验失败");
 						return vo;
 					}
 					
 					List<Record>  list = (List<Record>) vo.getData();
-					logger.debug(list);
+					logger.info("setCharge--imsi:" + imsi + ",mid:"+ mid +","+list);
 					List<Object> backList = new ArrayList<Object>();
 					List<String> errorBackList = new ArrayList<String>();
 					for(Record r:list){
 						String logId = UUIDUtil.getUUID();//单个计费代码的日志id
-						
+						logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + "," + r );
 						String id = r.getStr("id");
 						String codeName = r.getStr("code_name");
 						String sendType = r.getStr("send_type");
@@ -310,14 +331,15 @@ public class InfController {
 											.replace("${bsc_cid}", bsc_cid).replace("${mobile}", mobile).replace("${iccid}", iccid)
 											.replace("${mac}", mac).replace("${cpparm}", cpparm).replace("${fmt}", fmt)
 											.replace("${isp}", isp).replace("${ip}", realIp).replace("${logid}",logId);
+									logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",geturl:" + url );
 									//发送请求
 //								if(id.equals("5e5adfa42eb4461c8cdf39de20eaf42a")){
 //									backMsg = "{ \"msg\":\"success\", \"port1\": \"dddd\", \"msg1\": \"ssss\", \"type1\": \"1\"}";
 //								}else if(id.equals("90deb3c8b8f64a4dbede34fbd19d7452")){
 //									backMsg = "{ \"ok\": \"true\", \"msg\": \"请求成功\", \"data_list\": [ { \"port-no\": \"10086\", \"message\": \"6\", \"type\": \"0\" }, { \"port-no\": \"10087\", \"message\": \"7\", \"type\": \"0\" }, { \"port-no\": \"10088\", \"message\": \"8\", \"type\": \"0\" } ]}";
 //								}
-//									backMsg = this.sendGet(url, id, logId);
-									logger.info("backmsg:" + backMsg);
+									backMsg = this.sendGet(url, id, logId);
+									logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",getbackmsg:" + backMsg);
 									//记录下反馈报文
 								}else if(InfStatic.SEND_TYPE_POST.equals(sendType)){	//post方式
 									chargeCode = chargeCode.replace("${imei}", imei).replace("${imsi}", imsi).replace("${bsc_lac}", bsc_lac)
@@ -325,13 +347,16 @@ public class InfController {
 											.replace("${mac}", mac).replace("${cpparm}", cpparm).replace("${fmt}", fmt)
 											.replace("${isp}", isp).replace("${ip}", realIp);;
 											//发送请求
+											logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",posturl:" + url );
 											backMsg = this.sendPost(url,chargeCode,id,logId);
+											logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",postbackmsg:" + backMsg);
 								}else{
+									logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",chargeID:" + id +",code_name:"+codeName+";请求方式不对POST/GET");
 									errorBackList.add("id:" + id + ",code_name:"+codeName+";请求方式不对POST/GET");
 								}
 							}else if(inf_type==3){//不调用运营商接口
 								backMsg="\"msg\":\"success\"";
-								logger.info("inf_type=3,默认backMsg=" + backMsg);
+								logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",inf_type=3,默认backMsg=" + backMsg);
 							}else{//后期扩展
 								// TODO 扩展
 							}
@@ -341,7 +366,7 @@ public class InfController {
 							charge.put("inf_type", String.valueOf(inf_type));
 							
 							if(backMsg.indexOf(successFlag)<0){//判断成功标示(不包含则反馈的是失败信息)
-								logger.debug("charge_id:" + id +";logId:"+logId+";运营商反馈失败信息");
+								logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",charge_id:" + id +";运营商反馈失败信息,successFlag:" + successFlag);
 								log.setOrderState(2);//失败
 							}else{
 								if(inf_type==1||inf_type==2){//1：不需要验证码，直接请求运营商2需要通过接口反馈验证码
@@ -352,16 +377,17 @@ public class InfController {
 											}else if(InfStatic.BACK_MSG_XML.equals(backMsgType)){
 												analysisBackMsg = this.analysisXml(backMsg, returnForm);
 											}else{
-												errorBackList.add("id:" + id + ",code_name:"+codeName+";反馈报文格式不对JSON/XML");
+												logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",chargeID:" + id +",code_name:"+codeName+";反馈报文格式不对JSON/XML");
 											}
 										}
 									}
 								}else if(inf_type==3){//不调用运营商接口
+									logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",charge_id:" + id +",不调用运营商接口");
 									analysisBackMsg = backForm;
 								}else{//后期扩展
 									// TODO 扩展
 								}
-								
+								logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",analysisBackMsg:"+analysisBackMsg);
 								//analysisBackMsg = analysisBackMsg.replace("${code_id}", id);
 								List<Object> msg_list = new ArrayList<Object>();
 								Object o = null;
@@ -392,6 +418,7 @@ public class InfController {
 									}else if("list".equals(o_type)&&inf_type==2){
 										back_order_id = ((JSONObject)o).getString(order_id_code);
 									}
+									logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",back_order_id"+back_order_id);
 									if(back_order_id!=null&&!"".equals(back_order_id)){//记录验证码订单
 										log.setOrderNo(back_order_id);
 										infService.updateOrderNoById(logId, order_id_code);
@@ -400,6 +427,7 @@ public class InfController {
 										charge.put("orderId", "");
 									}
 									charge.put("msg_list", msg_list);
+									logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",msg_list:"+msg_list);
 								}catch(Exception e){
 									e.printStackTrace();
 									logger.error("charge_id:" + id +";验证码字段获取失败");
@@ -424,7 +452,7 @@ public class InfController {
 						}catch(Exception e){
 							e.printStackTrace();
 							logger.error(e);
-							logger.debug("charge_id:" + id+";请求运营商异常");
+							logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",;请求运营商异常");
 							log.setOrderState(2);//失败
 						}
 						log.setUpdateTime(new Date());
@@ -435,36 +463,43 @@ public class InfController {
 					vo.setData(backMap);//只反馈请求成功的计费代码
 					vo.setMsg("请求成功");
 					vo.setOk(true);
+					logger.info("setCharge--imsi:" + imsi + ",mid:" + mid + ",returnVo:" + vo);
 //				System.out.println(JSONUtil.toJson(vo));
 				}else{
 					vo.setOk(false);
+					logger.info("setCharge--imsi:" + imsi + ",mid:" + mid + ",can't get area");
 					vo.setMsg("can't get area");
 					return vo;
 				}
 			}
 		}else if("2".equals(request_type)){//验证请求
-			if(StringUtils.isBlank(code_id)) {
-				vo.setOk(false);
-				vo.setMsg("code_id is null");
-				return vo;
-			}
 			if(StringUtils.isBlank(order_id)) {
 				vo.setOk(false);
+				logger.info("setCharge--imsi:" + imsi + ",order_id is null");
 				vo.setMsg("order_id is null");
+				return vo;
+			}
+			if(StringUtils.isBlank(code_id)) {
+				vo.setOk(false);
+				logger.info("setCharge--imsi:" + imsi + ",order_id:" + order_id + ",code_id is null");
+				vo.setMsg("code_id is null");
 				return vo;
 			}
 			if(StringUtils.isBlank(ver_code)) {
 				vo.setOk(false);
+				logger.info("setCharge--imsi:" + imsi + ",order_id:" + order_id + ",ver_code is null");
 				vo.setMsg("ver_code is null");
 				return vo;
 			}
 			if(StringUtils.isBlank(mobile)) {
 				vo.setOk(false);
+				logger.info("setCharge--imsi:" + imsi + ",order_id:" + order_id + ",mobile is null");
 				vo.setMsg("mobile is null");
 				return vo;
 			}
 			//判断此order_id是否存在状态为1的记录
 			vo = infService.checkOrderId(order_id);
+			logger.info("setCharge--imsi:" + imsi + ",order_id:" + order_id + ",判断此order_id是否存在状态为1的记录 vo:" + vo);
 			if(vo.isOk()){
 				Record charge = infService.getVerCodeUrlById(code_id);
 				String ver_code_url = charge.getStr("ver_code_url");
@@ -476,7 +511,10 @@ public class InfController {
 							.replace("${mac}", mac).replace("${cpparm}", cpparm).replace("${fmt}", fmt)
 							.replace("${isp}", isp).replace("${order_id}", order_id).replace("${ver_code}", ver_code)
 							.replace("${mobile}", mobile);
+					logger.info("setCharge--imsi:" + imsi + ",order_id:" + order_id + ",ver_code_url:"+ver_code_url);
 					String backMsg = this.sendGet(ver_code_url,id,order_id);
+					logger.info("setCharge--imsi:" + imsi + ",order_id:" + order_id + ",backMsg:"+backMsg);
+					logger.info("setCharge--imsi:" + imsi + ",order_id:" + order_id + ",ver_code_success_flag:"+ver_code_success_flag);
 					if(backMsg.indexOf(ver_code_success_flag)>0){//反馈成功
 						//更新日月限量总数
 						infService.updateCount(app_id, id,area_id);
@@ -486,6 +524,7 @@ public class InfController {
 						log.setOrderState(7);
 						log.setUpdateTime(new Date());
 						vo.setOk(true);
+						logger.info("setCharge--imsi:" + imsi + ",order_id:" + order_id + ",charge success");
 						vo.setMsg("charge success");
 					}else{
 						log.setAppId(app_id);
@@ -493,35 +532,42 @@ public class InfController {
 						log.setOrderState(8);
 						log.setUpdateTime(new Date());
 						vo.setOk(false);
+						logger.info("setCharge--imsi:" + imsi + ",order_id:" + order_id + ",charge false");
 						vo.setMsg("charge false");
 					}
 					logOrder(infService, log, 0,2);//修改
 					Map<String, String> backMap = new HashMap<String,String>();
 					backMap.put("order_id", order_id);
 					vo.setData(backMap);
+					logger.info("setCharge--imsi:" + imsi + ",order_id:" + order_id + ",returnVo:" + vo);
 					return vo;
 				}else{
 					vo.setOk(false);
+					logger.info("setCharge--imsi:" + imsi + ",order_id:" + order_id + ",ver_code_url is null" );
 					vo.setMsg("ver_code_url is null");
 					return vo;
 				}
 			}else{
 				vo.setOk(false);
+				logger.info("setCharge--imsi:" + imsi + ",order_id:" + order_id + ",Have already been asked or There is no data on this platform" );
 				vo.setMsg("Have already been asked or There is no data on this platform");
 				return vo;
 			}
 		}else if("3".equals(request_type)){
 			if(StringUtils.isBlank(charge_key)) {
 				vo.setOk(false);
+				logger.info("setCharge--imsi:" + imsi + ",charge_key is null " );
 				vo.setMsg("charge_key is null");
 				return vo;
 			}
 			if(StringUtils.isBlank(charge_success)) {
 				vo.setOk(false);
+				logger.info("setCharge--imsi:" + imsi + ",charge_key:" + charge_key + ",charge_success is null" );
 				vo.setMsg("charge_success is null");
 				return vo;
 			}
 			log.setId(charge_key);
+			logger.info("setCharge--imsi:" + imsi + ",charge_key:" + charge_key + ",charge_success:" + charge_success );
 			if("1".equals(charge_success)){
 				log.setOrderState(5);
 			}else{
@@ -560,7 +606,8 @@ public class InfController {
 				memcachedClient.set(imsi,timeOut, "1");
 			}
 		} catch (Exception e) {
-			logger.error("the memcached is failed ",e);
+			logger.info("imsi:"+imsi + ",the memcached is failed ",e);
+			logger.error("imsi:"+imsi + ",the memcached is failed ",e);
 		}
 		return result;
 	} 
@@ -750,8 +797,7 @@ public class InfController {
 		HttpURLConnection httpConn = null;
 		String resultXml = "";
 		try {
-			logger.info("===***==创建http连接并设置参数。。。。");
-			logger.info("===charge_id:"+charge_id+";logid:"+logid+";***==msgUrl：" + msgUrl);
+			logger.info("****sendURL--create http request,charge_id:"+charge_id+";logid:"+logid+";***==msgUrl：" + msgUrl);
 			URL url = new URL(msgUrl);
 			URLConnection conn = url.openConnection();
 			// 设置超时时间
@@ -760,7 +806,7 @@ public class InfController {
 			httpConn = (HttpURLConnection) conn;
 			//byte[] contentByte = requestXml.getBytes();
 			if(InfStatic.SEND_TYPE_GET.equals(postGetFlag)){//get请求
-				logger.debug("===***get begin***====");
+				logger.info("****sendURL--create http request,charge_id:"+charge_id+";logid:"+logid+";***==get begin***====");
 				// 进行连接
 				// 但是实际上get request要在下一句的connection.getInputStream()函数中才会真正发到 服务器
 				conn.connect();
@@ -775,9 +821,9 @@ public class InfController {
 				resultXml = sb.toString();
 				reader.close();
 				// 断开连接
-				logger.debug("===***get end***====");
+				logger.info("****sendURL--create http request,charge_id:"+charge_id+";logid:"+logid+";===***get end***====");
 			}else if(InfStatic.SEND_TYPE_POST.equals(postGetFlag)){//post请求
-				logger.info("===***post begin***====");
+				logger.info("****sendURL--create http request,charge_id:"+charge_id+";logid:"+logid+";***==***post begin***====");
 				byte[] contentByte = null;
 				contentByte = msgContent.getBytes("UTF-8");
 				httpConn.setRequestProperty("Content-Length",String.valueOf(contentByte.length));
@@ -790,7 +836,7 @@ public class InfController {
 				os.write(contentByte);
 				os.flush();
 				os.close();
-				logger.info("===***post request***====");
+				logger.info("****sendURL--create http request,charge_id:"+charge_id+";logid:"+logid+";***==***post request***====");
 				int status = httpConn.getResponseCode();
 				if (status == HttpURLConnection.HTTP_OK) {
 					InputStreamReader isr = new InputStreamReader(httpConn.getInputStream(), "UTF-8");
@@ -809,23 +855,25 @@ public class InfController {
 					// 通讯异常处理
 					resultXml = "-9999";
 				}
-				logger.info("===***post end***====");
+				logger.info("****sendURL--create http request,charge_id:"+charge_id+";logid:"+logid+";***==***post end***====");
 			}
 		} catch(SocketTimeoutException e) { 
-			logger.error("SocketTimeoutException:" + e.getMessage(), e);
+			logger.info("****sendURL--create http request,charge_id:"+charge_id+";logid:"+logid+";***==SocketTimeoutException",e);
+			logger.error("****sendURL--create http request,charge_id:"+charge_id+";logid:"+logid+";***==SocketTimeoutException",e);
 			// 通讯异常处理
 			resultXml = "-9999";
 		} catch (Exception e) {
-			logger.error("Exception:" + e.getMessage(), e);
+			logger.info("****sendURL--create http request,charge_id:"+charge_id+";logid:"+logid+";***==Exception",e);
+			logger.error("****sendURL--create http request,charge_id:"+charge_id+";logid:"+logid+";***==Exception",e);
 		} finally {
-			logger.debug("===***release conn***====");
+			logger.info("****sendURL--create http request,charge_id:"+charge_id+";logid:"+logid+";***release conn***====");
 			if(httpConn != null) {
 				httpConn.disconnect();
 			}
 		}
 		String str5 = "{\"resultCode\": 0,\"count\": 1,\"port1\": \"10086\",\"msg1\": \"1\", " +
 				" \"type1\": 0, \"port2\": \"10086\",\"msg2\": \"2\",\"type2\": 0}";
-		logger.debug("==charge_id:"+charge_id+";logid:"+logid+";***response msg==:" + resultXml);
+		logger.info("****sendURL--create http request,charge_id:"+charge_id+";logid:"+logid+";***response msg==:" + resultXml);
 		return resultXml;
 	}
 	/**
