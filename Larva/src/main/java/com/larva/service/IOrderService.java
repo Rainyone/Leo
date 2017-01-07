@@ -42,5 +42,10 @@ public interface IOrderService {
 			String datetimeEnd);
 
 	Pager<Map<String, Object>> getAppLog(PagerReqVO pagerReqVO, String charge_key);
-
+	
+	List<Map<String,String>> queryCols(String datetimeStart,
+			String datetimeEnd);
+		
+	Pager<Map<String, Object>> queryColsResults(PagerReqVO pagerReqVO,
+			String datetimeStart, String datetimeEnd,String app_id,int queryType); 
 }

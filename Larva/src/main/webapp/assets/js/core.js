@@ -366,6 +366,9 @@ define(function (require, exports, module) {
         	this.reload = function(){
             	$('#'+_tableId).bootstrapTable('refresh',{silent: true});
             }
+        	this.destroy = function(){
+        		$('#'+_tableId).bootstrapTable('destroy');
+        	}
         },
         /**
 		 * Picture Select

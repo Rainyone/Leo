@@ -358,5 +358,18 @@ public class OrderDaoImpl extends MiniDao  implements IOrderDao {
 		String sql = "select * from t_app_inf_log where charge_key = ? ";
 		return this.paginateResult(sql, pageNo, limit, AppInfLog.class, charge_key);
 	}
+
+	@Override
+	public List<Record> getCols(String datetimeStart, String datetimeEnd) {
+		String sql = "select datelist from t_date where datelist between ? and ? order by datelist desc ";
+		return this.findList(sql,Record.class,datetimeStart,datetimeEnd);
+	}
+
+	@Override
+	public Record getLogAppCount(String datetime, String app_id) {
+		String sql = "select * from t_log_app_count a  "
+				+ " where a.state = 1 and a.app_id = ? and a.create_time = ? ";
+		return this.find(sql,Record.class,app_id,datetime);
+	}
 	
 }

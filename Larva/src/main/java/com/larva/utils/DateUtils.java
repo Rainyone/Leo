@@ -2,6 +2,7 @@ package com.larva.utils;
 
 import static java.util.Objects.requireNonNull;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -476,4 +477,23 @@ public abstract class DateUtils {
 		result = getDate(year, month, day, hour, minute, second);
 		return result;
 	}
+	 /**  
+     * 计算两个日期之间相差的天数  
+     * @param smdate 较小的时间 
+     * @param bdate  较大的时间 
+     * @return 相差天数 
+     * @throws ParseException  
+     */    
+    public static int daysBetween(Date smdate,Date bdate){    
+        SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");  
+        smdate= DateUtils.string2Date(DateUtils.date2String(smdate,DateUtils.SIMPLE_DATE_FORMAT));
+        bdate=DateUtils.string2Date(DateUtils.date2String(smdate,DateUtils.SIMPLE_DATE_FORMAT));
+        Calendar cal = Calendar.getInstance();    
+        cal.setTime(smdate);    
+        long time1 = cal.getTimeInMillis();                 
+        cal.setTime(bdate);    
+        long time2 = cal.getTimeInMillis();         
+        long between_days=(time2-time1)/(1000*3600*24);  
+       return Integer.parseInt(String.valueOf(between_days));           
+    }    
 }

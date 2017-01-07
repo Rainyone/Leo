@@ -46,6 +46,10 @@ public class TongjiController {
     public String charge() {
         return "main/tongji/charge/manage";
     }
+    @RequestMapping("/appnew/manage")
+    public String appnew() {
+        return "main/tongji/appnew/manage";
+    }
     @RequestMapping("/order/query")
     public
     @ResponseBody
@@ -151,6 +155,26 @@ public class TongjiController {
     	ResultVO vo = new ResultVO(true);
     	Map<String, Object>  m = orderService.getPlatformCharts(datetimeStart,datetimeEnd);
     	vo.setData(m);
+        return vo;
+    }
+    @RequestMapping("/appnew/queryCols")
+    public
+    @ResponseBody
+    ResultVO queryCols(String datetimeStart,String datetimeEnd,HttpSession session) {
+    	ResultVO vo = new ResultVO(true);
+    	List<Map<String,String>>  m = orderService.queryCols(datetimeStart,datetimeEnd);
+    	if(m!=null){
+    		vo.setData(m);
+    	}else{
+    		vo.setOk(false);
+    	}
+        return vo;
+    }
+    @RequestMapping("/appnew/queryColsResult")
+    public
+    @ResponseBody
+    Pager<Map<String,Object>> queryColsResults(PagerReqVO pagerReqVO,String datetimeStart,String datetimeEnd,String app_id,int queryType,HttpSession session) {
+    	Pager<Map<String,Object>> vo = orderService.queryColsResults(pagerReqVO,datetimeStart,datetimeEnd,app_id,queryType);
         return vo;
     }
 }

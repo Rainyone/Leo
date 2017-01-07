@@ -35,5 +35,8 @@ public interface IOrderDao {
 	List<Record> getPlatformCharts(String datetimeStart, String datetimeEnd);
 
 	PageResult<AppInfLog> getAppLog(int pageNo, int limit, String charge_key);
-
+	
+	List<Record> getCols(String datetimeStart, String datetimeEnd);
+	
+	Record getLogAppCount(String datetime,String app_id);
 }

@@ -9,10 +9,13 @@ import java.util.TreeMap;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Service;
 
+import com.larva.dao.IAppManageDao;
 import com.larva.dao.IOrderDao;
 import com.larva.model.AppInfLog;
+import com.larva.model.AppManage;
 import com.larva.model.LogOrder;
 import com.larva.service.IOrderService;
 import com.larva.utils.DateUtils;
@@ -26,6 +29,8 @@ import com.mini.core.Record;
 public class OrderServiceImpl implements IOrderService {
 	@Resource
 	private IOrderDao orderDao;
+	@Resource
+	private IAppManageDao appManageDao;
 	@Override
 	public Pager<Map<String, Object>> getOrderList(PagerReqVO pagerReqVO,
 			OrderVo orderVo) {
@@ -361,6 +366,138 @@ public class OrderServiceImpl implements IOrderService {
 		m.put("ydata_request_success_count", ydata_request_success_count);
 		return m;
 	}
+	@Override
+	public List<Map<String,String>> queryCols(String datetimeStart,
+			String datetimeEnd) {
+		List<Map<String,String>> result = new ArrayList<Map<String,String>>();
+		if(StringUtils.isNotBlank(datetimeStart)||StringUtils.isNotBlank(datetimeEnd)){//有选择时间
+			if(StringUtils.isNotBlank(datetimeStart)&&!StringUtils.isNotBlank(datetimeEnd)){//只选了开始时间
+				//当前时间减开始时间，如果小于60则允许查询。如果大于60在需要提醒
+				int days = DateUtils.daysBetween(DateUtils.string2Date(datetimeStart), new Date());//开始时间在最近2个月内
+				if(days<=60){
+					result = getCols(datetimeStart,DateUtils.date2String(new Date(),DateUtils.SIMPLE_DATE_FORMAT));
+				}
+			}else if(!StringUtils.isNotBlank(datetimeStart)&&StringUtils.isNotBlank(datetimeEnd)){//只选了结束时间
+				//默认往前推15天查询
+				Date thisDate = DateUtils.addDays(DateUtils.string2Date(datetimeEnd), -15);
+				String startTime = DateUtils.date2String(thisDate,DateUtils.SIMPLE_DATE_FORMAT);
+				String endTime = DateUtils.date2String(DateUtils.string2Date(datetimeEnd),DateUtils.SIMPLE_DATE_FORMAT);
+				result = getCols(startTime,endTime);
+			}else{//两个都选择了
+				//判断间隔是否小于60天，小于则允许查询
+				int days = DateUtils.daysBetween(DateUtils.string2Date(datetimeStart), new Date());//开始时间在最近2个月内
+				if(days<=60){
+					result = getCols(datetimeStart,datetimeEnd);
+				}
+			}
+		}else{
+			//默认只查最近半个月
+			Date thisDate = DateUtils.addDays(new Date(), -15);
+			String startTime = DateUtils.date2String(thisDate,DateUtils.SIMPLE_DATE_FORMAT);
+			String endTime = DateUtils.date2String(new Date(),DateUtils.SIMPLE_DATE_FORMAT);
+			result = getCols(startTime,endTime);
+		}
+		return result;
+	}
 	
-
+	public List<Map<String,String>> getCols(String datetimeStart,
+			String datetimeEnd) {
+		List<Record> list = orderDao.getCols(datetimeStart, datetimeEnd);
+		List<Map<String,String>> cols = new ArrayList<Map<String,String>>();
+		Map<String,String> filedName = new HashMap<String,String>();
+		filedName.put("field", "filedName");
+		filedName.put("title", "APP名称\\时间");
+		cols.add(filedName);
+		for(Record r:list){
+			Map<String,String> datelist = new HashMap<String,String>();
+			Date d = r.getDate("datelist");
+			String date = DateUtils.date2String(d,DateUtils.SIMPLE_DATE_FORMAT);
+			datelist.put("field", date);
+			datelist.put("title", date);
+			cols.add(datelist);
+		}
+		return cols;
+	}
+	
+	@Override
+	public Pager<Map<String, Object>> queryColsResults(PagerReqVO pagerReqVO,
+			String datetimeStart, String datetimeEnd,String app_id,int queryType) {
+		List<Map<String,Object>> results = new ArrayList<Map<String,Object>>();
+		//时间处理
+		if(StringUtils.isNotBlank(datetimeStart)||StringUtils.isNotBlank(datetimeEnd)){//有选择时间
+			if(StringUtils.isNotBlank(datetimeStart)&&!StringUtils.isNotBlank(datetimeEnd)){//只选了开始时间
+				//当前时间减开始时间，如果小于60则允许查询。如果大于60在需要提醒
+				int days = DateUtils.daysBetween(DateUtils.string2Date(datetimeStart), new Date());//开始时间在最近2个月内
+				if(days<=60){
+					datetimeEnd = DateUtils.date2String(new Date(),DateUtils.SIMPLE_DATE_FORMAT);
+				}else{
+					return null;
+				}
+			}else if(!StringUtils.isNotBlank(datetimeStart)&&StringUtils.isNotBlank(datetimeEnd)){//只选了结束时间
+				//默认往前推15天查询
+				Date thisDate = DateUtils.addDays(DateUtils.string2Date(datetimeEnd), -15);
+				datetimeStart = DateUtils.date2String(thisDate,DateUtils.SIMPLE_DATE_FORMAT);
+				datetimeEnd = DateUtils.date2String(DateUtils.string2Date(datetimeEnd),DateUtils.SIMPLE_DATE_FORMAT);
+			}else{//两个都选择了
+				//判断间隔是否小于60天，小于则允许查询
+				int days = DateUtils.daysBetween(DateUtils.string2Date(datetimeStart), new Date());//开始时间在最近2个月内
+				if(days<=60){
+					return null;
+				}
+			}
+		}else{
+			//默认只查最近半个月
+			Date thisDate = DateUtils.addDays(new Date(), -15);
+			datetimeStart = DateUtils.date2String(thisDate,DateUtils.SIMPLE_DATE_FORMAT);
+			datetimeEnd = DateUtils.date2String(new Date(),DateUtils.SIMPLE_DATE_FORMAT);
+		}
+		
+		List<Record> listCols = orderDao.getCols(datetimeStart, datetimeEnd);
+		if(listCols!=null&&listCols.size()>0){
+			for(Record r:listCols){
+				Date datetime = r.getDate("datelist");
+				String date = DateUtils.date2String(datetime,DateUtils.SIMPLE_DATE_FORMAT);
+				PageResult<AppManage> pagers = null;
+				if(StrKit.notBlank(app_id)){
+					Record logAppCount = orderDao.getLogAppCount(date, app_id);
+					if(logAppCount!=null){
+						
+						Map<String, Object> map = new HashMap<String, Object>();
+						if(queryType == 1){//请求量
+							map.put(date, logAppCount.getInt("request_count"));
+						}else if(queryType == 2) {//成功数
+							map.put(date, logAppCount.getInt("success_count"));
+						}else if(queryType == 3){//金额
+							map.put(date, logAppCount.getBigDecimal("success_count"));
+						}
+						results.add(map);
+					}
+					break;
+				}else{
+					pagers = appManageDao.selectAppManages(1,Integer.MAX_VALUE);
+					List<AppManage> list = pagers.getResults();
+					if(list!=null&&list.size()>0){
+						//然后遍历APP查日期值
+						for (AppManage app : list) {
+							app_id = app.getId();
+							Record logAppCount = orderDao.getLogAppCount(date, app_id);
+							if(logAppCount!=null){
+								Map<String, Object> map = new HashMap<String, Object>();
+								if(queryType == 1){//请求量
+									map.put(date, logAppCount.getInt("request_count"));
+								}else if(queryType == 2) {//成功数
+									map.put(date, logAppCount.getInt("success_count"));
+								}else if(queryType == 3){//金额
+									map.put(date, logAppCount.getBigDecimal("success_count"));
+								}
+								results.add(map);
+							}
+						}
+					}
+				}
+				
+			}
+		}
+        return new Pager(results, results.size());
+	}
 }
