@@ -49,8 +49,13 @@ public class UrlRewriteFilter implements Filter {
 			String servletPath=request.getServletPath();  
 			String queryStr = request.getQueryString();
 			String charge_id = servletPath.substring(servletPath.indexOf("callback/")+9,servletPath.length());
-			request.setAttribute("charge_id", charge_id);
-			request.getRequestDispatcher("/callback?charge_id="+charge_id+"&"+queryStr).forward(request, response);
+			log.info("callback--servletPath:" + servletPath + ";charge_id:" + charge_id);
+			if(StringUtils.isBlank(charge_id)){
+				request.getRequestDispatcher("/fail").forward(request, response);
+			}else{
+				request.setAttribute("charge_id", charge_id);
+				request.getRequestDispatcher("/callback?charge_id="+charge_id+"&"+queryStr).forward(request, response);
+			}
 			return;
 		}
 		/**
@@ -89,6 +94,7 @@ public class UrlRewriteFilter implements Filter {
 							String stepname = paramsMaps.get("stepname");
 							String timestamp = paramsMaps.get("timestamp");
 							String sign2 = DESEncrypt.getAppInfLogSign(charge_key, imsi,stepname, timestamp);
+							log.info("sign1:" + sign + ";sign2:" + sign2);
 							if (!sign.equals(sign2)) {
 								log.info("签名错误 sign:" + sign + " sign2: " + sign2);
 							}else{
@@ -189,8 +195,9 @@ public class UrlRewriteFilter implements Filter {
 		String imei = paramsMaps.get("imei");
 		String timestamp = paramsMaps.get("timestamp");
 		String sign2 = DESEncrypt.getSign(appId, appSecret,imei, timestamp);
+		log.info("sign1:" + sign + " sign2: " + sign2);
 		if (!sign.equals(sign2)) {
-			log.info("签名错误 sign:" + sign + " sign2: " + sign2);
+			log.info("签名错误 sign1:" + sign + " sign2: " + sign2);
 			return false;
 		}
 		
@@ -257,17 +264,19 @@ public class UrlRewriteFilter implements Filter {
 	private String decodeUrl(HttpServletRequest request, 
 			String contextPath) throws IOException, Exception {
 		String data = request.getParameter("body");
+		log.info("decodeUrl--before:" + data);
 		String temp = new String(
 				DESEncrypt.decrypt(Base64.decodeBase64(data)));
 		String plainText = URIUtil.getPathQuery(temp);
 		
-		log.info("plaintext: " + plainText);
+		log.info("decodeUrl--after:: " + plainText);
 		return plainText;
 	}
 	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		String excludedPages = filterConfig.getInitParameter("exclusions");  
+		String excludedPages = filterConfig.getInitParameter("exclusions"); 
+		log.info("init--excludedPages:" + excludedPages);
 		if (StringUtils.isNotEmpty(excludedPages)) {  
 			excludedPageArray = excludedPages.split(",");  
 		}  

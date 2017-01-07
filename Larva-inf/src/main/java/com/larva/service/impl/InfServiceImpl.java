@@ -25,11 +25,13 @@ public class InfServiceImpl implements InfService {
 	@Override
 	public ResultVO checkApp(String app_id, String app_key, String area_id,
 			String isp) {
+		logger.info("chechApp--app_id:" + app_id +",app_key:"+app_key + ",area_id:"+ area_id + ",isp:"+ isp);
 		Record r = iInfDao.get(app_id, app_key);
 		logger.debug(r);
 		ResultVO result = new ResultVO(false);
 		if(r==null){//appKey验证不通过,判断日限量、月限量
 			result.setOk(false);
+			logger.info("checkApp--app_id:" + app_id + ",appKey or limit is not available!");
 			result.setMsg("appKey or limit is not available!");
 			return result;
 		}
@@ -39,6 +41,7 @@ public class InfServiceImpl implements InfService {
 			logger.debug(appArea);
 			if(appArea<=0){//判断适用省份,判断日限量、月限量
 				result.setOk(false);
+				logger.info("checkApp--app_id:" + app_id + ",apparea or limit is not available!");
 				result.setMsg("apparea or limit is not available!");
 				return result;
 			}
@@ -47,6 +50,7 @@ public class InfServiceImpl implements InfService {
 		logger.debug(appIsp);
 		if(appIsp<=0){//判断运营商
 			result.setOk(false);
+			logger.info("checkApp--app_id:" + app_id + ",isp:"+ isp +",isp is not available!");
 			result.setMsg("isp is not available!");
 			return result;
 		}
@@ -58,25 +62,27 @@ public class InfServiceImpl implements InfService {
 	@Override
 	public ResultVO checkAndGetChargeCode(String app_id, String area_id,
 			String isp) {
+		logger.info("checkAndGetChargeCode--app_id:"+ app_id + ",area_id:" + area_id +",isp:"+isp);
 		List<Record> list = iInfDao.getChargeCodes(app_id);
 		List<Record> returnList = new ArrayList<Record>();
+		String errorStr = "";
 		ResultVO result = new ResultVO(false);
 		if(list!=null&&list.size()>0){//判断是否有可用的计费代码，日月限量是否超出
 			for(Record r:list){//遍历去判断区域、区域限量、可用运营商、可用时间
 				String id = r.getStr("ID");
 				Integer chargeAreaCount = iInfDao.getChargeArea(id,area_id);
 				if(chargeAreaCount<=0){//获取可用区域，判断日月限量 ,没有通过校验
-//					list.remove(r);
+					errorStr +="charge area not avalible:" + id + ";";
 					logger.debug("charge area not avalible:"+id);
 				}else{//继续其他判断
 					Integer chargeIspCount = iInfDao.getChargeIsps(id,isp);
 					if(chargeIspCount<=0){//运营商校验失败
-//						list.remove(r);
+						errorStr +="charge isp not avalible:" + id + ";";
 						logger.debug("charge isp not avalible:"+id);
 					}else{
 						Integer chargeDisableTimeCount = iInfDao.getChargeDisableTimes(id);
 						if(chargeDisableTimeCount>0){//在不可用时间范围内则校验不通过
-//							list.remove(r);
+							errorStr +="charge disable time:" + id + ";";
 							logger.debug("charge disable time:"+id);
 						}else{//通过考验的
 							returnList.add(r);
@@ -86,6 +92,7 @@ public class InfServiceImpl implements InfService {
 				}
 			}
 		}
+		logger.info("checkAndGetChargeCode--checkResult:" +errorStr);
 		list = null;//释放资源
 		if(returnList!=null&&returnList.size()>0){
 			result.setOk(true);
