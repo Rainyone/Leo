@@ -3,6 +3,7 @@ package com.mini.core.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.druid.sql.visitor.functions.Char;
@@ -21,6 +22,7 @@ import com.mini.core.utils.MiniUtil;
  */
 public class MiniDao implements IMiniDao
 {
+	private Logger logger = Logger.getLogger(MiniDao.class);
 	@Autowired
 	private MiniConfig miniConfig;
 	/*private miniConfig.getDbHelper() miniConfig.getDbHelper();
@@ -66,6 +68,7 @@ public class MiniDao implements IMiniDao
      * @return int
      */
     public <T extends Model> int insert(T record){
+    	logger.info("MiniDao--insert:" + record);
     	return miniConfig.getDbHelper().save(record);
     }
 
@@ -75,6 +78,7 @@ public class MiniDao implements IMiniDao
      * @return int
      */
     public <T extends Model> int delete(T record){
+    	logger.info("MiniDao--delete:" + record);
     	return miniConfig.getDbHelper().delete(record);
     }
     
@@ -85,6 +89,7 @@ public class MiniDao implements IMiniDao
      * @return int
      */
     public int deleteById(Class<? extends BaseEntity> clazz, Object primaryKey){
+    	logger.info("MiniDao--deleteById:" + clazz.getName() +";primaryKey:" + primaryKey);
     	return miniConfig.getDbHelper().deleteById(clazz, primaryKey);
     }
     
@@ -94,6 +99,7 @@ public class MiniDao implements IMiniDao
      * @return int
      */
     public <T extends Model> int update(T record){
+    	logger.info("MiniDao--update:" + record );
     	return miniConfig.getDbHelper().update(record);
     }
     
@@ -104,6 +110,7 @@ public class MiniDao implements IMiniDao
      * @return int
      */
     public int execute(String sql, Object... paras){
+    	logger.info("MiniDao--execute:" + sql +";paras:" + paras);
     	return miniConfig.getDbHelper().update(sql, paras);
     }
     
@@ -115,6 +122,7 @@ public class MiniDao implements IMiniDao
      */
     @SuppressWarnings("unchecked")
 	public <T> T findById(Class<? extends BaseEntity> clazz, Object primaryKey){
+    	logger.info("MiniDao--findById:" + clazz.getName() +";primaryKey:" + primaryKey);
     	return (T) miniConfig.getDbHelper().findById(clazz, primaryKey);
     }
     
@@ -127,6 +135,7 @@ public class MiniDao implements IMiniDao
      */
     @SuppressWarnings("unchecked")
 	public <T> T find(String sql, Class clazz, Object... args){
+    	logger.info("MiniDao--find:" + sql +";clazz:" + clazz.getName() + ";args:" + args);
     	if(MiniUtil.isPrimitiveClass(clazz))
     		return (T) miniConfig.getDbHelper().queryForObject(sql,clazz,args);
     	else if(MiniUtil.isBaseEntity(clazz))
@@ -147,6 +156,7 @@ public class MiniDao implements IMiniDao
      * @return T {String、Integer、Long、Record、BaseEntity等}
      */
     public <T> T cacheFind(String cacheName, Object key, String sql, Class clazz, Object... args){
+    	logger.info("MiniDao--cacheFind:" + cacheName +";key:" + key + ";sql:" + sql + ";clazz:" + clazz.getName() + ";args:" + args);
     	if(MiniUtil.isPrimitiveClass(clazz))
     		return (T) miniConfig.getDbHelper().queryForObjectByCache(cacheName, key, sql,clazz,args);
     	else if(MiniUtil.isBaseEntity(clazz))
@@ -166,6 +176,7 @@ public class MiniDao implements IMiniDao
      */
     @SuppressWarnings("unchecked")
 	public <T> List<T> findList(String sql, Class clazz, Object... args){
+    	logger.info("MiniDao--findList:" + sql + ";clazz:" + clazz.getName() + ";args:"+ args);
     	if(MiniUtil.isPrimitiveClass(clazz))
     		return miniConfig.getDbHelper().queryForList(sql, clazz, args);
     	else if(MiniUtil.isBaseEntity(clazz))
@@ -186,6 +197,7 @@ public class MiniDao implements IMiniDao
      * @return T extends BaseEntity
      */
     public <T> List<T> cacheFindList(String cacheName, Object key, String sql, Class clazz, Object... args){
+    	logger.info("MiniDao--cacheFindList:" + cacheName +";key:" + key + ";sql:" + sql + ";clazz:" + clazz.getName() + ";args:" + args);
     	if(MiniUtil.isPrimitiveClass(clazz))
     		return miniConfig.getDbHelper().queryForListByCache(cacheName, key,sql, clazz, args);
     	else if(MiniUtil.isBaseEntity(clazz))
@@ -207,6 +219,7 @@ public class MiniDao implements IMiniDao
      */
     @SuppressWarnings("unchecked")
 	public <T> List<T> paginate(String sql,int pageNumber, int pageSize, Class clazz, Object... args){
+    	logger.info("MiniDao--paginate:" + sql +";pageNumber:" + pageNumber + ";pageSize:" + pageSize + ";clazz:" + clazz.getName() + ";args:" + args);
     	if(MiniUtil.isPrimitiveClass(clazz)){
     		List<T> list = new ArrayList<T>();
     		List<Record> records = miniConfig.getDbHelper().paginateRecord(pageNumber, pageSize, sql, args);
@@ -236,6 +249,7 @@ public class MiniDao implements IMiniDao
      * @return T extends BaseEntity
      */
     public <T> List<T> cachePaginate(String cacheName, Object key, String sql,int pageNumber, int pageSize, Class clazz, Object... args){
+    	logger.info("MiniDao--cachePaginate:" + cacheName +";key:" + key + ";sql:" + sql + ";clazz:" + clazz.getName() + ";args:" + args);
     	if(MiniUtil.isPrimitiveClass(clazz)){
     		List<T> list = new ArrayList<T>();
     		List<Record> records = miniConfig.getDbHelper().paginateRecordByCache(cacheName, key, pageNumber, pageSize, sql, args);
@@ -265,6 +279,7 @@ public class MiniDao implements IMiniDao
      */
     @SuppressWarnings("unchecked")
 	public <T> PageResult<T> paginateResult(String sql, int pageNumber, int pageSize, Class clazz, Object... args){
+    	logger.info("MiniDao--paginateResult:" + sql +";pageNumber:" + pageNumber + ";pageSize:" + pageSize + ";clazz:" + clazz.getName() + ";args:" + args);
     	if(MiniUtil.isPrimitiveClass(clazz)){
     		PageResult<Record> records = miniConfig.getDbHelper().paginate(pageNumber, pageSize, sql, args);
     		List<T> list = new ArrayList<T>();
@@ -294,6 +309,7 @@ public class MiniDao implements IMiniDao
      * @return PageResult<Record>
      */
     public <T> PageResult<T> cachePaginateResult(String cacheName, Object key, String sql, int pageNumber, int pageSize, Class clazz, Object... args){
+    	logger.info("MiniDao--cachePaginateResult:" + cacheName +";key:" + key + ";sql:" + sql + ";clazz:" + clazz.getName() + ";args:" + args);
     	if(MiniUtil.isPrimitiveClass(clazz)){
     		PageResult<Record> records = miniConfig.getDbHelper().paginateByCache(cacheName, key, pageNumber, pageSize, sql, args);
     		List<T> list = new ArrayList<T>();
