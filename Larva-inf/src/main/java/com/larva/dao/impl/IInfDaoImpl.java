@@ -12,6 +12,7 @@ import com.larva.model.AppManage;
 import com.larva.model.ChargeCode;
 import com.larva.model.ChargeCodeArea;
 import com.larva.model.LogOrder;
+import com.larva.model.ReqLogOrder;
 import com.larva.utils.DateUtils;
 import com.mini.core.Record;
 import com.mini.core.dao.MiniDao;
@@ -82,6 +83,9 @@ public class IInfDaoImpl extends MiniDao implements IInfDao {
 		return this.insert(logOrder);
 	}
 
+	public Integer saveReqLogOrder(ReqLogOrder logOrder) {
+		return this.insert(logOrder);
+	}
 	@Override
 	public Integer updateLogOrder(String id, int inState, int oldState) {
 		String update = "";
@@ -205,7 +209,7 @@ public class IInfDaoImpl extends MiniDao implements IInfDao {
 	@Override
 	public Integer updateOrderNoById(String id, String orderNo) {
 		String update = "update t_log_order set order_no= ? where id = ? ";
-		return this.execute(update, id,orderNo);
+		return this.execute(update, orderNo,id);
 	}
 
 	@Override

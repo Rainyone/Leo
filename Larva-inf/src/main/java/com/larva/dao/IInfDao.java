@@ -2,6 +2,7 @@ package com.larva.dao;
 
 import com.larva.model.AppInfLog;
 import com.larva.model.LogOrder;
+import com.larva.model.ReqLogOrder;
 import com.mini.core.Record;
 
 import java.util.List;
@@ -67,6 +68,7 @@ public interface IInfDao  {
 	 * @return
 	 */
 	Integer saveLogOrder(LogOrder logOrder);
+	Integer saveReqLogOrder(ReqLogOrder logOrder);
 	/**
 	 * 更新日志记录状态
 	 * @param id

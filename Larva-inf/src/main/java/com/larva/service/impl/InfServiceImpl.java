@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.larva.dao.IInfDao;
 import com.larva.model.AppInfLog;
 import com.larva.model.LogOrder;
+import com.larva.model.ReqLogOrder;
 import com.larva.service.InfService;
 import com.larva.vo.ResultVO;
 import com.mini.core.Record;
@@ -110,7 +111,33 @@ public class InfServiceImpl implements InfService {
 	}
 	@Override
 	public Integer saveLogOrder(LogOrder logOrder) {
-		return iInfDao.saveLogOrder(logOrder);
+		if(logOrder.getOrderState()==-1){//请求记录
+			ReqLogOrder r = new ReqLogOrder();
+			r.setAppId(logOrder.getAppId());
+			r.setAreaId(logOrder.getAreaId());
+			r.setBscCid(logOrder.getBscCid());
+			r.setBscLac(logOrder.getBscLac());
+			r.setChargeCodeId(logOrder.getChargeCodeId());
+			r.setChargePrice(logOrder.getChargePrice());
+			r.setCpparm(logOrder.getCpparm());
+			r.setCreateTime(logOrder.getCreateTime());
+			r.setFmt(logOrder.getFmt());
+			r.setIccid(logOrder.getIccid());
+			r.setId(logOrder.getId());
+			r.setImei(logOrder.getImei());
+			r.setImsi(logOrder.getImsi());
+			r.setIp(logOrder.getIp());
+			r.setIspId(logOrder.getIspId());
+			r.setMac(logOrder.getMac());
+			r.setMid(logOrder.getMid());
+			r.setMobile(logOrder.getMobile());
+			r.setOrderNo(logOrder.getOrderNo());
+			r.setOrderState(logOrder.getOrderState());
+			r.setPrice(logOrder.getPrice());
+			return iInfDao.saveReqLogOrder(r);
+		}else{
+			return iInfDao.saveLogOrder(logOrder);
+		}
 	}
 	@Override
 	public Integer updateLogOrder(String id, int inState, int oldState) {

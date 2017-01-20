@@ -253,19 +253,19 @@ public class InfController {
 		//  逻辑判断，获取计费代码，请求计费代码，解析反馈数据，反馈客户端数据
 		if("1".equals(request_type)){//计费请求
 			//计费请求需要去重
-			if(isInvalidOrder(imsi,86400)){//无效（24小时重复3次）订单则直接反馈
+			/*if(isInvalidOrder(imsi,86400)){//无效（24小时重复3次）订单则直接反馈
 				vo.setOk(false);
 				logger.info("setCharge--imsi:" + imsi + ",mid:"+ mid +",24 hours can not be repeated more than 3 times");
 				vo.setMsg("24 hours can not be repeated more than 3 times");
 				return vo;
-			}else{
+			}else{*/
 				area_id = infService.getAreaIdByImsi(imsi);//根据imsi号获取省份
 				logger.info("setCharge--imsi:" + imsi + ",mid:"+ mid +",area_id:"+area_id);
 				if(area_id==null||"".equals(area_id)){//如果没有获取到再根据ip获取省份
 					String address = ipSeeker.getAddress(realIp);
 					area_id = address.split(" ")[0];//获取区域编码
 					logger.info("setCharge--imsi:" + imsi + ",mid:"+ mid +",area_id from realIp:"+area_id);
-//				area_id = "110000";//测试用
+//				area_id = "310000";//测试用
 //				isp = "1002";
 				}
 				//测试用
@@ -406,33 +406,40 @@ public class InfController {
 									}
 									o_type = "list";
 								}
+								String back_order_id = "";
 								try{
-									String back_order_id = "";
-									//获取order_id(验证码反馈的订单编码)
-									if(o!=null&&inf_type==2){
-										if("o".equals(o_type)){//json 对象
-											JSONArray dataList = ((JSONObject)o).getJSONArray("list");
-											JSONObject onelist = dataList.getJSONObject(0);
-											back_order_id = onelist.getString(order_id_code);
+									if(inf_type!=3){
+										try{
+											o = (backMsg!=null&&!"".equals(backMsg))?JSONUtil.getJSONFromString(backMsg):null;
+										}catch(Exception e1){
+											o = (backMsg!=null&&!"".equals(backMsg))?JSONUtil.getJSONFromString("{list:["+backMsg+"]}"):null;
+											o_type = "list";
 										}
-									}else if("list".equals(o_type)&&inf_type==2){
-										back_order_id = ((JSONObject)o).getString(order_id_code);
+										//获取order_id(验证码反馈的订单编码)
+										if(o!=null&&inf_type==2){
+											if("list".equals(o_type)){//json 对象
+												JSONArray dataList = ((JSONObject)o).getJSONArray("list");
+												JSONObject onelist = dataList.getJSONObject(0);
+												back_order_id = onelist.getString(order_id_code);
+											}else if("o".equals(o_type)){
+												back_order_id = ((JSONObject)o).getString(order_id_code);
+											}
+										}
 									}
-									logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",back_order_id"+back_order_id);
-									if(back_order_id!=null&&!"".equals(back_order_id)){//记录验证码订单
-										log.setOrderNo(back_order_id);
-										infService.updateOrderNoById(logId, order_id_code);
-										charge.put("orderId", back_order_id);
-									}else{
-										charge.put("orderId", "");
-									}
-									charge.put("msg_list", msg_list);
-									logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",msg_list:"+msg_list);
 								}catch(Exception e){
-									e.printStackTrace();
-									logger.error("charge_id:" + id +";验证码字段获取失败");
+									logger.error("charge_id:" + id + ",logId:" + logId +";验证码字段获取失败");
 									log.setOrderState(2);//失败
 								}
+								logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",back_order_id:"+back_order_id);
+								if(back_order_id!=null&&!"".equals(back_order_id)){//记录验证码订单
+									log.setOrderNo(back_order_id);
+									infService.updateOrderNoById(logId, back_order_id);
+									charge.put("orderId", back_order_id);
+								}else{
+									charge.put("orderId", "");
+								}
+								charge.put("msg_list", msg_list);
+								logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",msg_list:"+msg_list);
 								if(inf_type!=2){//除掉需要接口反馈验证码
 									//更新日月限量总数
 									infService.updateCount(app_id, id,area_id);
@@ -471,7 +478,7 @@ public class InfController {
 					vo.setMsg("can't get area");
 					return vo;
 				}
-			}
+//			}
 		}else if("2".equals(request_type)){//验证请求
 			if(StringUtils.isBlank(order_id)) {
 				vo.setOk(false);
@@ -991,8 +998,10 @@ public class InfController {
 		String str9 = "{\"sms1\": {\"status\": \"\",\"serviceno\": \"10658423\",\"sms\": \"bXZ3bGFuLDFmODQ2NmVmZTE2ZDlhNGUyMjE2NDY4MjQ3YmExMmE0LGpubEY=\",\"msg\": \"getsmsok\",\"id\": 31551997,\"reportUrl\": \"http://101.251.100.8/migu.vsdk.servlet2/login_mo_sent\"},\"sms2\": {\"serviceno\": \"1065842232\",\"sms\": \"QUUyMDAwMzM4bDBxMzA4KyxyMzY5MDNcNTciNjBiMit4MTlsNXI4YTdOR05e Tkd3WzR6eU5nemw/QTJzMHcrPz03MEo0NzZbNF8yU0Uzfmw1MjAxQTExMV1E IDE2MFNcYnstMGJzMDAwPzBNSVtYd1Jrd3IwXzdYQ1NwM3RrRTdpMTFlckIz Qj0=\",\"msg\": \"getsmsok\",\"id\": 23588804,\"reportUrl\": \"http://101.251.100.8/migu.vsdk.servlet2/pay_mo_sent\"},\"limitInfo\": {\"provinceName\": \"未知省份\",\"limited\": false}}";
 		String str10 = "{\"status\":0,\"stepcount\":1,\"codetype\":1,\"smss\":{\"sms1\":{\"smscontent\":\"131000RI000001B002RB00100000120390000000000003h33\",\"smsvcode\":0,\"smsretport\":\"10001888,10005888\",\"smsretcontent\":\"爱动漫,由爱动漫话费代收,客服4008867686,天翼爱动漫,爱动漫互动点播产品,失败原因\",\"smsport\":\"11802115100\",\"smsbase64\":0,\"smsbinary\":0}},\"orderid\":\"131000RI000001B002RB00100000120390000000000003h33\"}";
 		String str11 = "{\"status\":0,\"stepcount\":2,\"codetype\":2,\"smss\":{\"sms1\":{\"smscontent\":\"bXZ3bGFuLDM0MWQwNGVmM2IzYWU2ZTAwZDNhYmQ4NTZkNmFiM2ZjLGdQcWU=\",\"smsvcode\":0,\"smsretport\":\"\",\"smsretcontent\":\"包月\",\"smsport\":\"10658423\",\"smsbase64\":1,\"smsbinary\":0},\"sms2\":{\"smscontent\":\"QUUyMDAwMzU5aTN6NjIzLS56Mjc3YTBbNzMiNjBiMiF9MjRrNXIyZzVwTHd1akkrP205M0o1Q0ktVUN3YzAxQT1jM0hkNDhcNlszY2ZGfTBHMjAxQTEyMVlFLDM2MV5canstMGJzMDAwPzBNSU1QV2U1QmdsbCB5M3FPMlAybEd1OHA5KE9iaD0=\",\"smsvcode\":0,\"smsretport\":\"\",\"smsretcontent\":\"包月\",\"smsport\":\"1065842232\",\"smsbase64\":1,\"smsbinary\":0}},\"orderid\":\"0000000000003mc7\"}";
-		JSONObject backJson = JSONUtil.getJSONFromString(str4);
-		System.out.println(str2);
+		String str12 = "{\"recordId\":\"5720170112220053086521\",\"resultCode\":\"00\",\"resultDesc\":\"获取验证码成功\"}";
+		String str13 = "{     \"port\": \"10658000\",     \"msg\": \"QNWZ\",     \"type\": \"0\",     \"orderby\": \"1\",     \"msgtype\": 0 }";
+		JSONObject backJson = JSONUtil.getJSONFromString(str13);
+		System.out.println(backJson);
 		//System.out.println(backJson.getJSONArray("data_list").get(0));
 		String r = "data_list(m):port1";
 //		List<String > list = getElement(backJson,"resultCode(s)e","resultCode",null);
@@ -1001,7 +1010,7 @@ public class InfController {
 //		}
 		System.out.println(str6.indexOf("\"msg\":\"getsmsok\""));
 		//String result = analysisJson(str, "data_list(m):port-no->port,message->msg,type->type","{\"code_id\": \"${code_id}\", \"inf_type\": \"1\", \"orderId\": \"\", \"port\": \"${port}\", \"msg\": \"${msg}\", \"type\": \"${type}\"}");
-		String result = analysisJson(str11, "smss(s):sms1(s):smsport->smsport1,smscontent->smscontent1|smss(s):sms2(s):smsport->smsport2,smscontent->smscontent2","{\"port\":\"${smsport1}\",\"msg\":\"${smscontent1}\",\"type\":\"0\",\"orderby\":\"1\",\"msgtype\":1},{\"port\":\"${smsport2}\",\"msg\":\"${smscontent2}\",\"type\":\"0\",\"orderby\":\"2\",\"msgtype\":1}");
+		String result = analysisJson(str12, "\"\":recordId->","{\"port\":\"${smsport1}\",\"msg\":\"${smscontent1}\",\"type\":\"0\",\"orderby\":\"1\",\"msgtype\":1},{\"port\":\"${smsport2}\",\"msg\":\"${smscontent2}\",\"type\":\"0\",\"orderby\":\"2\",\"msgtype\":1}");
 		System.out.println(result);
 //		System.out.println("sdf\\asf".replace("\"", "\\\\"));
 	}
