@@ -23,7 +23,7 @@ define(function (require, exports, module) {
 	        		        field: 'request_success_count',
 	        		        title: '计费成功次数'
 	        		    }];
-    		F.table.init(F.basepath+'/main/tongji/platform/query',cols);
+    		F.table.init('',cols);
             $('#datetimeStart').datetimepicker({
 		        format: 'yyyy-mm-dd',
 		        minView:'month',

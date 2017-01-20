@@ -137,7 +137,7 @@ define(function (require, exports, module) {
 		    		        	 events: operateEvents,
 			    			     formatter:F.appLogFormatter
 		    		        }];
-	    		F.table.init(F.basepath+'/main/tongji/order/query',cols);
+	    		F.table.init('',cols);
 	    		
 				/**
 				 * 查询
