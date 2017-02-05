@@ -8,7 +8,7 @@ define(function (require, exports, module) {
         table:new core.Table('orderTable'),
         init:function(_basepath) {
             F.basepath = _basepath;
-            F.initCharts();
+            //F.initCharts();
 	        var cols = [
 	                    {
 	        		        field: 'datelist',
