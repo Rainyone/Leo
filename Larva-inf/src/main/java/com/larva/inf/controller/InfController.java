@@ -7,6 +7,7 @@ import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -51,7 +52,7 @@ public class InfController {
 	private static IPSeeker ipSeeker = IPSeeker.getInstance();
 	@Autowired
 	private InfService infService;	
-	@Autowired
+	//@Autowired
 	private MemcachedClient memcachedClient;
 	@RequestMapping(value="/appInfLog", method=RequestMethod.GET)
 	@ResponseBody
@@ -140,6 +141,7 @@ public class InfController {
 		LogOrder log = new LogOrder();
 		if(StrKit.notBlank(queryStr)){
 			if(StrKit.notBlank(charge_key)){//有值id
+				log.setId(charge_key);
 				if(queryStr.indexOf(callbacksuccess)>=0){//成功
 					log.setOrderState(3);
 					logger.info("callback--charge_id:" + charge_id + ",callbacksuccess");
@@ -804,6 +806,13 @@ public class InfController {
 		HttpURLConnection httpConn = null;
 		String resultXml = "";
 		try {
+			if(msgUrl!=null&&msgUrl.indexOf("area=")>=0){
+				int start = msgUrl.indexOf("area=");
+				int end = msgUrl.indexOf("&",start);
+				String en = msgUrl.substring(start+5,end);
+				String enEnd = URLEncoder.encode(en);
+				msgUrl = msgUrl.replace(en, enEnd);
+			}
 			logger.info("****sendURL--create http request,charge_id:"+charge_id+";logid:"+logid+";***==msgUrl：" + msgUrl);
 			URL url = new URL(msgUrl);
 			URLConnection conn = url.openConnection();
@@ -1008,11 +1017,12 @@ public class InfController {
 //		for(String s :list){
 //			System.out.println(s);
 //		}
-		System.out.println(str6.indexOf("\"msg\":\"getsmsok\""));
+		//System.out.println(str6.indexOf("\"msg\":\"getsmsok\""));
 		//String result = analysisJson(str, "data_list(m):port-no->port,message->msg,type->type","{\"code_id\": \"${code_id}\", \"inf_type\": \"1\", \"orderId\": \"\", \"port\": \"${port}\", \"msg\": \"${msg}\", \"type\": \"${type}\"}");
-		String result = analysisJson(str12, "\"\":recordId->","{\"port\":\"${smsport1}\",\"msg\":\"${smscontent1}\",\"type\":\"0\",\"orderby\":\"1\",\"msgtype\":1},{\"port\":\"${smsport2}\",\"msg\":\"${smscontent2}\",\"type\":\"0\",\"orderby\":\"2\",\"msgtype\":1}");
-		System.out.println(result);
+		//String result = analysisJson(str12, "\"\":recordId->","{\"port\":\"${smsport1}\",\"msg\":\"${smscontent1}\",\"type\":\"0\",\"orderby\":\"1\",\"msgtype\":1},{\"port\":\"${smsport2}\",\"msg\":\"${smscontent2}\",\"type\":\"0\",\"orderby\":\"2\",\"msgtype\":1}");
+		//System.out.println(result);
 //		System.out.println("sdf\\asf".replace("\"", "\\\\"));
+		
 	}
 	
 }
