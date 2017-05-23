@@ -50,6 +50,7 @@ public class ChargeCode extends WeakEntity implements Serializable {
 		public static final String callbackcolumn = "callbackcolumn";
 		public static final String key_msg = "key_msg";
 		public static final String charge_price = "charge_price";
+		public static final String is_limit = "is_limit";
 
 	}
 
@@ -299,5 +300,12 @@ public class ChargeCode extends WeakEntity implements Serializable {
         super.set(Columns.dateLimit, dateLimit);
         return this;
     }
-	
+	public Integer getIsLimit() {
+        return super.getInt(Columns.is_limit);
+    }
+
+    public ChargeCode setIsLimit(Integer isLimit) {
+        super.set(Columns.is_limit, isLimit);
+        return this;
+    }
 }

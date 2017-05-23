@@ -62,6 +62,7 @@ public class ChargeCodeServiceImpl implements IChargeCodeService {
 		chargeCode.setCallbackurl("http://139.196.169.27:8087/Larva-inf/callback/" + id);
 		chargeCode.setKeyMsg(createVO.getKey_msg());
 		chargeCode.setChargePrice(createVO.getCharge_price());
+		chargeCode.setIsLimit(createVO.getIs_limit());
 		chargeCodeDao.save(chargeCode);
         resultVO.setMsg("操作成功!");
         return resultVO;
@@ -103,7 +104,8 @@ public class ChargeCodeServiceImpl implements IChargeCodeService {
 		m.put("create_time", createTime!=null?format.format(chargeCode.getCreateTime()):"");
 		m.put("create_people_name", chargeCode.getCreatePeopleName());
 		Date updateTime = chargeCode.getUpdateTime();
-		m.put("update_time", updateTime!=null?format.format(chargeCode.getUpdateTime()):"");
+		SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+		m.put("update_time", updateTime!=null?format1.format(chargeCode.getUpdateTime()):"");
 		m.put("update_people_name", chargeCode.getUpdatePeopleName());
 		m.put("date_count", chargeCode.getDateCount());
 		m.put("month_count", chargeCode.getMonthCount());
@@ -115,6 +117,7 @@ public class ChargeCodeServiceImpl implements IChargeCodeService {
 		m.put("callbackurl", chargeCode.getCallbackurl());
 		m.put("key_msg", chargeCode.getKeyMsg());
 		m.put("charge_price", chargeCode.getChargePrice());
+		m.put("is_limit", chargeCode.getIsLimit());
 		return m;
 	}
 
@@ -172,6 +175,7 @@ public class ChargeCodeServiceImpl implements IChargeCodeService {
 		cc.setCallbacksuccess(editVo.getCallbacksuccess());
 		cc.setKeyMsg(editVo.getKey_msg());
 		cc.setChargePrice(editVo.getCharge_price());
+		cc.setIsLimit(editVo.getIs_limit());
 		int result = chargeCodeDao.editChargeCode(cc);
 		ResultVO r = new ResultVO();
 		if(result>0){

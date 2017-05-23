@@ -33,8 +33,16 @@ public class ChargeCodeCreateVO {
     private String callbackcolumn;
     private String key_msg;
     private Long charge_price;
+	private Integer is_limit=0;
     
+	
     
+	public Integer getIs_limit() {
+		return is_limit;
+	}
+	public void setIs_limit(Integer is_limit) {
+		this.is_limit = is_limit;
+	}
 	public Long getCharge_price() {
 		return charge_price;
 	}

@@ -43,10 +43,10 @@ public class ChargeCodeDaoImpl extends MiniDao implements IChargeCodeDao {
 		String updateSql = "update `t_charge_code` set `send_type` = ? , `ver_code_url` = ? , `charge_code` = ? , `code_name` = ? , "
 				+ " `linke_name` = ? , `inf_type` = ? , `return_form` = ? ,  `back_msg_type` = ? , `date_limit` = ? , "
 				+ " `back_form` = ? , `month_limit` = ? , `channel_type` = ? , `update_people_name` = ? , "
-				+ " `order_id_code` = ?  , `url` = ? , `success_flag` = ? , `order_back` = ? , `detail` = ?,`phone_no` = ?,`ver_code_success_flag` = ?,`callbacksuccess` = ?,`callbackcolumn` = ?,`key_msg` = ?,`charge_price` = ? where `id` = ?";
+				+ " `order_id_code` = ?  , `url` = ? , `success_flag` = ? , `order_back` = ? , `detail` = ?,`phone_no` = ?,`ver_code_success_flag` = ?,`callbacksuccess` = ?,`callbackcolumn` = ?,`key_msg` = ?,`charge_price` = ?,`is_limit`=? where `id` = ?";
 		return this.execute(updateSql, cc.getSendType(),cc.getVerCodeUrl(),cc.getChargeCode(),cc.getCodeName(),cc.getLinkeName(),cc.getInfType(),
 				cc.getReturnForm(),cc.getBackMsgType(),cc.getDateLimit(),cc.getBackForm(),cc.getMonthLimit(),cc.getChannelType(),cc.getUpdatePeopleName(),
-				cc.getOrderIdCode(),cc.getUrl(),cc.getSuccessFlag(),cc.getOrderBack(),cc.getDetail(),cc.getPhoneNo(),cc.getVerCodeSuccessFlag(),cc.getCallbacksuccess(),cc.getCallbackcolumn(),cc.getKeyMsg(),cc.getChargePrice(),cc.getId());
+				cc.getOrderIdCode(),cc.getUrl(),cc.getSuccessFlag(),cc.getOrderBack(),cc.getDetail(),cc.getPhoneNo(),cc.getVerCodeSuccessFlag(),cc.getCallbacksuccess(),cc.getCallbackcolumn(),cc.getKeyMsg(),cc.getChargePrice(),cc.getIsLimit(),cc.getId());
 	}
 
 }

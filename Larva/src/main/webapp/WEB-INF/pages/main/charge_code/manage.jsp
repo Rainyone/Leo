@@ -163,11 +163,22 @@
           	        <textarea class="span8" rows="3" id="ver_code_url" name="ver_code_url" placeholder='反馈验证码的请求URL' type='text' ></textarea>
 	            </div>
 	        </div>
+	         <div class='control-group'>
+           		<label class='control-label'>日限量</label>
+	        	<div class='controls'>
+		                <input class='span8' id='date_limit'  name='date_limit' digits="true" placeholder='日限量' type="number" value='-1' required/>
+	        	</div>
+	        </div>
 	        <div class='control-group'>
-	            <label class='control-label'>日限量</label>
-	            <div class='controls'>
-	                <input class='span8' id='date_limit'  name='date_limit' digits="true" placeholder='日限量' type="number" value='-1' required/>
-	            </div>
+	        	<div class='controls' style='margin-left: 0;'>
+		           		<label class='control-label'>数据更新日期</label>
+						<input type="text" id="datetimeUpdate" name='update_time' readonly="" class="form_datetime span2" style='margin-left: 2.5%;float: left;'>
+	        			<label class='control-label span2'>日实际量</label>
+		                <input class='span2' style='margin-left: 1%;float: left;' id='date_count'  name='date_count' digits='true' type="number" value='0' required />
+		                <label class='control-label span2'>是否限量</label>
+		                <input class="check span1" style='width:20px;height:20px;' id="is_limit_temp" name="is_limit_temp" type="checkbox" >
+	        			<input type='hidden' id='is_limit' name='is_limit'/>
+	        	</div>
 	        </div>
 	        <div class='control-group'>
 	            <label class='control-label'>月限量</label>

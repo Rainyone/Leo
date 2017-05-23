@@ -8,6 +8,12 @@ define(function (require, exports, module) {
         table:new core.Table('chargeCodeTable'),
         init:function(_basepath) {
             F.basepath = _basepath;
+            $('#datetimeUpdate').datetimepicker({
+		        format: 'yyyy-mm-dd',
+		        minView:'month',
+		        language: 'zh-CN',
+		        autoclose:true
+		    })
             /**
              * 是否具有添加菜单权限
              */
@@ -53,12 +59,23 @@ define(function (require, exports, module) {
 			        			$('#callbackcolumn').val(row.callbackcolumn);
 			        			$('#key_msg').val(row.key_msg);
 			        			$('#charge_price').val(row.charge_price);
+			        			$('#date_count').val(row.date_count);
+			        			$('#is_limit').val(row.is_limit);
+			        			$('#datetimeUpdate').val(row.update_time);
+			        			
+			        			if(row.is_limit==1){
+			        				$('#is_limit_temp').attr('checked','checked')
+			        			}else{
+			        				$('#is_limit_temp').removeAttr('checked')
+			        			}
 			        			
 			        			F.setDelAttr('input','readonly');
 								F.setDelAttr('select','readonly');
 								F.setDelAttr('input','disabled');
 								F.setDelAttr('select','disabled');
 								$('#callbackurl').attr('readonly','readonly')
+								$('#date_count').attr('readonly','readonly')
+								$('#datetimeUpdate').attr('readonly','readonly')
 			        			$('#btnSubmit').show();
 			            	}
 			        	});
@@ -104,12 +121,20 @@ define(function (require, exports, module) {
 	        			$('#callbackcolumn').val(row.callbackcolumn);
 	        			$('#key_msg').val(row.key_msg);
 	        			$('#charge_price').val(row.charge_price);
+	        			$('#date_count').val(row.date_count);
+	        			$('#is_limit').val(row.is_limit);
+	        			if(row.is_limit==1){
+	        				$('#is_limit_temp').attr('checked','checked')
+	        			}else{
+	        				$('#is_limit_temp').removeAttr('checked')
+	        			}
 	        			F.setAddAttr('input','readonly','readonly');
 	        			F.setAddAttr('select','readonly','readonly');
 	        			F.setAddAttr('input','disabled','disabled');
 	        			F.setAddAttr('select','disabled','disabled');
 	        			$('#btnSubmit').hide();
-    		        },
+    		        }
+    		        
 			    };
 		        
 		        var cols = [
@@ -227,6 +252,10 @@ define(function (require, exports, module) {
 		    			        field: 'charge_price',
 		    			        title: '计费代码单价',
 		    			        visible:false
+		    		        },{
+		    			        field: 'is_limit',
+		    			        title: '是否限量',
+		    			        visible:false
 		    		        }];
 		        //是否需要操作列
 		        if(base.perList.menu.edit||base.perList.menu.del||base.perList.menu.grant||base.perList.menu.checkPermission)
@@ -281,6 +310,17 @@ define(function (require, exports, module) {
 						base.bootAlert({"ok":false,"msg":"请选择你要删除的菜单！"});
 					}
 				});
+				
+				/**
+		         * 是否限量选择事件
+		         */
+				$('#is_limit_temp').click(function(){
+		        	if($(this).attr("checked")){//选中
+		        		$('#is_limit').val(1);
+	    			}else{
+	    				$('#is_limit').val(0);
+	    			}
+		        });
         },submit:function(){
         	var url = F.basepath+'/main/charge_code/create';
         	if($('#id').val()!=null&&$('#id').val()!='')
