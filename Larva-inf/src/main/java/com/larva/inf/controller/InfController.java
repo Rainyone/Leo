@@ -3,10 +3,12 @@ package com.larva.inf.controller;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Date;
@@ -271,8 +273,8 @@ public class InfController {
 //				isp = "1002";
 				}
 				//测试用
-//			area_id = "110000";
-//			realIp = "132.33.32.12";
+			area_id = "520000";
+			realIp = "132.33.32.12";
 				log.setAreaId(area_id);
 				logOrder(infService, log, -1, 0);
 				if(area_id!=null&&!"".equals(area_id)){//如果有区域编码
@@ -810,7 +812,7 @@ public class InfController {
 				int start = msgUrl.indexOf("area=");
 				int end = msgUrl.indexOf("&",start);
 				String en = msgUrl.substring(start+5,end);
-				String enEnd = URLEncoder.encode(en);
+				String enEnd = URLEncoder.encode(en,"UTF-8");
 				msgUrl = msgUrl.replace(en, enEnd);
 			}
 			logger.info("****sendURL--create http request,charge_id:"+charge_id+";logid:"+logid+";***==msgUrl：" + msgUrl);
@@ -906,7 +908,7 @@ public class InfController {
 	}
 	
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws UnsupportedEncodingException {
 		String str = "{\"ok\": \"true\",  \"msg\": \"请求成功\",  \"data_list\": [ { \"port-no\": \"10086\",";
 		            str += "\"message\": \"1\", \"type\": \"0\"},{ \"port-no\": \"10086\", \"message\": \"1\",\"type\": \"0\"}], \"original\": {}}";
 		System.out.println(str); 
@@ -1022,7 +1024,21 @@ public class InfController {
 		//String result = analysisJson(str12, "\"\":recordId->","{\"port\":\"${smsport1}\",\"msg\":\"${smscontent1}\",\"type\":\"0\",\"orderby\":\"1\",\"msgtype\":1},{\"port\":\"${smsport2}\",\"msg\":\"${smscontent2}\",\"type\":\"0\",\"orderby\":\"2\",\"msgtype\":1}");
 		//System.out.println(result);
 //		System.out.println("sdf\\asf".replace("\"", "\\\\"));
+		String msgUrl = "http://122.114.60.22:13888/v_charge_request_face.asp?cpid=dianxin06&imsi=460006473581518&imei=864118034935374&ua=HUAWEIG510-0010&cpparam=b7e029020f8e44f6af60574707dc4582&area=安徽&iccid=898600851285f6471518&ip=117.136.101.180";
+		int start = msgUrl.indexOf("area=");
+		int end = msgUrl.indexOf("&",start);
+		String en = msgUrl.substring(start+5,end);
+		String enEnd = URLEncoder.encode(en,"UTF-8");
+		System.out.println(enEnd);
+		msgUrl = msgUrl.replace(en, enEnd);
 		
+		
+		System.out.println(msgUrl);
+		System.out.println(URLDecoder.decode("%B0%B2%BB%D5","GBK"));
+		String bak = "{\"code\":\"0\",\"sms_conttype\":\"TEXT\",\"sender_number\":\"10659862\",\"order_no\":\"X1L9tisqGBdUntoC\",\"message_content\":\"M9;1003311324\"}";
+		String msg = "\"code\":\"0\"";
+		System.out.println(bak.indexOf(msg));
+			
 	}
 	
 }

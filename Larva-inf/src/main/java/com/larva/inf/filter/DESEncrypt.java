@@ -124,7 +124,7 @@ public class DESEncrypt {
 	}
 	
 	public static void main(String[] args) {
-		String url = "setCharge?app_id=6&app_key=testapp&request_type=1&channel=16100004&price=2000&imei=865728023092265&imsi=460031539820392&bsc_lac=100&bsc_cid=100&mobile=&iccid=null&mac=a0:93:47:4e:eb:7d&cpparm=&fmt=json&timestamp=1484306042356&isp=1001&code_id=&order_id=&ver_code=&charge_key=&charge_success=0";
+		String url = "setCharge?app_id=6&app_key=testapp&request_type=1&channel=16100005&price=2000&imei=A0000055BB7356&imsi=460036081325342&bsc_lac=100&bsc_cid=100&mobile=&iccid=89860315940231908813&mac=04:02:1f:d5:74:97&cpparm=&fmt=json&timestamp=1494403975637&isp=1001&code_id=&order_id=&ver_code=&charge_key=&charge_success=0";
 		String verUrl = "setCharge?app_id=6&app_key=testapp&channel=431233&price=1000&imei=32323132&request_type=2&imsi=33112334&bsc_lac=3322&bsc_cid=33884&mobile=13800138000&iccid=299200931&mac=12maski298&cpparm=32398842&fmt=json&timestamp=1829304985&isp=1001&code_id=1&order_id=32133&ver_code=3332244";
 //		String context = "1065842232:AE2000394k7q537, z529a5U03\"60b0!q71i3v1a41NR1DkW88a@(U7q$r[JOKQi=5jIfT7e6ujSf6%14201A112TE/011^\\k{-0bs000?0MIuerV8/c~z4_Xg0jse/IOztbeMJ|=";
 		String context = "中文";
@@ -139,7 +139,7 @@ public class DESEncrypt {
 			e.printStackTrace();
 		}
 		
-		String sign = DESEncrypt.getSign("6", "testapp","865728023092265", "1484306042356");
+		String sign = DESEncrypt.getSign("6", "testapp","A0000055BB7356", "1494403975637");
 		System.out.println(URLEncoder.encode(sign));
 		String sign2 = DESEncrypt.getAppInfLogSign("32efb83bed71480ea0a8713ce5fd0ee6", "460002971130174","10002:", "1480406476539");
 		System.out.println(URLEncoder.encode(sign2));
