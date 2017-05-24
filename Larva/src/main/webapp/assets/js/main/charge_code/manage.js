@@ -316,7 +316,14 @@ define(function (require, exports, module) {
 		         */
 				$('#is_limit_temp').click(function(){
 		        	if($(this).attr("checked")){//选中
-		        		$('#is_limit').val(1);
+		        		var date_limit = $('#date_limit').val();
+		        		if(date_limit<=0){
+		        			base.bootAlert({"ok":false,"msg":"如果限量，请先填写大于0的限量数值！"});
+		        			$('#is_limit_temp').removeAttr('checked')
+		        			$('#is_limit').val(0);
+		        		}else{
+		        			$('#is_limit').val(1);
+		        		}
 	    			}else{
 	    				$('#is_limit').val(0);
 	    			}
