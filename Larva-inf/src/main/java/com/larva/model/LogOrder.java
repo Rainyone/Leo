@@ -40,8 +40,15 @@ public class LogOrder extends WeakEntity implements Serializable {
 		public static final String create_time = "create_time";
 		public static final String update_time = "update_time";
 		public static final String charge_price = "charge_price";
+		public static final String code_sub_channel = "code_sub_channel";
 	}
-
+	  public String getCodeSubChannel() {
+	        return super.getStr(Columns.code_sub_channel);
+	    }
+	    public LogOrder setCodeSubChannel(String code_sub_channel) {
+	        super.set(Columns.code_sub_channel, code_sub_channel);
+	        return this;
+	    }
 	public Long getChargePrice() {
         return super.getLong(Columns.charge_price);
     }

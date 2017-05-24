@@ -183,11 +183,12 @@ public class InfController {
 			@RequestParam(value="order_id", required=false, defaultValue="") String order_id,//验证码回传的订单号
 			@RequestParam(value="ver_code", required=false, defaultValue="") String ver_code,//验证码
 			@RequestParam(value="charge_key", required=false, defaultValue="") String charge_key,//验证码
-			@RequestParam(value="charge_success", required=false, defaultValue="") String charge_success,//验证码
+			@RequestParam(value="charge_success", required=false, defaultValue="") String charge_success,//
+			@RequestParam(value="csubchnl", required=false, defaultValue="") String csubchnl,
 			HttpServletRequest request){
 		logger.info("setCharge--app_id:" + app_id + ";app_key:"+app_key+ ";request_type:"+request_type+ ";channel:"+channel+ ";price:"+price
 				+ ";imei:"+imei + ";imsi:"+imsi + ";bsc_lac:"+bsc_lac + ";bsc_cid:"+bsc_cid + ";mobile:"+mobile + ";iccid:"+iccid + ";mac:"+mac 
-				+ ";cpparm:"+cpparm + ";fmt:"+fmt + ";timestamp:"+timestamp + ";isp:"+isp + ";code_id:"+code_id + ";order_id:"+order_id + ";ver_code:"+ver_code );
+				+ ";cpparm:"+cpparm + ";fmt:"+fmt + ";timestamp:"+timestamp + ";isp:"+isp + ";code_id:"+code_id + ";order_id:"+order_id + ";ver_code:"+ver_code+ ";csubchnl:"+csubchnl  );
 		ResultVO vo = new ResultVO(true);
 		String area_id = "";
 		//参数判断
@@ -252,6 +253,7 @@ public class InfController {
 		log.setCpparm(cpparm);
 		log.setFmt(fmt);
 		log.setPrice(price);
+		log.setCodeSubChannel(csubchnl);
 		log.setOrderState(-1);
 		log.setCreateTime(new Date());
 		//  逻辑判断，获取计费代码，请求计费代码，解析反馈数据，反馈客户端数据
