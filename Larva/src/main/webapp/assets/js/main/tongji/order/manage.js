@@ -132,6 +132,9 @@ define(function (require, exports, module) {
 		    			        field: 'create_time',
 		    			        title: '创建时间'
 		    		        },{
+		    			        field: 'code_sub_channel',
+		    			        title: '子渠道'
+		    		        },{
 		    		        	 field: 'app_log',
 			    			     title: 'APP日志',
 		    		        	 events: operateEvents,
@@ -177,9 +180,14 @@ define(function (require, exports, module) {
         	var order_state = $('#order_state').val();
         	var datetimeStart = $('#datetimeStart').val();
         	var datetimeEnd = $('#datetimeEnd').val();
-        	var data = "order_id=" + order_id +"&code_name=" + code_name +"&app_name="+app_name 
-        	+ "&order_state=" + order_state +"&datetimeStart="+datetimeStart+"&datetimeEnd="+datetimeEnd;
-        	$('#orderTable').bootstrapTable('refresh',{url:url+'?'+data});
+        	if(!datetimeStart){
+        		base.bootAlert({msg:'开始时间必填'});
+        	}else{
+        		var code_sub_channel = $('#code_sub_channel').val();
+            	var data = "order_id=" + order_id +"&code_name=" + code_name +"&app_name="+app_name 
+            	+ "&order_state=" + order_state +"&datetimeStart="+datetimeStart+"&datetimeEnd="+datetimeEnd+"&code_sub_channel="+code_sub_channel;
+            	$('#orderTable').bootstrapTable('refresh',{url:url+'?'+data});
+        	}
         },GetDateStr:function(AddDayCount) {
 		    var dd = new Date();
 		    dd.setDate(dd.getDate()+AddDayCount);//获取AddDayCount天后的日期
@@ -195,8 +203,9 @@ define(function (require, exports, module) {
         	var order_state = $('#order_state').val();
         	var datetimeStart = F.GetDateStr(dateCount);
         	var datetimeEnd ='';
+        	var code_sub_channel = $('#code_sub_channel').val();
         	var data = "order_id=" + order_id +"&code_name=" + code_name +"&app_name="+app_name 
-        	+ "&order_state=" + order_state +"&datetimeStart="+datetimeStart+"&datetimeEnd="+datetimeEnd;
+        	+ "&order_state=" + order_state +"&datetimeStart="+datetimeStart+"&datetimeEnd="+datetimeEnd+"&code_sub_channel="+code_sub_channel;
         	$('#orderTable').bootstrapTable('refresh',{url:url+'?'+data});
 		},appLogFormatter:function(){
 			var _btnAction = "";

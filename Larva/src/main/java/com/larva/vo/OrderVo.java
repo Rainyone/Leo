@@ -8,7 +8,16 @@ public class OrderVo {
 	private String datetimeStart;
 	private String datetimeEnd;
 	private int order_state=-1;
+	private String code_sub_channel;
 	
+	
+	
+	public String getCode_sub_channel() {
+		return code_sub_channel;
+	}
+	public void setCode_sub_channel(String code_sub_channel) {
+		this.code_sub_channel = code_sub_channel;
+	}
 	public int getOrder_state() {
 		return order_state;
 	}

@@ -45,6 +45,17 @@
         	<div class='controls span2'>
                <input type='text' id='datetimeEnd' readonly class='form_datetime span12' placeholder='结束时间'>
       		</div>
+        </div>
+         <div class='control-group'>
+        	<label class='control-label span1'>子渠道：</label>
+        	<div class='controls span2' >
+	             	  <input class='span12' id='code_sub_channel' name='code_sub_channel' placeholder='子渠道' type='text' />
+	            </div>
+        	<label class='control-label span2'></label>
+        	<div class='controls span2'>
+      		</div>
+        	<div class='controls span2'>
+      		</div>
       		<div class='controls span2'>
       			<button id='reset' type='reset' class='btn btn-info'>重置</button>
       			<button id='query' type='button' class='btn btn-primary'>查询</button>

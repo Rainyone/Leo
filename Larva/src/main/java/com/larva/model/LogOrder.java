@@ -3,6 +3,7 @@ package com.larva.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.larva.model.LogOrder.Columns;
 import com.mini.core.WeakEntity;
 import com.mini.core.annotation.Entity;
 import com.mini.core.utils.EnumClazz.StrategyType;
@@ -44,7 +45,16 @@ public class LogOrder extends WeakEntity implements Serializable {
 		public static final String charge_code_name = "charge_code_name";
 		public static final String areaName = "areaName";
 		public static final String isp_name = "isp_name";
+		public static final String code_sub_channel = "code_sub_channel";
+		
 	}
+  public String getCodeSubChannel() {
+        return super.getStr(Columns.code_sub_channel);
+    }
+    public LogOrder setCodeSubChannel(String code_sub_channel) {
+        super.set(Columns.code_sub_channel, code_sub_channel);
+        return this;
+    }
 	public Long getChargePrice() {
         return super.getLong(Columns.charge_price);
     }
