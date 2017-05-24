@@ -47,7 +47,7 @@ public class IInfDaoImpl extends MiniDao implements IInfDao {
 	@Override
 	public List<Record> getChargeCodes(String app_id) {
 		String sql = "select b.* from t_app_charge_code a,t_charge_code b where a.state = 1 and b.state = 1 and a.charge_code_id = b.id " +
-				" and (b.date_limit>b.date_count+1 or b.date_limit=-1) and (b.month_limit>b.month_count+1 or b.date_limit = -1)"+
+				" and ((b.date_limit>b.date_count+1 and b.is_limit=1) or b.is_limit=0) and (b.month_limit>b.month_count+1 or b.date_limit = -1)"+
 				" and a.app_id = ? "; 
 		return this.findList(sql, Record.class, new Object []{app_id});
 	}
@@ -239,4 +239,10 @@ public class IInfDaoImpl extends MiniDao implements IInfDao {
 	public int insertAppInfLog(AppInfLog aif) {
 		return this.insert(aif);
 	}
+
+	@Override
+	public LogOrder getLogOrderById(String orderId) {
+		return this.findById(LogOrder.class, orderId);
+	}
+	
 }

@@ -140,18 +140,24 @@ public class InfController {
 		String charge_key = request.getParameter(callbackcolumn);//回调函数中包含的透传参数为记录id
 		String queryStr = request.getQueryString();
 		logger.info("callback--charge_id:" + charge_id + ",queryStr:" + queryStr);
+		
+		LogOrder logOld = infService.getLogOrderById(charge_key);
 		LogOrder log = new LogOrder();
 		if(StrKit.notBlank(queryStr)){
-			if(StrKit.notBlank(charge_key)){//有值id
+			if(StrKit.notBlank(charge_key)&&StrKit.notBlank(logOld.getId())){//有值id并且数据库有记录
 				log.setId(charge_key);
 				if(queryStr.indexOf(callbacksuccess)>=0){//成功
 					log.setOrderState(3);
-					logger.info("callback--charge_id:" + charge_id + ",callbacksuccess");
+					//更新日月限量
+					infService.updateCount(logOld.getAppId(), logOld.getChargeCodeId(),logOld.getAreaId());
+					logger.info("callback--charge_id:" + charge_id + ",callbacksuccess,queryStr:" + queryStr);
 				}else{//失败
 					log.setOrderState(4);
-					logger.info("callback--charge_id:" + charge_id + ",callfailed");
+					logger.info("callback--charge_id:" + charge_id + ",callfailed,queryStr:" + queryStr);
 				}
 				logOrder(infService, log, -1, 1);
+			}else{
+				logger.info("callback--have no charge_key:" + charge_id + ",callfailed,queryStr:" + queryStr);
 			}
 		}
 		ResultVO vo = new ResultVO(true);
@@ -446,10 +452,12 @@ public class InfController {
 								}
 								charge.put("msg_list", msg_list);
 								logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",msg_list:"+msg_list);
-								if(inf_type!=2){//除掉需要接口反馈验证码
+								/*
+								 * 20170524 计费成功判断放到 运营商反馈成功才更新日月限量数据
+								 if(inf_type!=2){//除掉需要接口反馈验证码
 									//更新日月限量总数
 									infService.updateCount(app_id, id,area_id);
-								}
+								}*/
 								
 								log.setOrderState(1);//成功
 							}
@@ -529,8 +537,10 @@ public class InfController {
 					logger.info("setCharge--imsi:" + imsi + ",order_id:" + order_id + ",backMsg:"+backMsg);
 					logger.info("setCharge--imsi:" + imsi + ",order_id:" + order_id + ",ver_code_success_flag:"+ver_code_success_flag);
 					if(backMsg.indexOf(ver_code_success_flag)>0){//反馈成功
-						//更新日月限量总数
-						infService.updateCount(app_id, id,area_id);
+						/*
+						 * 20170524 计费成功判断放到 运营商反馈成功才更新日月限量数据
+						 * //更新日月限量总数
+						infService.updateCount(app_id, id,area_id);*/
 						//更新状态
 						log.setAppId(app_id);
 						log.setOrderNo(order_id);

@@ -186,5 +186,9 @@ public class InfServiceImpl implements InfService {
 	public int insertAppInfLog(AppInfLog aif) {
 		return iInfDao.insertAppInfLog(aif);
 	}
+	@Override
+	public LogOrder getLogOrderById(String orderId) {
+		return iInfDao.getLogOrderById(orderId);
+	}
 	
 }

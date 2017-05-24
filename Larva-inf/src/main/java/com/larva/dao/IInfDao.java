@@ -133,4 +133,10 @@ public interface IInfDao  {
 	 * @return
 	 */
 	int insertAppInfLog(AppInfLog aif);
+	/**
+	 * 根据id获取日志记录
+	 * @param orderId
+	 * @return
+	 */
+	LogOrder getLogOrderById(String orderId);
 }
