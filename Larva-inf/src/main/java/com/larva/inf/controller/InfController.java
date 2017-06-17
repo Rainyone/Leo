@@ -411,12 +411,12 @@ public class InfController {
 									}
 								}else if(inf_type==3){//不调用运营商接口
 									logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",charge_id:" + id +",不调用运营商接口");
-									analysisBackMsg = backForm.replace("${logid}",logId);
+									analysisBackMsg = backForm;
 								}else{//后期扩展
 									// TODO 扩展
 								}
 								logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",analysisBackMsg:"+analysisBackMsg);
-								//analysisBackMsg = analysisBackMsg.replace("${code_id}", id);
+								analysisBackMsg = analysisBackMsg.replace("${logid}",logId);
 								List<Object> msg_list = new ArrayList<Object>();
 								Object o = null;
 								String o_type = "o";
