@@ -56,6 +56,18 @@ public class InfController {
 	private InfService infService;	
 	//@Autowired
 	private MemcachedClient memcachedClient;
+	/**
+	 * 记录客户端日志 app_inf_log
+	 * @param charge_key
+	 * @param imsi
+	 * @param channel
+	 * @param logtime
+	 * @param stepname
+	 * @param context
+	 * @param timestamp
+	 * @param request
+	 * @return
+	 */
 	@RequestMapping(value="/appInfLog", method=RequestMethod.GET)
 	@ResponseBody
 	public ResultVO appInfLog(
@@ -127,7 +139,11 @@ public class InfController {
 		}
 		return vo;
 	}
-	
+	/**
+	 * 运营商回调
+	 * @param request
+	 * @return
+	 */
 	@RequestMapping(value="/callback", method=RequestMethod.GET)
 	@ResponseBody
 	public ResultVO callback(HttpServletRequest request){
@@ -155,7 +171,7 @@ public class InfController {
 					log.setOrderState(4);
 					logger.info("callback--charge_id:" + charge_id + ",callfailed,queryStr:" + queryStr);
 				}
-				logOrder(infService, log, -1, 1);
+				infService.updateLogOrder(log.getId(), log.getOrderState(), 0);//更新状态
 			}else{
 				logger.info("callback--have no charge_key:" + charge_id + ",callfailed,queryStr:" + queryStr);
 			}
@@ -277,14 +293,14 @@ public class InfController {
 					String address = ipSeeker.getAddress(realIp);
 					area_id = address.split(" ")[0];//获取区域编码
 					logger.info("setCharge--imsi:" + imsi + ",mid:"+ mid +",area_id from realIp:"+area_id);
-//				area_id = "310000";//测试用
-//				isp = "1002";
+				//area_id = "310000";//测试用
+				//isp = "1001";
 				}
 				//测试用
-			area_id = "520000";
-			realIp = "132.33.32.12";
+			//area_id = "310000";
+			//realIp = "132.33.32.12";
 				log.setAreaId(area_id);
-				logOrder(infService, log, -1, 0);
+				infService.saveLogOrder(log);//order_state = -1 记录到req表中
 				if(area_id!=null&&!"".equals(area_id)){//如果有区域编码
 					/**记录日志：接收到请求
 					（一个请求可能有多个计费代码）
@@ -335,7 +351,7 @@ public class InfController {
 							log.setChargePrice(chargePrice);
 							log.setOrderState(0);//发起
 							log.setCreateTime(new Date());
-							logOrder(infService, log, -1, 0);
+							infService.saveLogOrder(log);
 							if(inf_type==1||inf_type==2){//1：不需要验证码，直接请求运营商2需要通过接口反馈验证码
 								if(InfStatic.SEND_TYPE_GET.equals(sendType)){//get方式没有charge_code
 									//参数替换
@@ -395,7 +411,7 @@ public class InfController {
 									}
 								}else if(inf_type==3){//不调用运营商接口
 									logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",charge_id:" + id +",不调用运营商接口");
-									analysisBackMsg = backForm;
+									analysisBackMsg = backForm.replace("${logid}",logId);
 								}else{//后期扩展
 									// TODO 扩展
 								}
@@ -477,7 +493,7 @@ public class InfController {
 							log.setOrderState(2);//失败
 						}
 						log.setUpdateTime(new Date());
-						logOrder(infService, log, 0,1);//修改
+						infService.updateLogOrder(log.getId(), log.getOrderState(), 0);
 					}
 					Map<String, List<Object>> backMap = new HashMap<String,List<Object>>();
 					backMap.put("charge_list", backList);
@@ -558,7 +574,7 @@ public class InfController {
 						logger.info("setCharge--imsi:" + imsi + ",order_id:" + order_id + ",charge false");
 						vo.setMsg("charge false");
 					}
-					logOrder(infService, log, 0,2);//修改
+					infService.updateLogOrderByOrderNo(log.getOrderNo(), log.getOrderState());
 					Map<String, String> backMap = new HashMap<String,String>();
 					backMap.put("order_id", order_id);
 					vo.setData(backMap);
@@ -596,7 +612,7 @@ public class InfController {
 			}else{
 				log.setOrderState(6);
 			}
-			logOrder(infService, log, 0,1);//修改
+			infService.updateLogOrder(log.getId(), log.getOrderState(), 0);
 			vo.setOk(true);
 			vo.setMsg("请求成功");
 			return vo;
