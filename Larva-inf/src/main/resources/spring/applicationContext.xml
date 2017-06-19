@@ -29,5 +29,5 @@
     <aop:aspectj-autoproxy proxy-target-class="true" />
 
     <import resource="db.xml"/>
-     <import resource="memcache.xml"/>
+     <!-- <import resource="memcache.xml"/> -->
 </beans>

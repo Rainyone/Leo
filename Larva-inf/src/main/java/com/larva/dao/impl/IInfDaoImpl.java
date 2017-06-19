@@ -47,7 +47,7 @@ public class IInfDaoImpl extends MiniDao implements IInfDao {
 	@Override
 	public List<Record> getChargeCodes(String app_id) {
 		String sql = "select b.* from t_app_charge_code a,t_charge_code b where a.state = 1 and b.state = 1 and a.charge_code_id = b.id " +
-				" and ((b.date_limit>b.date_count+1 and b.is_limit=1) or b.is_limit=0) and (b.month_limit>b.month_count+1 or b.date_limit = -1)"+
+				" and ((b.date_limit>b.date_count+1 and b.is_limit=1) or b.is_limit=0) and (b.month_limit>b.month_count+1 or b.month_limit = -1)"+
 				" and a.app_id = ? "; 
 		return this.findList(sql, Record.class, new Object []{app_id});
 	}
@@ -89,11 +89,15 @@ public class IInfDaoImpl extends MiniDao implements IInfDao {
 	@Override
 	public Integer updateLogOrder(String id, int inState, int oldState) {
 		String update = "";
+		String condition = "";
+		if(inState!=3&&inState!=4){
+			condition = " and order_state not in (3,4) ";
+		}
 		if(oldState>0){
-			update = "update t_log_order set order_state=? where id=? and order_state = ?";
+			update = "update t_log_order set order_state=? where id=? and order_state = ? " + condition;
 			return this.execute(update, inState,id,oldState);
 		}else{
-			update = "update t_log_order set order_state=? where id=? ";
+			update = "update t_log_order set order_state=? where id=? " +condition;
 			return this.execute(update, inState,id);
 		}
 	}
@@ -202,7 +206,7 @@ public class IInfDaoImpl extends MiniDao implements IInfDao {
 
 	@Override
 	public Integer updateLogOrderByOrderNo(String orderNo, Integer orderState) {
-		String update = "update t_log_order set order_state = ? where order_no=? ";
+		String update = "update t_log_order set order_state = ? where order_no=?  and order_state not in (3,4)";
 		return this.execute(update, orderState,orderNo);
 	}
 

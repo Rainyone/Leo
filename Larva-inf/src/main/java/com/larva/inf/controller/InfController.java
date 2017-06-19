@@ -208,6 +208,7 @@ public class InfController {
 			@RequestParam(value="charge_success", required=false, defaultValue="") String charge_success,//
 			@RequestParam(value="csubchnl", required=false, defaultValue="") String csubchnl,
 			HttpServletRequest request){
+		Long start = new Date().getTime();
 		logger.info("setCharge--app_id:" + app_id + ";app_key:"+app_key+ ";request_type:"+request_type+ ";channel:"+channel+ ";price:"+price
 				+ ";imei:"+imei + ";imsi:"+imsi + ";bsc_lac:"+bsc_lac + ";bsc_cid:"+bsc_cid + ";mobile:"+mobile + ";iccid:"+iccid + ";mac:"+mac 
 				+ ";cpparm:"+cpparm + ";fmt:"+fmt + ";timestamp:"+timestamp + ";isp:"+isp + ";code_id:"+code_id + ";order_id:"+order_id + ";ver_code:"+ver_code+ ";csubchnl:"+csubchnl  );
@@ -287,7 +288,9 @@ public class InfController {
 				vo.setMsg("24 hours can not be repeated more than 3 times");
 				return vo;
 			}else{*/
-				area_id = infService.getAreaIdByImsi(imsi);//根据imsi号获取省份
+				if(StringUtils.isNotBlank(imsi)&&!"null".equals(imsi)){
+					area_id = infService.getAreaIdByImsi(imsi);//根据imsi号获取省份
+				}
 				logger.info("setCharge--imsi:" + imsi + ",mid:"+ mid +",area_id:"+area_id);
 				if(area_id==null||"".equals(area_id)){//如果没有获取到再根据ip获取省份
 					String address = ipSeeker.getAddress(realIp);
@@ -417,6 +420,8 @@ public class InfController {
 								}
 								logger.info("setCharge--imsi:" + imsi + ",logId:" + logId + ",analysisBackMsg:"+analysisBackMsg);
 								analysisBackMsg = analysisBackMsg.replace("${logid}",logId);
+								//测试用
+								//analysisBackMsg = "{     \"port\": \"106598725\",     \"msg\": \"10GGoXsPjcC6yS66bSI5_2700_freffcdf443d\",     \"type\": \"0\",    \"orderby\": \"1\",     \"msgtype\": 0 }";
 								List<Object> msg_list = new ArrayList<Object>();
 								Object o = null;
 								String o_type = "o";
@@ -621,6 +626,8 @@ public class InfController {
 			vo.setMsg("request_type is error");
 			return vo;
 		}
+		Long end = new Date().getTime();
+		logger.info(log.getId() + ";cost：" + (end-start) + "ms");
 		return vo;
 	}
 	/**
