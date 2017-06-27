@@ -31,7 +31,7 @@ public class ChargeCodeEditVO {
     private String order_id_code = "验证码的order_id字段";
     private String ver_code_success_flag ;
     private Date create_time;
-    private Date update_time;
+    //private Date update_time;
 	private String create_people_name;
     private String update_people_name;
     private Integer state;
@@ -105,12 +105,12 @@ public class ChargeCodeEditVO {
 	public void setCreate_time(Date create_time) {
 		this.create_time = create_time;
 	}
-	public Date getUpdate_time() {
-		return update_time;
-	}
-	public void setUpdate_time(Date update_time) {
-		this.update_time = update_time;
-	}
+//	public Date getUpdate_time() {
+//		return update_time;
+//	}
+//	public void setUpdate_time(Date update_time) {
+//		this.update_time = update_time;
+//	}
 	public Integer getState() {
 		return state;
 	}

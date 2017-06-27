@@ -164,7 +164,7 @@ public class ChargeCodeServiceImpl implements IChargeCodeService {
 		cc.setState(editVo.getState());
 		cc.setCreateTime(editVo.getCreate_time());
 		cc.setCreatePeopleName(editVo.getCreate_people_name());
-		cc.setUpdateTime(new Date());
+		//cc.setUpdateTime(new Date());
 		cc.setUpdatePeopleName(editVo.getUpdate_people_name());
 		cc.setDateCount(editVo.getDateCount());
 		cc.setMonthCount(editVo.getMonthCount());
